@@ -5,7 +5,7 @@ import { DndContext, DragEndEvent, useSensor, useSensors, PointerSensor, DragOve
 import { useDraggable } from '@dnd-kit/core'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { GlassButton } from '@/components/ui/GlassButton'
-import { TrendingUp, Clock, Target, Music, Award, ArrowRight, BookOpen, GripVertical } from 'lucide-react'
+import { TrendingUp, Clock, Target, Music, Award, ArrowRight, BookOpen, GripVertical, RotateCcw } from 'lucide-react'
 import Link from 'next/link'
 
 interface WidgetPosition {
@@ -151,7 +151,7 @@ export default function HomePage() {
     // Calculer la taille réelle des cellules en fonction du conteneur
     const gridRect = gridRef.current.getBoundingClientRect()
     const cellWidth = gridRect.width / GRID_COLS
-    const cellHeight = 180 + 24 // 180px de hauteur + 24px de gap
+    const cellHeight = 200 + 32 // 200px de hauteur + 32px de gap (gap-8)
 
     const deltaX = Math.round(delta.x / cellWidth)
     const deltaY = Math.round(delta.y / cellHeight)
@@ -219,15 +219,16 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen">
-      <div className="p-6 lg:p-12 max-w-[1800px]">
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-white mb-2">Tableau de bord</h1>
-              <p className="text-[#b4c6e7]">Glisse les widgets <GripVertical className="inline w-4 h-4" /> pour les placer librement dans la grille</p>
+    <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35]">
+      <div className="p-6 lg:p-12 max-w-[1800px] mx-auto">
+        <div className="mb-12">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div className="space-y-3">
+              <h1 className="text-4xl lg:text-5xl font-bold text-white tracking-tight">Tableau de bord</h1>
+              <p className="text-lg text-[#b4c6e7]/80 font-light">Glisse les widgets <GripVertical className="inline w-5 h-5" /> pour personnaliser ton espace</p>
             </div>
-            <GlassButton variant="primary" size="md" onClick={resetPositions} className="whitespace-nowrap">
+            <GlassButton variant="primary" size="lg" onClick={resetPositions} className="whitespace-nowrap shadow-xl">
+              <RotateCcw className="w-5 h-5" />
               Réinitialiser
             </GlassButton>
           </div>
@@ -241,10 +242,10 @@ export default function HomePage() {
         >
           <div
             ref={gridRef}
-            className="grid gap-6"
+            className="grid gap-8"
             style={{
               gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
-              gridTemplateRows: `repeat(${GRID_ROWS}, 180px)`,
+              gridTemplateRows: `repeat(${GRID_ROWS}, 200px)`,
             }}
           >
             {widgets.map((widget) => (
@@ -282,31 +283,31 @@ const defaultWidgets: Widget[] = [
     w: 6,
     h: 2,
     component: (
-      <GlassCard variant="elevated" padding="lg" className="h-full">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-white mb-2">Vue d'ensemble</h2>
-          <p className="text-sm text-[#b4c6e7]">Ta progression cette semaine</p>
+      <GlassCard variant="elevated" padding="xl" className="h-full">
+        <div className="mb-8 space-y-2">
+          <h2 className="text-2xl font-bold text-white tracking-tight">Vue d'ensemble</h2>
+          <p className="text-base text-[#b4c6e7]/70 font-light">Ta progression cette semaine</p>
         </div>
 
-        <div className="h-32 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 mb-6">
+        <div className="h-36 flex items-center justify-center rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 mb-8 backdrop-blur-xl">
           <div className="text-center">
-            <TrendingUp className="h-12 w-12 text-[#667eea] mx-auto mb-3" />
-            <p className="text-sm text-[#b4c6e7]">Graphique de progression</p>
+            <TrendingUp className="h-14 w-14 text-[#667eea] mx-auto mb-4" />
+            <p className="text-sm text-[#b4c6e7]/80 font-light">Graphique de progression</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          <div className="text-center p-3 rounded-xl bg-white/5">
-            <div className="text-2xl font-bold gradient-text mb-1">0h</div>
-            <div className="text-xs text-[#b4c6e7]">Pratique</div>
+        <div className="grid grid-cols-3 gap-6">
+          <div className="text-center p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 backdrop-blur-sm">
+            <div className="text-3xl font-bold gradient-text mb-2">0h</div>
+            <div className="text-sm text-[#b4c6e7]/70 font-light">Pratique</div>
           </div>
-          <div className="text-center p-3 rounded-xl bg-white/5">
-            <div className="text-2xl font-bold gradient-text mb-1">0</div>
-            <div className="text-xs text-[#b4c6e7]">Leçons</div>
+          <div className="text-center p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 backdrop-blur-sm">
+            <div className="text-3xl font-bold gradient-text mb-2">0</div>
+            <div className="text-sm text-[#b4c6e7]/70 font-light">Leçons</div>
           </div>
-          <div className="text-center p-3 rounded-xl bg-white/5">
-            <div className="text-2xl font-bold gradient-text mb-1">0</div>
-            <div className="text-xs text-[#b4c6e7]">Série</div>
+          <div className="text-center p-4 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 backdrop-blur-sm">
+            <div className="text-3xl font-bold gradient-text mb-2">0</div>
+            <div className="text-sm text-[#b4c6e7]/70 font-light">Série</div>
           </div>
         </div>
       </GlassCard>
@@ -319,29 +320,29 @@ const defaultWidgets: Widget[] = [
     w: 3,
     h: 1,
     component: (
-      <GlassCard variant="elevated" padding="lg" className="h-full">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Target className="w-5 h-5 text-white" />
+      <GlassCard variant="elevated" padding="xl" className="h-full flex flex-col">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center shadow-lg shadow-purple-500/30">
+            <Target className="w-7 h-7 text-white" />
           </div>
-          <div>
-            <h3 className="font-semibold text-white">Niveau</h3>
-            <p className="text-xs text-[#b4c6e7]">Débutant</p>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-[#b4c6e7]">Progression</span>
-            <span className="text-white font-medium">0%</span>
-          </div>
-          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full" style={{width: '0%'}}></div>
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-white tracking-tight">Niveau</h3>
+            <p className="text-sm text-[#b4c6e7]/70 font-light">Débutant</p>
           </div>
         </div>
-        <div className="mt-4 pt-4 border-t border-white/10">
+        <div className="space-y-3 mb-auto">
+          <div className="flex justify-between text-base">
+            <span className="text-[#b4c6e7]/70 font-light">Progression</span>
+            <span className="text-white font-semibold">0%</span>
+          </div>
+          <div className="h-2.5 bg-white/5 rounded-full overflow-hidden backdrop-blur-sm">
+            <div className="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full shadow-lg" style={{width: '0%'}}></div>
+          </div>
+        </div>
+        <div className="mt-6 pt-6 border-t border-white/10">
           <div className="text-center">
-            <div className="text-3xl font-bold gradient-text mb-1">1</div>
-            <div className="text-xs text-[#b4c6e7]">Niveau actuel</div>
+            <div className="text-4xl font-bold gradient-text mb-2">1</div>
+            <div className="text-sm text-[#b4c6e7]/70 font-light">Niveau actuel</div>
           </div>
         </div>
       </GlassCard>
@@ -354,19 +355,19 @@ const defaultWidgets: Widget[] = [
     w: 3,
     h: 1,
     component: (
-      <GlassCard variant="elevated" padding="lg" className="h-full">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Clock className="w-5 h-5 text-white" />
+      <GlassCard variant="elevated" padding="xl" className="h-full flex flex-col">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center shadow-lg shadow-purple-500/30">
+            <Clock className="w-7 h-7 text-white" />
           </div>
-          <div>
-            <h3 className="font-semibold text-white">Pratique</h3>
-            <p className="text-xs text-[#b4c6e7]">Objectif: 15 min</p>
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-white tracking-tight">Pratique</h3>
+            <p className="text-sm text-[#b4c6e7]/70 font-light">Objectif: 15 min</p>
           </div>
         </div>
-        <div className="text-center py-4">
-          <div className="text-4xl font-bold gradient-text mb-2">0 min</div>
-          <p className="text-xs text-[#b4c6e7]">Aujourd'hui</p>
+        <div className="text-center flex-1 flex flex-col justify-center">
+          <div className="text-5xl font-bold gradient-text mb-3">0 min</div>
+          <p className="text-sm text-[#b4c6e7]/70 font-light">Aujourd'hui</p>
         </div>
       </GlassCard>
     )
@@ -378,21 +379,21 @@ const defaultWidgets: Widget[] = [
     w: 6,
     h: 2,
     component: (
-      <GlassCard variant="elevated" padding="lg" className="h-full overflow-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h3 className="text-lg font-bold text-white mb-1">Parcours</h3>
-            <p className="text-sm text-[#b4c6e7]">5 niveaux progressifs</p>
+      <GlassCard variant="elevated" padding="xl" className="h-full overflow-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold text-white tracking-tight">Parcours</h3>
+            <p className="text-base text-[#b4c6e7]/70 font-light">5 niveaux progressifs</p>
           </div>
           <Link href="/parcours">
-            <GlassButton variant="outline" size="sm">
-              <BookOpen className="w-4 h-4" />
+            <GlassButton variant="outline" size="md">
+              <BookOpen className="w-5 h-5" />
               Voir tout
             </GlassButton>
           </Link>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {[
             { level: 1, name: 'Découverte', lessons: 7, locked: false },
             { level: 2, name: 'Fondations', lessons: 8, locked: true },
@@ -401,25 +402,25 @@ const defaultWidgets: Widget[] = [
             <div
               key={level.level}
               className={cn(
-                'p-4 rounded-xl border transition-all',
+                'p-5 rounded-2xl border transition-all',
                 level.locked
                   ? 'bg-white/[0.02] border-white/5 opacity-50'
-                  : 'bg-white/5 border-white/10 hover:bg-white/10 cursor-pointer'
+                  : 'bg-gradient-to-br from-white/10 to-white/5 border-white/10 hover:from-white/15 hover:to-white/10 cursor-pointer backdrop-blur-sm'
               )}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className={cn(
-                    'w-10 h-10 rounded-lg flex items-center justify-center font-bold',
+                    'w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg',
                     level.locked
                       ? 'bg-white/5 text-[#6b7fa8]'
-                      : 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white'
+                      : 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white shadow-lg shadow-purple-500/30'
                   )}>
                     {level.level}
                   </div>
-                  <div>
-                    <div className="font-semibold text-white">{level.name}</div>
-                    <div className="text-xs text-[#b4c6e7]">{level.lessons} leçons</div>
+                  <div className="space-y-1">
+                    <div className="text-lg font-bold text-white tracking-tight">{level.name}</div>
+                    <div className="text-sm text-[#b4c6e7]/70 font-light">{level.lessons} leçons</div>
                   </div>
                 </div>
                 {!level.locked && (
@@ -441,20 +442,20 @@ const defaultWidgets: Widget[] = [
     w: 3,
     h: 1,
     component: (
-      <GlassCard variant="elevated" padding="lg" className="h-full">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Award className="w-5 h-5 text-white" />
+      <GlassCard variant="elevated" padding="xl" className="h-full flex flex-col">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center shadow-lg shadow-purple-500/30">
+            <Award className="w-7 h-7 text-white" />
           </div>
-          <div>
-            <h3 className="font-semibold text-white">Badges</h3>
-            <p className="text-xs text-[#b4c6e7]">0 débloqués</p>
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-white tracking-tight">Badges</h3>
+            <p className="text-sm text-[#b4c6e7]/70 font-light">0 débloqués</p>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-3">
           {[1,2,3,4,5,6].map((i) => (
-            <div key={i} className="aspect-square rounded-lg bg-white/5 flex items-center justify-center">
-              <Award className="w-5 h-5 text-[#6b7fa8]" />
+            <div key={i} className="aspect-square rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center backdrop-blur-sm">
+              <Award className="w-6 h-6 text-[#6b7fa8]/50" />
             </div>
           ))}
         </div>
@@ -468,24 +469,24 @@ const defaultWidgets: Widget[] = [
     w: 3,
     h: 1,
     component: (
-      <GlassCard variant="elevated" padding="lg" className="h-full">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Music className="w-5 h-5 text-white" />
+      <GlassCard variant="elevated" padding="xl" className="h-full flex flex-col">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center shadow-lg shadow-purple-500/30">
+            <Music className="w-7 h-7 text-white" />
           </div>
-          <div>
-            <h3 className="font-semibold text-white">Morceaux</h3>
-            <p className="text-xs text-[#b4c6e7]">À apprendre</p>
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-white tracking-tight">Morceaux</h3>
+            <p className="text-sm text-[#b4c6e7]/70 font-light">À apprendre</p>
           </div>
         </div>
-        <div className="space-y-2">
-          <div className="p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all cursor-pointer">
-            <div className="font-medium text-white text-sm mb-1">Au clair de la lune</div>
-            <div className="text-xs text-[#b4c6e7]">Niveau 1</div>
+        <div className="space-y-3">
+          <div className="p-4 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:from-white/15 hover:to-white/10 transition-all cursor-pointer backdrop-blur-sm">
+            <div className="font-bold text-white text-base mb-1 tracking-tight">Au clair de la lune</div>
+            <div className="text-sm text-[#b4c6e7]/70 font-light">Niveau 1</div>
           </div>
-          <div className="p-3 rounded-lg bg-white/5 opacity-50">
-            <div className="font-medium text-white text-sm mb-1">Frère Jacques</div>
-            <div className="text-xs text-[#b4c6e7]">Niveau 1</div>
+          <div className="p-4 rounded-xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/5 opacity-50">
+            <div className="font-bold text-white text-base mb-1 tracking-tight">Frère Jacques</div>
+            <div className="text-sm text-[#b4c6e7]/70 font-light">Niveau 1</div>
           </div>
         </div>
       </GlassCard>
@@ -498,11 +499,11 @@ const defaultWidgets: Widget[] = [
     w: 12,
     h: 1,
     component: (
-      <GlassCard variant="elevated" padding="xl" className="h-full text-center flex flex-col items-center justify-center">
-        <h3 className="text-2xl font-bold text-white mb-3">Prêt à commencer ?</h3>
-        <p className="text-[#b4c6e7] mb-6">Crée ton compte gratuit et démarre ton apprentissage</p>
+      <GlassCard variant="elevated" padding="xl" className="h-full text-center flex flex-col items-center justify-center bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl">
+        <h3 className="text-3xl font-bold text-white mb-4 tracking-tight">Prêt à commencer ?</h3>
+        <p className="text-lg text-[#b4c6e7]/70 mb-8 font-light max-w-2xl">Crée ton compte gratuit et démarre ton apprentissage du piano dès aujourd'hui</p>
         <Link href="/inscription" className="inline-block">
-          <GlassButton variant="primary" size="lg">
+          <GlassButton variant="primary" size="lg" className="shadow-2xl shadow-purple-500/30">
             Créer mon compte
             <ArrowRight className="h-5 w-5" />
           </GlassButton>
