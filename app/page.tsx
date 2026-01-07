@@ -66,17 +66,27 @@ export default function HomePage() {
     if (savedPositions) {
       try {
         const positions: WidgetPosition[] = JSON.parse(savedPositions)
-        const restoredWidgets = positions.map(pos => {
-          const defaultWidget = defaultWidgets.find(w => w.id === pos.id)
-          return defaultWidget ? { ...defaultWidget, ...pos } : null
-        }).filter(Boolean) as Widget[]
 
-        if (restoredWidgets.length > 0) {
-          setWidgets(restoredWidgets)
-          return
+        // Vérifier que les positions sont valides (pas de chevauchement)
+        const isValid = positions.length === defaultWidgets.length
+
+        if (isValid) {
+          const restoredWidgets = positions.map(pos => {
+            const defaultWidget = defaultWidgets.find(w => w.id === pos.id)
+            return defaultWidget ? { ...defaultWidget, ...pos } : null
+          }).filter(Boolean) as Widget[]
+
+          if (restoredWidgets.length > 0) {
+            setWidgets(restoredWidgets)
+            return
+          }
+        } else {
+          // Positions invalides, réinitialiser
+          localStorage.removeItem('widgetPositions')
         }
       } catch (e) {
         console.error('Failed to load positions', e)
+        localStorage.removeItem('widgetPositions')
       }
     }
     setWidgets(defaultWidgets)
@@ -123,12 +133,22 @@ export default function HomePage() {
     setActiveId(null)
   }
 
+  const resetPositions = () => {
+    localStorage.removeItem('widgetPositions')
+    setWidgets(defaultWidgets)
+  }
+
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen pl-0 lg:pl-28">
       <div className="p-6 lg:p-12 max-w-[1800px]">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Tableau de bord</h1>
-          <p className="text-[#b4c6e7]">Glisse les widgets <GripVertical className="inline w-4 h-4" /> pour les placer librement dans la grille</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Tableau de bord</h1>
+            <p className="text-[#b4c6e7]">Glisse les widgets <GripVertical className="inline w-4 h-4" /> pour les placer librement dans la grille</p>
+          </div>
+          <GlassButton variant="outline" size="sm" onClick={resetPositions}>
+            Réinitialiser la grille
+          </GlassButton>
         </div>
 
         <DndContext
