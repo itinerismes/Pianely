@@ -8,7 +8,7 @@ import Link from 'next/link'
 export default function HomePage() {
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
+      {/* Hero Section - v2.0 */}
       <section className="min-h-screen flex items-center px-8 lg:px-16 xl:px-24 py-20">
         <div className="max-w-5xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-4 py-2 mb-8">
