@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { DndContext, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverlay } from '@dnd-kit/core'
 import { useDraggable } from '@dnd-kit/core'
 import { GlassCard } from '@/components/ui/GlassCard'
@@ -51,6 +51,7 @@ const GRID_ROWS = 20
 export default function HomePage() {
   const [widgets, setWidgets] = useState<Widget[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -89,10 +90,13 @@ export default function HomePage() {
     setActiveId(null)
     const { active, delta } = event
 
-    if (!delta) return
+    if (!delta || !gridRef.current) return
 
-    const cellWidth = 80
-    const cellHeight = 180
+    // Calculer la taille réelle des cellules en fonction du conteneur
+    const gridRect = gridRef.current.getBoundingClientRect()
+    const cellWidth = gridRect.width / GRID_COLS
+    const cellHeight = 180 + 24 // 180px de hauteur + 24px de gap
+
     const deltaX = Math.round(delta.x / cellWidth)
     const deltaY = Math.round(delta.y / cellHeight)
 
@@ -134,6 +138,7 @@ export default function HomePage() {
           onDragCancel={handleDragCancel}
         >
           <div
+            ref={gridRef}
             className="grid gap-6"
             style={{
               gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
