@@ -2,81 +2,77 @@
 
 import { GlassCard } from '@/components/ui/GlassCard'
 import { GlassButton } from '@/components/ui/GlassButton'
-import { Piano, Zap, TrendingUp, Award, ArrowRight, Play } from 'lucide-react'
+import { Piano, Zap, TrendingUp, Award, ArrowRight, Play, Music, Clock, Target } from 'lucide-react'
 import Link from 'next/link'
 
 export default function HomePage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center px-12 md:px-16 lg:px-24 py-24">
-        <div className="max-w-6xl w-full mx-auto">
-          <div>
-            <div className="inline-block mb-10">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-6 py-2.5 text-base text-[#b4c6e7]">
-                <Zap className="h-5 w-5 text-[#667eea]" />
-                Nouveau parcours débutant disponible
-              </span>
-            </div>
+      <section className="min-h-screen flex items-center px-8 lg:px-16 xl:px-24 py-20">
+        <div className="max-w-5xl">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-4 py-2 mb-8">
+            <Zap className="h-4 w-4 text-[#667eea]" />
+            <span className="text-sm text-[#b4c6e7]">Nouveau parcours débutant disponible</span>
+          </div>
 
-            <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold mb-10 leading-[1.05]">
-              <span className="gradient-text">Apprends le piano</span>
-              <br />
-              <span className="text-white">simplement</span>
-            </h1>
+          <h1 className="text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
+            <span className="gradient-text">Apprends le piano</span>
+            <br />
+            <span className="text-white">simplement</span>
+          </h1>
 
-            <p className="text-2xl md:text-3xl text-[#b4c6e7] mb-14 max-w-4xl leading-relaxed">
-              Joue tes premiers morceaux en quelques semaines.
-              Méthode progressive sans solfège au départ, parfaite pour les débutants.
-            </p>
+          <p className="text-xl lg:text-2xl text-[#b4c6e7] mb-10 max-w-3xl">
+            Joue tes premiers morceaux en quelques semaines.
+            Méthode progressive sans solfège au départ, parfaite pour les débutants.
+          </p>
 
-            <div className="flex flex-col sm:flex-row gap-5">
-              <Link href="/inscription">
-                <GlassButton variant="primary" size="lg" fullWidth className="sm:w-auto text-lg px-10 py-4">
-                  Commencer gratuitement
-                  <ArrowRight className="h-6 w-6" />
-                </GlassButton>
-              </Link>
-              <Link href="/parcours">
-                <GlassButton variant="outline" size="lg" fullWidth className="sm:w-auto text-lg px-10 py-4">
-                  <Play className="h-6 w-6" />
-                  Voir le parcours
-                </GlassButton>
-              </Link>
-            </div>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/inscription">
+              <GlassButton variant="primary" size="lg">
+                Commencer gratuitement
+                <ArrowRight className="h-5 w-5" />
+              </GlassButton>
+            </Link>
+            <Link href="/parcours">
+              <GlassButton variant="outline" size="lg">
+                <Play className="h-5 w-5" />
+                Voir le parcours
+              </GlassButton>
+            </Link>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-12 md:gap-16 mt-24">
+          <div className="grid grid-cols-3 gap-8 mt-16 pt-16 border-t border-white/10">
             <div>
-              <div className="text-6xl md:text-7xl font-bold gradient-text mb-3">5</div>
-              <div className="text-base md:text-lg text-[#b4c6e7]">Niveaux progressifs</div>
+              <div className="text-4xl font-bold gradient-text mb-2">5</div>
+              <div className="text-sm text-[#b4c6e7]">Niveaux progressifs</div>
             </div>
             <div>
-              <div className="text-6xl md:text-7xl font-bold gradient-text mb-3">30+</div>
-              <div className="text-base md:text-lg text-[#b4c6e7]">Leçons interactives</div>
+              <div className="text-4xl font-bold gradient-text mb-2">30+</div>
+              <div className="text-sm text-[#b4c6e7]">Leçons interactives</div>
             </div>
             <div>
-              <div className="text-6xl md:text-7xl font-bold gradient-text mb-3">15min</div>
-              <div className="text-base md:text-lg text-[#b4c6e7]">Par jour suffit</div>
+              <div className="text-4xl font-bold gradient-text mb-2">15min</div>
+              <div className="text-sm text-[#b4c6e7]">Par jour suffit</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="px-12 md:px-16 lg:px-24 py-32 md:py-40">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-20 md:mb-24">
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 text-white">
+      <section className="px-8 lg:px-16 xl:px-24 py-24">
+        <div className="max-w-6xl">
+          <div className="mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-white">
               Une méthode pensée pour toi
             </h2>
-            <p className="text-xl md:text-2xl text-[#b4c6e7] max-w-3xl">
+            <p className="text-lg text-[#b4c6e7] max-w-2xl">
               Pas de jargon complexe, juste l'essentiel pour progresser rapidement
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               {
                 icon: Piano,
@@ -84,7 +80,7 @@ export default function HomePage() {
                 description: 'Aucune connaissance musicale requise. Démarre avec les bases et progresse à ton rythme.'
               },
               {
-                icon: Play,
+                icon: Music,
                 title: 'Morceaux réels',
                 description: 'Joue des chansons que tu aimes dès les premières leçons. Apprentissage pratique et motivant.'
               },
@@ -94,19 +90,19 @@ export default function HomePage() {
                 description: 'Suis tes progrès avec des jalons clairs et des badges de réussite.'
               },
               {
-                icon: Award,
+                icon: Target,
                 title: 'Solfège progressif',
                 description: 'Introduction graduelle de la théorie musicale quand tu es prêt.'
               }
             ].map((feature, index) => (
-              <GlassCard key={index} variant="hover" padding="xl">
-                <div className="flex items-start gap-6">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] shrink-0">
-                    <feature.icon className="h-8 w-8 text-white" />
+              <GlassCard key={index} variant="hover" padding="lg">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-[#667eea] to-[#764ba2] shrink-0">
+                    <feature.icon className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-semibold text-white mb-4">{feature.title}</h3>
-                    <p className="text-lg text-[#b4c6e7] leading-relaxed">{feature.description}</p>
+                    <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+                    <p className="text-sm text-[#b4c6e7] leading-relaxed">{feature.description}</p>
                   </div>
                 </div>
               </GlassCard>
@@ -116,18 +112,18 @@ export default function HomePage() {
       </section>
 
       {/* Social Proof */}
-      <section className="px-12 md:px-16 lg:px-24 py-32 md:py-40">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-20 md:mb-24">
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 text-white">
+      <section className="px-8 lg:px-16 xl:px-24 py-24">
+        <div className="max-w-6xl">
+          <div className="mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-white">
               Ils ont commencé comme toi
             </h2>
-            <p className="text-xl md:text-2xl text-[#b4c6e7]">
+            <p className="text-lg text-[#b4c6e7]">
               Des débutants qui jouent maintenant leurs morceaux préférés
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 name: 'Marie L.',
@@ -145,11 +141,11 @@ export default function HomePage() {
                 text: 'L\'approche progressive est parfaite. On joue vraiment dès la première leçon, c\'est motivant.'
               }
             ].map((testimonial, index) => (
-              <GlassCard key={index} padding="xl">
-                <p className="text-lg md:text-xl text-[#b4c6e7] mb-8 leading-relaxed">&ldquo;{testimonial.text}&rdquo;</p>
+              <GlassCard key={index} padding="lg">
+                <p className="text-sm text-[#b4c6e7] mb-6 leading-relaxed">&ldquo;{testimonial.text}&rdquo;</p>
                 <div>
-                  <p className="font-semibold text-white text-lg">{testimonial.name}</p>
-                  <p className="text-base text-[#6b7fa8] mt-2">{testimonial.role}</p>
+                  <p className="font-semibold text-white">{testimonial.name}</p>
+                  <p className="text-xs text-[#6b7fa8] mt-1">{testimonial.role}</p>
                 </div>
               </GlassCard>
             ))}
@@ -158,23 +154,23 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="px-12 md:px-16 lg:px-24 py-32 md:py-40 pb-40">
-        <div className="max-w-5xl mx-auto">
-          <GlassCard variant="elevated" padding="xl" className="lg:p-20">
+      <section className="px-8 lg:px-16 xl:px-24 py-24 pb-32">
+        <div className="max-w-4xl">
+          <GlassCard variant="elevated" padding="xl">
             <div className="text-center">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-white">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white">
                 Prêt à jouer tes premiers morceaux ?
               </h2>
-              <p className="text-xl md:text-2xl text-[#b4c6e7] mb-12">
+              <p className="text-lg text-[#b4c6e7] mb-8">
                 Crée ton compte gratuit et démarre dès maintenant
               </p>
               <Link href="/inscription">
-                <GlassButton variant="primary" size="lg" className="text-lg px-10 py-4">
+                <GlassButton variant="primary" size="lg">
                   Commencer l'aventure
-                  <ArrowRight className="h-6 w-6" />
+                  <ArrowRight className="h-5 w-5" />
                 </GlassButton>
               </Link>
-              <p className="text-base md:text-lg text-[#6b7fa8] mt-10">
+              <p className="text-sm text-[#6b7fa8] mt-6">
                 Tu n'as pas encore d'instrument ?{' '}
                 <Link href="/pianos-debutants" className="text-[#667eea] hover:text-[#764ba2] transition-colors">
                   Voir nos recommandations
