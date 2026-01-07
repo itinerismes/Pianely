@@ -7,8 +7,8 @@ import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen lg:pl-20">
-      <div className="p-6 lg:p-8 max-w-[1800px] mx-auto">
+    <main className="min-h-screen lg:pl-28">
+      <div className="p-6 lg:p-8 max-w-[1800px]">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Tableau de bord</h1>
           <p className="text-[#b4c6e7]">Bienvenue sur Pianely</p>
