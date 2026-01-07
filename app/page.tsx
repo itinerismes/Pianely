@@ -162,6 +162,10 @@ export default function HomePage() {
       const draggedWidget = prevWidgets.find(w => w.id === active.id)
       if (!draggedWidget) return prevWidgets
 
+      // Sauvegarder la position d'origine
+      const originalX = draggedWidget.x
+      const originalY = draggedWidget.y
+
       // Calculer la nouvelle position souhaitée
       const desiredX = Math.max(0, Math.min(GRID_COLS - draggedWidget.w, draggedWidget.x + deltaX))
       const desiredY = Math.max(0, Math.min(GRID_ROWS - draggedWidget.h, draggedWidget.y + deltaY))
@@ -185,10 +189,10 @@ export default function HomePage() {
         }
       }
 
-      // Si collision, trouver une position valide
+      // Si collision, revenir à la position d'origine (le widget ne bouge pas)
       let finalPosition = desiredPosition
       if (hasCollision) {
-        finalPosition = findValidPosition(desiredPosition, prevWidgets)
+        finalPosition = { ...desiredPosition, x: originalX, y: originalY }
       }
 
       const newWidgets = prevWidgets.map(widget => {
@@ -217,14 +221,16 @@ export default function HomePage() {
   return (
     <main className="min-h-screen">
       <div className="p-6 lg:p-12 max-w-[1800px]">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Tableau de bord</h1>
-            <p className="text-[#b4c6e7]">Glisse les widgets <GripVertical className="inline w-4 h-4" /> pour les placer librement dans la grille</p>
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">Tableau de bord</h1>
+              <p className="text-[#b4c6e7]">Glisse les widgets <GripVertical className="inline w-4 h-4" /> pour les placer librement dans la grille</p>
+            </div>
+            <GlassButton variant="primary" size="md" onClick={resetPositions} className="whitespace-nowrap">
+              Réinitialiser
+            </GlassButton>
           </div>
-          <GlassButton variant="outline" size="sm" onClick={resetPositions}>
-            Réinitialiser la grille
-          </GlassButton>
         </div>
 
         <DndContext
