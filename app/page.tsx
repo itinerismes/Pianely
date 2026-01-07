@@ -1,89 +1,122 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core'
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
+import { DndContext, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverlay } from '@dnd-kit/core'
+import { useDraggable } from '@dnd-kit/core'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { GlassButton } from '@/components/ui/GlassButton'
-import { Piano, TrendingUp, Clock, Target, Music, Award, ArrowRight, BookOpen, GripVertical } from 'lucide-react'
+import { TrendingUp, Clock, Target, Music, Award, ArrowRight, BookOpen, GripVertical } from 'lucide-react'
 import Link from 'next/link'
 
-interface Widget {
+interface WidgetPosition {
   id: string
-  component: React.ReactNode
-  className: string
+  x: number
+  y: number
+  w: number
+  h: number
 }
 
-function SortableWidget({ id, children, className }: { id: string; children: React.ReactNode; className: string }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id })
+interface Widget extends WidgetPosition {
+  component: React.ReactNode
+}
+
+function DraggableWidget({ id, children, x, y, w, h }: { id: string; children: React.ReactNode; x: number; y: number; w: number; h: number }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id,
+  })
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    gridColumn: `${x + 1} / span ${w}`,
+    gridRow: `${y + 1} / span ${h}`,
     opacity: isDragging ? 0.5 : 1,
   }
 
   return (
-    <div ref={setNodeRef} style={style} className={className}>
-      <div className="relative group">
-        <div
-          {...attributes}
-          {...listeners}
-          className="absolute top-2 right-2 z-10 p-2 rounded-lg bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
-        >
-          <GripVertical className="w-4 h-4 text-white" />
-        </div>
-        {children}
+    <div ref={setNodeRef} style={style} className="relative group">
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute top-2 right-2 z-10 p-2 rounded-lg bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+      >
+        <GripVertical className="w-4 h-4 text-white" />
       </div>
+      {children}
     </div>
   )
 }
 
+const GRID_COLS = 12
+const GRID_ROWS = 20
+
 export default function HomePage() {
   const [widgets, setWidgets] = useState<Widget[]>([])
+  const [activeId, setActiveId] = useState<string | null>(null)
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
     })
   )
 
   useEffect(() => {
-    const savedOrder = localStorage.getItem('widgetOrder')
-    if (savedOrder) {
+    const savedPositions = localStorage.getItem('widgetPositions')
+    if (savedPositions) {
       try {
-        const order = JSON.parse(savedOrder)
-        setWidgets(order.map((id: string) => defaultWidgets.find(w => w.id === id)!).filter(Boolean))
-      } catch {
-        setWidgets(defaultWidgets)
+        const positions: WidgetPosition[] = JSON.parse(savedPositions)
+        const restoredWidgets = positions.map(pos => {
+          const defaultWidget = defaultWidgets.find(w => w.id === pos.id)
+          return defaultWidget ? { ...defaultWidget, ...pos } : null
+        }).filter(Boolean) as Widget[]
+
+        if (restoredWidgets.length > 0) {
+          setWidgets(restoredWidgets)
+          return
+        }
+      } catch (e) {
+        console.error('Failed to load positions', e)
       }
-    } else {
-      setWidgets(defaultWidgets)
     }
+    setWidgets(defaultWidgets)
   }, [])
 
+  const handleDragStart = (event: DragEndEvent) => {
+    setActiveId(event.active.id as string)
+  }
+
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
+    setActiveId(null)
+    const { active, delta } = event
 
-    if (over && active.id !== over.id) {
-      setWidgets((items) => {
-        const oldIndex = items.findIndex(item => item.id === active.id)
-        const newIndex = items.findIndex(item => item.id === over.id)
-        const newOrder = arrayMove(items, oldIndex, newIndex)
+    if (!delta) return
 
-        localStorage.setItem('widgetOrder', JSON.stringify(newOrder.map(w => w.id)))
-        return newOrder
+    const cellWidth = 80
+    const cellHeight = 180
+    const deltaX = Math.round(delta.x / cellWidth)
+    const deltaY = Math.round(delta.y / cellHeight)
+
+    if (deltaX === 0 && deltaY === 0) return
+
+    setWidgets(prevWidgets => {
+      const newWidgets = prevWidgets.map(widget => {
+        if (widget.id === active.id) {
+          const newX = Math.max(0, Math.min(GRID_COLS - widget.w, widget.x + deltaX))
+          const newY = Math.max(0, Math.min(GRID_ROWS - widget.h, widget.y + deltaY))
+          return { ...widget, x: newX, y: newY }
+        }
+        return widget
       })
-    }
+
+      const positions = newWidgets.map(({ id, x, y, w, h }) => ({ id, x, y, w, h }))
+      localStorage.setItem('widgetPositions', JSON.stringify(positions))
+
+      return newWidgets
+    })
+  }
+
+  const handleDragCancel = () => {
+    setActiveId(null)
   }
 
   return (
@@ -91,19 +124,43 @@ export default function HomePage() {
       <div className="p-6 lg:p-12 max-w-[1800px]">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Tableau de bord</h1>
-          <p className="text-[#b4c6e7]">Survole les widgets et clique sur <GripVertical className="inline w-4 h-4" /> pour les réorganiser</p>
+          <p className="text-[#b4c6e7]">Glisse les widgets <GripVertical className="inline w-4 h-4" /> pour les placer librement dans la grille</p>
         </div>
 
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={widgets.map(w => w.id)} strategy={rectSortingStrategy}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {widgets.map((widget) => (
-                <SortableWidget key={widget.id} id={widget.id} className={widget.className}>
-                  {widget.component}
-                </SortableWidget>
-              ))}
-            </div>
-          </SortableContext>
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
+        >
+          <div
+            className="grid gap-6"
+            style={{
+              gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
+              gridTemplateRows: `repeat(${GRID_ROWS}, 180px)`,
+            }}
+          >
+            {widgets.map((widget) => (
+              <DraggableWidget
+                key={widget.id}
+                id={widget.id}
+                x={widget.x}
+                y={widget.y}
+                w={widget.w}
+                h={widget.h}
+              >
+                {widget.component}
+              </DraggableWidget>
+            ))}
+          </div>
+
+          <DragOverlay>
+            {activeId ? (
+              <div className="opacity-50">
+                {widgets.find(w => w.id === activeId)?.component}
+              </div>
+            ) : null}
+          </DragOverlay>
         </DndContext>
       </div>
     </main>
@@ -113,7 +170,10 @@ export default function HomePage() {
 const defaultWidgets: Widget[] = [
   {
     id: 'overview',
-    className: 'md:col-span-2 lg:col-span-2',
+    x: 0,
+    y: 0,
+    w: 6,
+    h: 2,
     component: (
       <GlassCard variant="elevated" padding="lg" className="h-full">
         <div className="mb-6">
@@ -121,7 +181,7 @@ const defaultWidgets: Widget[] = [
           <p className="text-sm text-[#b4c6e7]">Ta progression cette semaine</p>
         </div>
 
-        <div className="h-48 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 mb-6">
+        <div className="h-32 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 mb-6">
           <div className="text-center">
             <TrendingUp className="h-12 w-12 text-[#667eea] mx-auto mb-3" />
             <p className="text-sm text-[#b4c6e7]">Graphique de progression</p>
@@ -147,7 +207,10 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'level',
-    className: '',
+    x: 6,
+    y: 0,
+    w: 3,
+    h: 1,
     component: (
       <GlassCard variant="elevated" padding="lg" className="h-full">
         <div className="flex items-center gap-3 mb-4">
@@ -168,7 +231,7 @@ const defaultWidgets: Widget[] = [
             <div className="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full" style={{width: '0%'}}></div>
           </div>
         </div>
-        <div className="mt-6 pt-4 border-t border-white/10">
+        <div className="mt-4 pt-4 border-t border-white/10">
           <div className="text-center">
             <div className="text-3xl font-bold gradient-text mb-1">1</div>
             <div className="text-xs text-[#b4c6e7]">Niveau actuel</div>
@@ -179,7 +242,10 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'practice',
-    className: '',
+    x: 9,
+    y: 0,
+    w: 3,
+    h: 1,
     component: (
       <GlassCard variant="elevated" padding="lg" className="h-full">
         <div className="flex items-center gap-3 mb-4">
@@ -191,7 +257,7 @@ const defaultWidgets: Widget[] = [
             <p className="text-xs text-[#b4c6e7]">Objectif: 15 min</p>
           </div>
         </div>
-        <div className="text-center py-6">
+        <div className="text-center py-4">
           <div className="text-4xl font-bold gradient-text mb-2">0 min</div>
           <p className="text-xs text-[#b4c6e7]">Aujourd'hui</p>
         </div>
@@ -200,9 +266,12 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'parcours',
-    className: 'md:col-span-2 lg:col-span-2',
+    x: 0,
+    y: 2,
+    w: 6,
+    h: 2,
     component: (
-      <GlassCard variant="elevated" padding="lg" className="h-full">
+      <GlassCard variant="elevated" padding="lg" className="h-full overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-lg font-bold text-white mb-1">Parcours</h3>
@@ -260,7 +329,10 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'badges',
-    className: '',
+    x: 6,
+    y: 1,
+    w: 3,
+    h: 1,
     component: (
       <GlassCard variant="elevated" padding="lg" className="h-full">
         <div className="flex items-center gap-3 mb-4">
@@ -272,7 +344,7 @@ const defaultWidgets: Widget[] = [
             <p className="text-xs text-[#b4c6e7]">0 débloqués</p>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 mb-4">
+        <div className="grid grid-cols-3 gap-2">
           {[1,2,3,4,5,6].map((i) => (
             <div key={i} className="aspect-square rounded-lg bg-white/5 flex items-center justify-center">
               <Award className="w-5 h-5 text-[#6b7fa8]" />
@@ -284,7 +356,10 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'morceaux',
-    className: '',
+    x: 9,
+    y: 1,
+    w: 3,
+    h: 1,
     component: (
       <GlassCard variant="elevated" padding="lg" className="h-full">
         <div className="flex items-center gap-3 mb-4">
@@ -311,9 +386,12 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'cta',
-    className: 'md:col-span-2 lg:col-span-4',
+    x: 0,
+    y: 4,
+    w: 12,
+    h: 1,
     component: (
-      <GlassCard variant="elevated" padding="xl" className="h-full text-center">
+      <GlassCard variant="elevated" padding="xl" className="h-full text-center flex flex-col items-center justify-center">
         <h3 className="text-2xl font-bold text-white mb-3">Prêt à commencer ?</h3>
         <p className="text-[#b4c6e7] mb-6">Crée ton compte gratuit et démarre ton apprentissage</p>
         <Link href="/inscription" className="inline-block">
