@@ -16,22 +16,22 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden lg:fixed lg:left-0 lg:top-0 lg:z-50 lg:h-screen lg:w-64 lg:flex glass-strong border-r border-white/10">
+    <aside className="hidden lg:flex lg:fixed lg:left-0 lg:top-0 lg:z-50 lg:h-screen lg:w-72 glass-strong border-r border-white/10">
       <div className="flex h-full flex-col w-full">
         {/* Logo */}
-        <div className="flex items-center gap-3 p-6 border-b border-white/10">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2]">
-            <Piano className="h-6 w-6 text-white" />
+        <div className="flex items-center gap-3 p-8 border-b border-white/10">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2]">
+            <Piano className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-white">Pianely</h1>
-            <p className="text-xs text-[#b4c6e7]">Apprends simplement</p>
+            <h1 className="text-xl font-bold text-white">Pianely</h1>
+            <p className="text-sm text-[#b4c6e7]">Apprends simplement</p>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6">
-          <ul className="space-y-2">
+        <nav className="flex-1 px-6 py-8">
+          <ul className="space-y-3">
             {navigation.map((item) => {
               const isActive = pathname === item.href
               return (
@@ -39,7 +39,7 @@ export function Sidebar() {
                   <Link
                     href={item.href}
                     className={cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                      'flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium transition-all',
                       isActive
                         ? 'bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-lg shadow-purple-500/20'
                         : 'text-[#b4c6e7] hover:bg-white/5 hover:text-white'
@@ -55,17 +55,17 @@ export function Sidebar() {
         </nav>
 
         {/* User section */}
-        <div className="border-t border-white/10 p-4">
+        <div className="border-t border-white/10 p-6">
           <Link
             href="/connexion"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#b4c6e7] hover:bg-white/5 hover:text-white transition-all"
+            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#b4c6e7] hover:bg-white/5 hover:text-white transition-all mb-3"
           >
             <User className="h-5 w-5" />
             Connexion
           </Link>
           <Link
             href="/inscription"
-            className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#667eea] to-[#764ba2] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all"
+            className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#667eea] to-[#764ba2] px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all"
           >
             Commencer gratuitement
           </Link>
