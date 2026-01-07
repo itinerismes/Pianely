@@ -16,7 +16,7 @@ export function DashboardSidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden lg:flex fixed left-0 top-0 z-[100] h-screen w-20 bg-[#0f1629] border-r border-white/10 flex-col">
+    <aside className="hidden lg:flex fixed left-0 top-0 z-[9999] h-screen w-20 bg-[#0f1629] border-r border-white/10 flex-col shadow-2xl">
       <div className="flex h-16 items-center justify-center border-b border-white/10">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[#667eea] to-[#764ba2]">
           <Piano className="h-6 w-6 text-white" />
