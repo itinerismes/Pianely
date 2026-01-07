@@ -16,8 +16,8 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="fixed left-0 top-0 z-50 h-screen w-64 glass-strong border-r border-white/10">
-      <div className="flex h-full flex-col">
+    <aside className="hidden lg:fixed lg:left-0 lg:top-0 lg:z-50 lg:h-screen lg:w-64 lg:flex glass-strong border-r border-white/10">
+      <div className="flex h-full flex-col w-full">
         {/* Logo */}
         <div className="flex items-center gap-3 p-6 border-b border-white/10">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2]">
