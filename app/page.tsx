@@ -8,8 +8,13 @@ import Link from 'next/link'
 export default function HomePage() {
   return (
     <main className="min-h-screen">
+      {/* MESSAGE DE TEST POUR VERIFICATION DEPLOIEMENT */}
+      <div className="fixed top-0 left-0 right-0 z-[9999] bg-red-600 text-white text-center py-8 text-4xl font-bold">
+        ⚠️ VERSION REDESIGNÉE - SI TU VOIS CE MESSAGE, LE DÉPLOIEMENT FONCTIONNE ⚠️
+      </div>
+
       {/* Hero Section - v2.0 */}
-      <section className="min-h-screen flex items-center px-8 lg:px-16 xl:px-24 py-20">
+      <section className="min-h-screen flex items-center px-8 lg:px-16 xl:px-24 py-20 pt-32">
         <div className="max-w-5xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-4 py-2 mb-8">
             <Zap className="h-4 w-4 text-[#667eea]" />
