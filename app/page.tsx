@@ -96,6 +96,52 @@ export default function HomePage() {
     setActiveId(event.active.id as string)
   }
 
+  // Fonction pour vérifier si deux widgets se chevauchent
+  const checkCollision = (widget1: WidgetPosition, widget2: WidgetPosition): boolean => {
+    return !(
+      widget1.x >= widget2.x + widget2.w ||
+      widget1.x + widget1.w <= widget2.x ||
+      widget1.y >= widget2.y + widget2.h ||
+      widget1.y + widget1.h <= widget2.y
+    )
+  }
+
+  // Fonction pour trouver une position valide sans collision
+  const findValidPosition = (widget: WidgetPosition, otherWidgets: Widget[]): WidgetPosition => {
+    let newX = widget.x
+    let newY = widget.y
+    let hasCollision = true
+    let attempts = 0
+    const maxAttempts = 100
+
+    while (hasCollision && attempts < maxAttempts) {
+      hasCollision = false
+      const testWidget = { ...widget, x: newX, y: newY }
+
+      for (const other of otherWidgets) {
+        if (other.id !== widget.id && checkCollision(testWidget, other)) {
+          hasCollision = true
+          // Décaler le widget vers la droite ou vers le bas
+          newX += 1
+          if (newX + widget.w > GRID_COLS) {
+            newX = 0
+            newY += 1
+          }
+          if (newY + widget.h > GRID_ROWS) {
+            // Revenir à la position d'origine si aucune position valide n'est trouvée
+            newX = widget.x
+            newY = widget.y
+            hasCollision = false
+          }
+          break
+        }
+      }
+      attempts++
+    }
+
+    return { ...widget, x: newX, y: newY }
+  }
+
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveId(null)
     const { active, delta } = event
@@ -113,11 +159,41 @@ export default function HomePage() {
     if (deltaX === 0 && deltaY === 0) return
 
     setWidgets(prevWidgets => {
+      const draggedWidget = prevWidgets.find(w => w.id === active.id)
+      if (!draggedWidget) return prevWidgets
+
+      // Calculer la nouvelle position souhaitée
+      const desiredX = Math.max(0, Math.min(GRID_COLS - draggedWidget.w, draggedWidget.x + deltaX))
+      const desiredY = Math.max(0, Math.min(GRID_ROWS - draggedWidget.h, draggedWidget.y + deltaY))
+
+      const desiredPosition: WidgetPosition = {
+        id: draggedWidget.id,
+        x: desiredX,
+        y: desiredY,
+        w: draggedWidget.w,
+        h: draggedWidget.h
+      }
+
+      // Vérifier les collisions avec d'autres widgets
+      const otherWidgets = prevWidgets.filter(w => w.id !== active.id)
+      let hasCollision = false
+
+      for (const other of otherWidgets) {
+        if (checkCollision(desiredPosition, other)) {
+          hasCollision = true
+          break
+        }
+      }
+
+      // Si collision, trouver une position valide
+      let finalPosition = desiredPosition
+      if (hasCollision) {
+        finalPosition = findValidPosition(desiredPosition, prevWidgets)
+      }
+
       const newWidgets = prevWidgets.map(widget => {
         if (widget.id === active.id) {
-          const newX = Math.max(0, Math.min(GRID_COLS - widget.w, widget.x + deltaX))
-          const newY = Math.max(0, Math.min(GRID_ROWS - widget.h, widget.y + deltaY))
-          return { ...widget, x: newX, y: newY }
+          return { ...widget, x: finalPosition.x, y: finalPosition.y }
         }
         return widget
       })
@@ -139,7 +215,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen pl-0 lg:pl-28">
+    <main className="min-h-screen">
       <div className="p-6 lg:p-12 max-w-[1800px]">
         <div className="mb-8 flex items-center justify-between">
           <div>
