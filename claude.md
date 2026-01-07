@@ -285,20 +285,29 @@ Structure:
 
 ### Sprint actuel: MVP - Phase 1
 **Date de début**: 2026-01-07
+**Dernière mise à jour**: 2026-01-07 18:45
 
-#### ✅ Fait
-- [ ] Documentation projet (ce fichier)
+#### ✅ Fait (Phase 1 - Setup complet)
+- [x] Documentation projet (ce fichier)
+- [x] Initialisation Next.js avec TypeScript
+- [x] Configuration GitHub (repository créé)
+- [x] Configuration Vercel (déployement automatique)
+- [x] Intégration Supabase (schéma appliqué)
+- [x] Design system glassmorphism complet
+- [x] Page d'accueil avec hero, features, testimonials
+- [x] Variables d'environnement configurées
+- [x] Build production testé et validé
 
 #### 🚧 En cours
-- [ ] Configuration initiale (Supabase, Vercel, GitHub)
+- Aucune tâche en cours
 
-#### 📋 À faire
-- [ ] Initialisation Next.js
-- [ ] Intégration Supabase
-- [ ] Design system glassmorphism
-- [ ] Page d'accueil
-- [ ] Auth flow
-- [ ] Première leçon prototype
+#### 📋 À faire (Prochaines priorités)
+- [ ] Pages d'authentification (inscription/connexion)
+- [ ] Page parcours avec affichage des 5 niveaux
+- [ ] Système de routing pour les leçons
+- [ ] Dashboard utilisateur avec progression
+- [ ] Auth flow complet avec Supabase Auth
+- [ ] Première leçon prototype interactive
 
 ---
 
@@ -306,24 +315,28 @@ Structure:
 
 ### Supabase
 - [x] **Project URL**: `https://lyaybmlzjxgdzzaaxfcc.supabase.co`
+- [x] **Dashboard**: https://supabase.com/dashboard/project/lyaybmlzjxgdzzaaxfcc
 - [x] **Anon key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5YXlibWx6anhnZHp6YWF4ZmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc3OTIyMDcsImV4cCI6MjA4MzM2ODIwN30.OmxVrXA80nzRh3wgFg3lyIxgXSGhKyqbal6hpov2j4g`
 - [x] **Service role key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5YXlibWx6anhnZHp6YWF4ZmNjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2Nzc5MjIwNywiZXhwIjoyMDgzMzY4MjA3fQ.ebvftkQnAcbB6Xw9NJLqukg4W5GxB29yCL7q7hEHY9o`
 - [x] **Secret API key**: `sb_secret_7iT5L6wfEjJcJYfWuOA9-g_ro3SkM8q`
-- [ ] Database schema créé
+- [x] **Database schema créé** ✅ (appliqué le 2026-01-07)
 
 ### Vercel
 - **Organisation**: `https://vercel.com/itinerismes-projects`
 - **Projet**: `pianely`
-- [ ] Projet lié via CLI
-- [ ] Variables d'environnement configurées
-- [ ] Domaine: `.vercel.app` (défaut)
+- **URL de production**: https://pianely-itinerismes-projects.vercel.app
+- [x] Projet lié via CLI
+- [x] Variables d'environnement configurées
+- [x] Déploiement automatique actif (GitHub → Vercel)
+- [x] Domaine: `pianely-itinerismes-projects.vercel.app`
 
 ### GitHub
 - **Organisation**: `https://github.com/itinerismes`
-- **Repository**: `Pianely`
-- [ ] Repository créé via CLI
-- [ ] Branch protection rules
-- [ ] CI/CD pipeline
+- **Repository**: https://github.com/itinerismes/Pianely
+- [x] Repository créé via CLI
+- [x] Push automatique configuré
+- [ ] Branch protection rules (optionnel)
+- [x] CI/CD pipeline (via Vercel)
 
 ### Dépendances validées
 - ✅ Next.js 14+ avec TypeScript
