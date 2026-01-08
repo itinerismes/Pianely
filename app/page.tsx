@@ -151,7 +151,7 @@ export default function HomePage() {
     // Calculer la taille réelle des cellules en fonction du conteneur
     const gridRect = gridRef.current.getBoundingClientRect()
     const cellWidth = gridRect.width / GRID_COLS
-    const cellHeight = 160 + 16 // 160px de hauteur + 16px de gap (gap-4)
+    const cellHeight = 160 + 24 // 160px de hauteur + 24px de gap (gap-6)
 
     const deltaX = Math.round(delta.x / cellWidth)
     const deltaY = Math.round(delta.y / cellHeight)
@@ -236,7 +236,7 @@ export default function HomePage() {
         >
           <div
             ref={gridRef}
-            className="grid gap-4"
+            className="grid gap-6"
             style={{
               gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
               gridTemplateRows: `repeat(${GRID_ROWS}, 160px)`,
@@ -274,7 +274,7 @@ const defaultWidgets: Widget[] = [
     id: 'overview',
     x: 0,
     y: 0,
-    w: 6,
+    w: 4,
     h: 2,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full">
@@ -309,9 +309,9 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'level',
-    x: 6,
+    x: 4,
     y: 0,
-    w: 3,
+    w: 4,
     h: 1,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
@@ -342,9 +342,9 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'practice',
-    x: 9,
+    x: 8,
     y: 0,
-    w: 3,
+    w: 4,
     h: 1,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
@@ -368,7 +368,7 @@ const defaultWidgets: Widget[] = [
     id: 'parcours',
     x: 0,
     y: 2,
-    w: 6,
+    w: 12,
     h: 2,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full overflow-auto">
@@ -385,7 +385,7 @@ const defaultWidgets: Widget[] = [
           </Link>
         </div>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-3 gap-4">
           {[
             { level: 1, name: 'Découverte', lessons: 7, locked: false },
             { level: 2, name: 'Fondations', lessons: 8, locked: true },
@@ -394,33 +394,27 @@ const defaultWidgets: Widget[] = [
             <div
               key={level.level}
               className={cn(
-                'p-3 rounded-xl border transition-all',
+                'p-4 rounded-xl border transition-all flex flex-col items-center text-center',
                 level.locked
                   ? 'bg-white/[0.02] border-white/5 opacity-50'
                   : 'bg-gradient-to-br from-white/10 to-white/5 border-white/10 hover:from-white/15 hover:to-white/10 cursor-pointer'
               )}
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={cn(
-                    'w-9 h-9 rounded-lg flex items-center justify-center font-bold text-base',
-                    level.locked
-                      ? 'bg-white/5 text-[#6b7fa8]'
-                      : 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white'
-                  )}>
-                    {level.level}
-                  </div>
-                  <div>
-                    <div className="text-base font-bold text-white">{level.name}</div>
-                    <div className="text-xs text-[#b4c6e7]/70">{level.lessons} leçons</div>
-                  </div>
-                </div>
-                {!level.locked && (
-                  <GlassButton variant="outline" size="sm">
-                    Commencer
-                  </GlassButton>
-                )}
+              <div className={cn(
+                'w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg mb-3',
+                level.locked
+                  ? 'bg-white/5 text-[#6b7fa8]'
+                  : 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white'
+              )}>
+                {level.level}
               </div>
+              <div className="text-base font-bold text-white mb-1">{level.name}</div>
+              <div className="text-xs text-[#b4c6e7]/70 mb-4">{level.lessons} leçons</div>
+              {!level.locked && (
+                <GlassButton variant="outline" size="sm" className="mt-auto">
+                  Commencer
+                </GlassButton>
+              )}
             </div>
           ))}
         </div>
@@ -429,9 +423,9 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'badges',
-    x: 6,
+    x: 4,
     y: 1,
-    w: 3,
+    w: 4,
     h: 1,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
@@ -456,9 +450,9 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'morceaux',
-    x: 9,
+    x: 8,
     y: 1,
-    w: 3,
+    w: 4,
     h: 1,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
