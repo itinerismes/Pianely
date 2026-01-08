@@ -1,11 +1,28 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { DndContext, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverlay } from '@dnd-kit/core'
+import {
+  DndContext,
+  DragEndEvent,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  DragOverlay,
+} from '@dnd-kit/core'
 import { useDraggable } from '@dnd-kit/core'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { GlassButton } from '@/components/ui/GlassButton'
-import { TrendingUp, Clock, Target, Music, Award, ArrowRight, BookOpen, GripVertical, RotateCcw } from 'lucide-react'
+import {
+  TrendingUp,
+  Clock,
+  Target,
+  Music,
+  Award,
+  ArrowRight,
+  BookOpen,
+  GripVertical,
+  RotateCcw,
+} from 'lucide-react'
 import Link from 'next/link'
 
 interface WidgetPosition {
@@ -20,12 +37,26 @@ interface Widget extends WidgetPosition {
   component: React.ReactNode
 }
 
-function DraggableWidget({ id, children, x, y, w, h }: { id: string; children: React.ReactNode; x: number; y: number; w: number; h: number }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+function DraggableWidget({
+  id,
+  children,
+  x,
+  y,
+  w,
+  h,
+}: {
+  id: string
+  children: React.ReactNode
+  x: number
+  y: number
+  w: number
+  h: number
+}) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id,
   })
 
-  const style = {
+  const style: React.CSSProperties = {
     gridColumn: `${x + 1} / span ${w}`,
     gridRow: `${y + 1} / span ${h}`,
     opacity: isDragging ? 0.5 : 1,
@@ -67,21 +98,21 @@ export default function HomePage() {
       try {
         const positions: WidgetPosition[] = JSON.parse(savedPositions)
 
-        // Vérifier que les positions sont valides (pas de chevauchement)
         const isValid = positions.length === defaultWidgets.length
 
         if (isValid) {
-          const restoredWidgets = positions.map(pos => {
-            const defaultWidget = defaultWidgets.find(w => w.id === pos.id)
-            return defaultWidget ? { ...defaultWidget, ...pos } : null
-          }).filter(Boolean) as Widget[]
+          const restoredWidgets = positions
+            .map((pos) => {
+              const defaultWidget = defaultWidgets.find((w) => w.id === pos.id)
+              return defaultWidget ? { ...defaultWidget, ...pos } : null
+            })
+            .filter(Boolean) as Widget[]
 
           if (restoredWidgets.length > 0) {
             setWidgets(restoredWidgets)
             return
           }
         } else {
-          // Positions invalides, réinitialiser
           localStorage.removeItem('widgetPositions')
         }
       } catch (e) {
@@ -96,7 +127,6 @@ export default function HomePage() {
     setActiveId(event.active.id as string)
   }
 
-  // Fonction pour vérifier si deux widgets se chevauchent
   const checkCollision = (widget1: WidgetPosition, widget2: WidgetPosition): boolean => {
     return !(
       widget1.x >= widget2.x + widget2.w ||
@@ -106,80 +136,46 @@ export default function HomePage() {
     )
   }
 
-  // Fonction pour trouver une position valide sans collision
-  const findValidPosition = (widget: WidgetPosition, otherWidgets: Widget[]): WidgetPosition => {
-    let newX = widget.x
-    let newY = widget.y
-    let hasCollision = true
-    let attempts = 0
-    const maxAttempts = 100
-
-    while (hasCollision && attempts < maxAttempts) {
-      hasCollision = false
-      const testWidget = { ...widget, x: newX, y: newY }
-
-      for (const other of otherWidgets) {
-        if (other.id !== widget.id && checkCollision(testWidget, other)) {
-          hasCollision = true
-          // Décaler le widget vers la droite ou vers le bas
-          newX += 1
-          if (newX + widget.w > GRID_COLS) {
-            newX = 0
-            newY += 1
-          }
-          if (newY + widget.h > GRID_ROWS) {
-            // Revenir à la position d'origine si aucune position valide n'est trouvée
-            newX = widget.x
-            newY = widget.y
-            hasCollision = false
-          }
-          break
-        }
-      }
-      attempts++
-    }
-
-    return { ...widget, x: newX, y: newY }
-  }
-
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveId(null)
     const { active, delta } = event
 
     if (!delta || !gridRef.current) return
 
-    // Calculer la taille réelle des cellules en fonction du conteneur
     const gridRect = gridRef.current.getBoundingClientRect()
     const cellWidth = gridRect.width / GRID_COLS
-    const cellHeight = 160 + 24 // 160px de hauteur + 24px de gap (gap-6)
+    const cellHeight = 180 + 24
 
     const deltaX = Math.round(delta.x / cellWidth)
     const deltaY = Math.round(delta.y / cellHeight)
 
     if (deltaX === 0 && deltaY === 0) return
 
-    setWidgets(prevWidgets => {
-      const draggedWidget = prevWidgets.find(w => w.id === active.id)
+    setWidgets((prevWidgets) => {
+      const draggedWidget = prevWidgets.find((w) => w.id === active.id)
       if (!draggedWidget) return prevWidgets
 
-      // Sauvegarder la position d'origine
       const originalX = draggedWidget.x
       const originalY = draggedWidget.y
 
-      // Calculer la nouvelle position souhaitée
-      const desiredX = Math.max(0, Math.min(GRID_COLS - draggedWidget.w, draggedWidget.x + deltaX))
-      const desiredY = Math.max(0, Math.min(GRID_ROWS - draggedWidget.h, draggedWidget.y + deltaY))
+      const desiredX = Math.max(
+        0,
+        Math.min(GRID_COLS - draggedWidget.w, draggedWidget.x + deltaX)
+      )
+      const desiredY = Math.max(
+        0,
+        Math.min(GRID_ROWS - draggedWidget.h, draggedWidget.y + deltaY)
+      )
 
       const desiredPosition: WidgetPosition = {
         id: draggedWidget.id,
         x: desiredX,
         y: desiredY,
         w: draggedWidget.w,
-        h: draggedWidget.h
+        h: draggedWidget.h,
       }
 
-      // Vérifier les collisions avec d'autres widgets
-      const otherWidgets = prevWidgets.filter(w => w.id !== active.id)
+      const otherWidgets = prevWidgets.filter((w) => w.id !== active.id)
       let hasCollision = false
 
       for (const other of otherWidgets) {
@@ -189,13 +185,12 @@ export default function HomePage() {
         }
       }
 
-      // Si collision, revenir à la position d'origine (le widget ne bouge pas)
       let finalPosition = desiredPosition
       if (hasCollision) {
         finalPosition = { ...desiredPosition, x: originalX, y: originalY }
       }
 
-      const newWidgets = prevWidgets.map(widget => {
+      const newWidgets = prevWidgets.map((widget) => {
         if (widget.id === active.id) {
           return { ...widget, x: finalPosition.x, y: finalPosition.y }
         }
@@ -222,7 +217,12 @@ export default function HomePage() {
     <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35]">
       <div className="p-4 lg:p-8 max-w-[1800px] mx-auto">
         <div className="mb-6 flex justify-end">
-          <GlassButton variant="primary" size="sm" onClick={resetPositions} className="whitespace-nowrap">
+          <GlassButton
+            variant="primary"
+            size="sm"
+            onClick={resetPositions}
+            className="whitespace-nowrap"
+          >
             <RotateCcw className="w-4 h-4" />
             Réinitialiser
           </GlassButton>
@@ -239,7 +239,7 @@ export default function HomePage() {
             className="grid gap-6"
             style={{
               gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
-              gridTemplateRows: `repeat(${GRID_ROWS}, 160px)`,
+              gridAutoRows: 'minmax(180px, auto)',
             }}
           >
             {widgets.map((widget) => (
@@ -259,7 +259,7 @@ export default function HomePage() {
           <DragOverlay>
             {activeId ? (
               <div className="opacity-50">
-                {widgets.find(w => w.id === activeId)?.component}
+                {widgets.find((w) => w.id === activeId)?.component}
               </div>
             ) : null}
           </DragOverlay>
@@ -274,12 +274,12 @@ const defaultWidgets: Widget[] = [
     id: 'overview',
     x: 0,
     y: 0,
-    w: 8,
-    h: 4,
+    w: 7,
+    h: 2,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full">
         <div className="mb-4 space-y-1">
-          <h2 className="text-lg font-bold text-white">Vue d'ensemble</h2>
+          <h2 className="text-lg font-bold text-white">Vue d&apos;ensemble</h2>
           <p className="text-sm text-[#b4c6e7]/70">Ta progression cette semaine</p>
         </div>
 
@@ -305,13 +305,14 @@ const defaultWidgets: Widget[] = [
           </div>
         </div>
       </GlassCard>
-    )
+    ),
   },
+
   {
     id: 'level',
-    x: 8,
+    x: 7,
     y: 0,
-    w: 4,
+    w: 3,
     h: 1,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
@@ -330,7 +331,10 @@ const defaultWidgets: Widget[] = [
             <span className="text-white font-semibold">0%</span>
           </div>
           <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full" style={{width: '0%'}}></div>
+            <div
+              className="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full"
+              style={{ width: '0%' }}
+            />
           </div>
         </div>
         <div className="text-center pt-3 border-t border-white/10">
@@ -338,13 +342,13 @@ const defaultWidgets: Widget[] = [
           <div className="text-xs text-[#b4c6e7]/70">Niveau actuel</div>
         </div>
       </GlassCard>
-    )
+    ),
   },
   {
     id: 'practice',
-    x: 8,
-    y: 1,
-    w: 4,
+    x: 10,
+    y: 0,
+    w: 2,
     h: 1,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
@@ -359,15 +363,78 @@ const defaultWidgets: Widget[] = [
         </div>
         <div className="text-center">
           <div className="text-3xl font-bold gradient-text mb-1">0 min</div>
-          <p className="text-xs text-[#b4c6e7]/70">Aujourd'hui</p>
+          <p className="text-xs text-[#b4c6e7]/70">Aujourd&apos;hui</p>
         </div>
       </GlassCard>
-    )
+    ),
   },
+
+  {
+    id: 'badges',
+    x: 7,
+    y: 1,
+    w: 5,
+    h: 1,
+    component: (
+      <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
+            <Award className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-white">Badges</h3>
+            <p className="text-xs text-[#b4c6e7]/70">0 débloqués</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className="aspect-square rounded-lg bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center"
+            >
+              <Award className="w-4 h-4 text-[#6b7fa8]/50" />
+            </div>
+          ))}
+        </div>
+      </GlassCard>
+    ),
+  },
+
+  {
+    id: 'morceaux',
+    x: 7,
+    y: 2,
+    w: 5,
+    h: 1,
+    component: (
+      <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
+            <Music className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-white">Morceaux</h3>
+            <p className="text-xs text-[#b4c6e7]/70">À apprendre</p>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="p-3 rounded-lg bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:from-white/15 hover:to-white/10 transition-all cursor-pointer">
+            <div className="font-semibold text-white text-sm mb-0.5">Au clair de la lune</div>
+            <div className="text-xs text-[#b4c6e7]/70">Niveau 1</div>
+          </div>
+          <div className="p-3 rounded-lg bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/5 opacity-50">
+            <div className="font-semibold text-white text-sm mb-0.5">Frère Jacques</div>
+            <div className="text-xs text-[#b4c6e7]/70">Niveau 1</div>
+          </div>
+        </div>
+      </GlassCard>
+    ),
+  },
+
   {
     id: 'parcours',
     x: 0,
-    y: 4,
+    y: 3,
     w: 12,
     h: 2,
     component: (
@@ -400,12 +467,14 @@ const defaultWidgets: Widget[] = [
                   : 'bg-gradient-to-br from-white/10 to-white/5 border-white/10 hover:from-white/15 hover:to-white/10 cursor-pointer'
               )}
             >
-              <div className={cn(
-                'w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg mb-3',
-                level.locked
-                  ? 'bg-white/5 text-[#6b7fa8]'
-                  : 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white'
-              )}>
+              <div
+                className={cn(
+                  'w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg mb-3',
+                  level.locked
+                    ? 'bg-white/5 text-[#6b7fa8]'
+                    : 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white'
+                )}
+              >
                 {level.level}
               </div>
               <div className="text-base font-bold text-white mb-1">{level.name}</div>
@@ -419,75 +488,25 @@ const defaultWidgets: Widget[] = [
           ))}
         </div>
       </GlassCard>
-    )
+    ),
   },
-  {
-    id: 'badges',
-    x: 8,
-    y: 2,
-    w: 4,
-    h: 1,
-    component: (
-      <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Award className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-white">Badges</h3>
-            <p className="text-xs text-[#b4c6e7]/70">0 débloqués</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          {[1,2,3,4,5,6].map((i) => (
-            <div key={i} className="aspect-square rounded-lg bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center">
-              <Award className="w-4 h-4 text-[#6b7fa8]/50" />
-            </div>
-          ))}
-        </div>
-      </GlassCard>
-    )
-  },
-  {
-    id: 'morceaux',
-    x: 8,
-    y: 3,
-    w: 4,
-    h: 1,
-    component: (
-      <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Music className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-white">Morceaux</h3>
-            <p className="text-xs text-[#b4c6e7]/70">À apprendre</p>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="p-3 rounded-lg bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:from-white/15 hover:to-white/10 transition-all cursor-pointer">
-            <div className="font-semibold text-white text-sm mb-0.5">Au clair de la lune</div>
-            <div className="text-xs text-[#b4c6e7]/70">Niveau 1</div>
-          </div>
-          <div className="p-3 rounded-lg bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/5 opacity-50">
-            <div className="font-semibold text-white text-sm mb-0.5">Frère Jacques</div>
-            <div className="text-xs text-[#b4c6e7]/70">Niveau 1</div>
-          </div>
-        </div>
-      </GlassCard>
-    )
-  },
+
   {
     id: 'cta',
     x: 0,
-    y: 6,
+    y: 5,
     w: 12,
     h: 1,
     component: (
-      <GlassCard variant="elevated" padding="md" className="h-full text-center flex flex-col items-center justify-center bg-gradient-to-br from-white/10 to-white/5">
+      <GlassCard
+        variant="elevated"
+        padding="md"
+        className="h-full text-center flex flex-col items-center justify-center bg-gradient-to-br from-white/10 to-white/5"
+      >
         <h3 className="text-xl font-bold text-white mb-2">Prêt à commencer ?</h3>
-        <p className="text-sm text-[#b4c6e7]/70 mb-4 max-w-xl">Crée ton compte gratuit et démarre ton apprentissage du piano</p>
+        <p className="text-sm text-[#b4c6e7]/70 mb-4 max-w-xl">
+          Crée ton compte gratuit et démarre ton apprentissage du piano
+        </p>
         <Link href="/inscription" className="inline-block">
           <GlassButton variant="primary" size="md">
             Créer mon compte
@@ -495,7 +514,7 @@ const defaultWidgets: Widget[] = [
           </GlassButton>
         </Link>
       </GlassCard>
-    )
+    ),
   },
 ]
 
