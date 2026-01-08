@@ -144,7 +144,7 @@ export default function HomePage() {
 
     const gridRect = gridRef.current.getBoundingClientRect()
     const cellWidth = gridRect.width / GRID_COLS
-    const cellHeight = 180 + 24
+    const cellHeight = 160 + 24
 
     const deltaX = Math.round(delta.x / cellWidth)
     const deltaY = Math.round(delta.y / cellHeight)
@@ -214,7 +214,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35]">
+    <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35] pt-20">
       <div className="p-4 lg:p-8 max-w-[1800px] mx-auto">
         <div className="mb-6 flex justify-end">
           <GlassButton
@@ -239,7 +239,7 @@ export default function HomePage() {
             className="grid gap-6"
             style={{
               gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
-              gridAutoRows: 'minmax(180px, auto)',
+              gridAutoRows: 'minmax(160px, auto)',
             }}
           >
             {widgets.map((widget) => (
@@ -274,7 +274,7 @@ const defaultWidgets: Widget[] = [
     id: 'overview',
     x: 0,
     y: 0,
-    w: 7,
+    w: 8,
     h: 2,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full">
@@ -310,9 +310,9 @@ const defaultWidgets: Widget[] = [
 
   {
     id: 'level',
-    x: 7,
+    x: 8,
     y: 0,
-    w: 3,
+    w: 2,
     h: 1,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
@@ -371,9 +371,9 @@ const defaultWidgets: Widget[] = [
 
   {
     id: 'badges',
-    x: 7,
+    x: 8,
     y: 1,
-    w: 5,
+    w: 4,
     h: 1,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
@@ -402,9 +402,9 @@ const defaultWidgets: Widget[] = [
 
   {
     id: 'morceaux',
-    x: 7,
+    x: 8,
     y: 2,
-    w: 5,
+    w: 4,
     h: 1,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
