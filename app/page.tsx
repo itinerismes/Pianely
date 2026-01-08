@@ -274,8 +274,8 @@ const defaultWidgets: Widget[] = [
     id: 'overview',
     x: 0,
     y: 0,
-    w: 4,
-    h: 2,
+    w: 8,
+    h: 4,
     component: (
       <GlassCard variant="elevated" padding="md" className="h-full">
         <div className="mb-4 space-y-1">
@@ -309,7 +309,7 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'level',
-    x: 4,
+    x: 8,
     y: 0,
     w: 4,
     h: 1,
@@ -343,7 +343,7 @@ const defaultWidgets: Widget[] = [
   {
     id: 'practice',
     x: 8,
-    y: 0,
+    y: 1,
     w: 4,
     h: 1,
     component: (
@@ -367,7 +367,7 @@ const defaultWidgets: Widget[] = [
   {
     id: 'parcours',
     x: 0,
-    y: 2,
+    y: 4,
     w: 12,
     h: 2,
     component: (
@@ -423,8 +423,8 @@ const defaultWidgets: Widget[] = [
   },
   {
     id: 'badges',
-    x: 4,
-    y: 1,
+    x: 8,
+    y: 2,
     w: 4,
     h: 1,
     component: (
@@ -451,7 +451,7 @@ const defaultWidgets: Widget[] = [
   {
     id: 'morceaux',
     x: 8,
-    y: 1,
+    y: 3,
     w: 4,
     h: 1,
     component: (
@@ -481,7 +481,7 @@ const defaultWidgets: Widget[] = [
   {
     id: 'cta',
     x: 0,
-    y: 4,
+    y: 6,
     w: 12,
     h: 1,
     component: (
