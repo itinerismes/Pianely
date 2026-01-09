@@ -25,8 +25,9 @@ const defaultLayout = [
 export default function HomePage() {
   const [layout, setLayout] = useState(defaultLayout)
   const [mounted, setMounted] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
-  // Load layout from localStorage
+  // Load layout from localStorage and detect mobile
   useEffect(() => {
     setMounted(true)
     const savedLayout = localStorage.getItem('pianely-layout')
@@ -37,6 +38,14 @@ export default function HomePage() {
         console.error('Failed to parse saved layout', e)
       }
     }
+
+    // Detect mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   const handleLayoutChange = (newLayout: any) => {
@@ -61,26 +70,17 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-gray-50 pt-6">
-      <div className="max-w-[1400px] mx-auto px-6 py-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-3xl font-semibold text-gray-900 tracking-tight mb-2" style={{fontFamily: 'Inter, sans-serif'}}>
-              Bonjour Michel, prêt à jouer aujourd&apos;hui ?
-            </h1>
-            <p className="text-sm text-gray-500">
-              Personnalise ton dashboard en déplaçant les widgets
-            </p>
-          </div>
-
+      <div className={`max-w-[1400px] mx-auto ${isMobile ? 'px-4' : 'px-6'} py-6 relative`}>
+        {/* Reset Layout Button */}
+        {!isMobile && (
           <button
             onClick={handleReset}
-            className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1 transition-colors"
+            className="absolute top-4 right-4 z-20 flex items-center gap-1.5 text-xs text-gray-500 hover:text-purple-600 transition-colors"
           >
-            <RotateCcw className="w-4 h-4" />
-            <span>Reset Layout</span>
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Réinitialiser</span>
           </button>
-        </div>
+        )}
 
         {/* Grid Layout */}
         <ResponsiveGridLayout
@@ -91,58 +91,90 @@ export default function HomePage() {
           rowHeight={100}
           width={1400}
           margin={[16, 16]}
+          isDraggable={!isMobile}
+          isResizable={false}
           onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
           {...({ draggableHandle: ".drag-handle" } as any)}
         >
-          <div key="guide">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="guide" className="group animate-fadeIn" style={{ animationDelay: '0ms' }}>
+            <div className="drag-handle cursor-move absolute top-2 left-2 w-6 h-6 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="4" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="12" r="1.5"/>
+                <circle cx="8" cy="4" r="1.5"/>
+                <circle cx="8" cy="8" r="1.5"/>
+                <circle cx="8" cy="12" r="1.5"/>
               </svg>
             </div>
             <GuideWidget />
           </div>
 
-          <div key="assistant">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/20 hover:bg-white/30 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="assistant" className="group animate-fadeIn" style={{ animationDelay: '50ms' }}>
+            <div className="drag-handle cursor-move absolute top-2 left-2 w-6 h-6 rounded-lg bg-white/20 hover:bg-white/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="4" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="12" r="1.5"/>
+                <circle cx="8" cy="4" r="1.5"/>
+                <circle cx="8" cy="8" r="1.5"/>
+                <circle cx="8" cy="12" r="1.5"/>
               </svg>
             </div>
             <AssistantWidget />
           </div>
 
-          <div key="aujourdhui">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="aujourdhui" className="group animate-fadeIn" style={{ animationDelay: '100ms' }}>
+            <div className="drag-handle cursor-move absolute top-2 left-2 w-6 h-6 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="4" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="12" r="1.5"/>
+                <circle cx="8" cy="4" r="1.5"/>
+                <circle cx="8" cy="8" r="1.5"/>
+                <circle cx="8" cy="12" r="1.5"/>
               </svg>
             </div>
             <AujourdhuiWidget />
           </div>
 
-          <div key="objectif">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="objectif" className="group animate-fadeIn" style={{ animationDelay: '150ms' }}>
+            <div className="drag-handle cursor-move absolute top-2 left-2 w-6 h-6 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="4" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="12" r="1.5"/>
+                <circle cx="8" cy="4" r="1.5"/>
+                <circle cx="8" cy="8" r="1.5"/>
+                <circle cx="8" cy="12" r="1.5"/>
               </svg>
             </div>
             <ObjectifWidget />
           </div>
 
-          <div key="morceaux">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="morceaux" className="group animate-fadeIn" style={{ animationDelay: '200ms' }}>
+            <div className="drag-handle cursor-move absolute top-2 left-2 w-6 h-6 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="4" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="12" r="1.5"/>
+                <circle cx="8" cy="4" r="1.5"/>
+                <circle cx="8" cy="8" r="1.5"/>
+                <circle cx="8" cy="12" r="1.5"/>
               </svg>
             </div>
             <MorceauxWidget />
           </div>
 
-          <div key="badges">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="badges" className="group animate-fadeIn" style={{ animationDelay: '250ms' }}>
+            <div className="drag-handle cursor-move absolute top-2 left-2 w-6 h-6 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="4" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="12" r="1.5"/>
+                <circle cx="8" cy="4" r="1.5"/>
+                <circle cx="8" cy="8" r="1.5"/>
+                <circle cx="8" cy="12" r="1.5"/>
               </svg>
             </div>
             <BadgesWidget />

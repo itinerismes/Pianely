@@ -1,8 +1,21 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Clock } from 'lucide-react'
 
+const targetProgress = 75 // Target percentage
+
 export function ObjectifWidget() {
+  const [progress, setProgress] = useState(0)
+
+  // Animate progress bar on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setProgress(targetProgress)
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 h-full hover:shadow-md transition-all duration-200">
       <div className="flex items-center gap-2 mb-2">
@@ -16,14 +29,17 @@ export function ObjectifWidget() {
       <div className="mb-2">
         <div className="flex justify-between text-xs mb-1.5">
           <span className="text-gray-600">15 min / 20 min</span>
-          <span className="text-gray-900 font-semibold">75%</span>
+          <span className="text-gray-900 font-semibold">{targetProgress}%</span>
         </div>
         <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-purple-500 rounded-full"
-            style={{ width: '75%' }}
+            className="h-full bg-purple-500 rounded-full transition-all duration-1000 ease-out"
+            style={{ width: `${progress}%` }}
           />
         </div>
+        {targetProgress >= 100 && (
+          <p className="text-xs text-green-600 font-medium mt-1">🎉 Objectif atteint !</p>
+        )}
       </div>
 
       {/* Mini histogram */}

@@ -21,13 +21,26 @@ export function GuideWidget() {
         {weekData.map((item, idx) => (
           <div
             key={idx}
-            className="flex items-center gap-3 py-1 pr-4 border-b border-gray-100 last:border-0 h-8"
+            className={`flex items-center gap-3 py-1 pr-4 border-b border-gray-100 last:border-0 h-8 ${
+              item.status === 'in_progress' ? 'ring-1 ring-purple-200 bg-purple-50/30 rounded-lg px-2 -mx-2' : ''
+            }`}
           >
+            {/* Status indicator - Colored dot */}
+            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+              item.status === 'completed'
+                ? 'bg-green-500'
+                : item.status === 'in_progress'
+                ? 'bg-purple-500'
+                : 'bg-gray-300'
+            }`} />
+
             {/* Checkbox */}
             {item.status === 'completed' ? (
-              <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+            ) : item.status === 'in_progress' ? (
+              <Circle className="w-4 h-4 text-purple-500 flex-shrink-0" />
             ) : (
-              <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
+              <Circle className="w-4 h-4 text-gray-300 flex-shrink-0" />
             )}
 
             {/* Day */}
@@ -48,12 +61,12 @@ export function GuideWidget() {
 
             {/* Action button */}
             {item.status === 'in_progress' && (
-              <button className="text-xs font-medium text-purple-600 hover:bg-purple-50 hover:text-purple-700 px-3 py-1 rounded-lg transition-colors">
+              <button className="text-xs font-medium text-purple-600 hover:bg-purple-100 hover:text-purple-700 px-3 py-1 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95">
                 Continuer
               </button>
             )}
             {item.status === 'pending' && (
-              <button className="text-xs font-medium text-gray-600 hover:text-purple-600 px-3 py-1 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="text-xs font-medium text-gray-600 hover:text-purple-600 px-3 py-1 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:scale-105 active:scale-95">
                 Démarrer
               </button>
             )}
