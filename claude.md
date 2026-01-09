@@ -55,47 +55,54 @@ Tables principales:
 
 ---
 
-## 🎨 DESIGN SYSTEM - MEDICAL DASHBOARD (Thème Clair)
+## 🎨 DESIGN SYSTEM - DARK FANTASY DASHBOARD
 
 ### Principes visuels
-- **Style**: Medical dashboard moderne avec accents violet
+- **Style**: Dark fantasy dashboard inspiré des sites fantasy basketball
 - **Palette principale**:
-  - Fond: Gradient `from-violet-50 via-blue-50 to-purple-100`
-  - Cards: Blanc `bg-white` avec ombres violet-tinted
-  - Texte: `slate-900` (primaire), `slate-600` (secondaire)
-  - Accents: `violet-600` (actif), `amber-400`/`orange-500` (info)
-- **Typographie**: Sans-serif moderne, hiérarchie claire
-- **Coins**: `rounded-3xl` (très arrondis pour look moderne)
-- **Ombres**: Douces avec teinte violet `shadow-lg shadow-violet-500/5`
+  - Fond: Gradient `from-slate-900 via-slate-800 to-slate-900`
+  - Cards: `bg-slate-800/50` avec backdrop-blur-sm
+  - Bordures: `border-slate-700` → hover: `border-slate-600`
+  - Texte: `text-white/90` (primaire), `text-gray-300` (secondaire), `text-gray-400` (tertiaire)
+  - Accents: Gradients colorés par widget (emerald, sky, purple, orange, amber)
+  - Ombres: `shadow-xl shadow-black/20` → hover: `shadow-2xl`
+- **Typographie**: Sans-serif moderne, hiérarchie claire avec tracking-tight
+- **Coins**: `rounded-xl` pour widgets, `rounded-2xl` pour header
+- **Icônes**: `w-10 h-10 rounded-xl` avec gradients colorés
+- **Effets**: backdrop-blur-sm pour effet glass sur fond sombre
 
 ### Variables CSS (globals.css)
 ```css
---light-bg-start: #f5f3ff;        /* violet-50 */
---light-bg-mid: #eff6ff;          /* blue-50 */
---light-bg-end: #fae8ff;          /* purple-100 */
---light-card-bg: #ffffff;
---light-card-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
---light-text-primary: #1e293b;    /* slate-900 */
---light-text-secondary: #64748b;  /* slate-500 */
---light-accent-violet: #7c3aed;   /* violet-600 */
---light-accent-amber: #f59e0b;    /* amber-400 */
+/* Dark theme principal */
+--bg-dark: #0a0e1a;
+--bg-surface: #12192e;
+--bg-elevated: #1a2642;
+
+/* Accent colors */
+--accent-primary: #667eea;
+--accent-secondary: #764ba2;
+--accent-tertiary: #f093fb;
+
+/* Text colors */
+--text-primary: #ffffff;
+--text-secondary: #b4c6e7;
+--text-muted: #6b7fa8;
 ```
 
 ### Règles d'accessibilité
-- ✅ Contraste WCAG AA minimum (texte foncé sur fond clair)
+- ✅ Contraste WCAG AA minimum (texte clair sur fond sombre)
 - ✅ Focus visible sur tous les éléments interactifs
-- ✅ Support clavier complet (Space/Enter + Arrow keys)
-- ✅ ARIA labels sur drag handles et actions
-- ✅ Animations respectueuses (300ms ease)
+- ✅ Support clavier complet pour navigation et drag & drop
+- ✅ Curseurs contextuels (move, grab, grabbing)
+- ✅ Animations fluides (200ms transition-all)
 
 ### Composants de base
 ```
-- GlassCard → Refactorisé en carte blanche avec ombres
-- GlassButton → 5 variantes (primary, secondary, accent, outline, ghost)
-- HorizontalNav → Barre sticky en haut (bg-[#0f1629]/95)
-- DashboardGrid → Grille 12 colonnes avec drag & drop
-- DraggableWidget → Wrapper pour widgets repositionnables
-- WidgetDragHandle → Poignée visible au hover
+- Widget containers → bg-slate-800/50 backdrop-blur-sm avec bordures slate-700
+- Boutons → Transparents avec backgrounds /20 et borders /30-50
+- Icons → w-10 h-10 rounded-xl avec gradients spécifiques par widget
+- Progress bars → bg-slate-700 avec gradients colorés
+- Tooltips → bg-slate-900 avec border-slate-700
 ```
 
 ---
@@ -228,83 +235,81 @@ Structure:
 Le dashboard utilise un système de grille 12 colonnes avec widgets repositionnables via drag & drop.
 
 #### Technologies utilisées
-- **@dnd-kit/core** v6.3.1 - Système de drag & drop moderne
-- **@dnd-kit/sortable** v10.0.0 - Stratégies de tri
-- **@dnd-kit/utilities** v3.2.2 - Utilitaires CSS
+- **react-grid-layout** (ResponsiveGridLayout) - Système de grille responsive avec drag & drop
 - **localStorage** - Persistence du layout personnalisé
+- **Tailwind CSS** - Styling avec thème dark fantasy
 
 ### Configuration de la grille
 ```typescript
 GRID_CONFIG = {
   columns: 12,           // Grille 12 colonnes
-  rowHeight: 220px,      // Hauteur fixe par ligne
-  gap: 24px,             // Espacement (gap-6)
+  rowHeight: 100px,      // Hauteur par unité de ligne
+  width: 1400px,         // Largeur container
+  margin: [16, 16],      // Espacement entre widgets
 }
 ```
 
 ### Widgets disponibles (5)
-1. **GuideProgressionWidget** (8×2) - Timeline hebdomadaire des séances
-2. **AssistantPianelyWidget** (4×2) - Grille 2×2 d'actions rapides (gradient violet)
-3. **ObjectifQuotidienWidget** (4×1) - Objectif quotidien + mini graphique
-4. **BadgesWidget** (4×2) - Grille 3×2 de badges débloqués/verrouillés
-5. **MorceauxEnCoursWidget** (8×2) - Liste des morceaux en cours
+1. **AujourdhuiWidget** (4×2) - Section "Aujourd'hui" avec niveau actuel
+2. **ObjectifWidget** (4×2) - Objectif quotidien + progress bar + histogram 7 jours
+3. **BadgesWidget** (4×2) - Grille 3×2 de badges débloqués/verrouillés avec tooltips
+4. **GuideWidget** (6×3) - Guide de progression hebdomadaire avec statuts
+5. **MorceauxWidget** (6×3) - Liste des morceaux en cours avec progress bars
 
-### Layout par défaut
+### Layout par défaut (3×3)
 ```typescript
 DEFAULT_LAYOUT = [
-  { id: 'guide-progression', x: 0, y: 0, w: 8, h: 2 },
-  { id: 'assistant-pianely', x: 8, y: 0, w: 4, h: 2 },
-  { id: 'objectif-quotidien', x: 8, y: 2, w: 4, h: 1 },
-  { id: 'badges', x: 8, y: 3, w: 4, h: 2 },
-  { id: 'morceaux-en-cours', x: 0, y: 2, w: 8, h: 2 },
+  // Rangée 1 (3 widgets de 4 colonnes chacun)
+  { i: 'aujourdhui', x: 0, y: 0, w: 4, h: 2 },
+  { i: 'objectif', x: 4, y: 0, w: 4, h: 2 },
+  { i: 'badges', x: 8, y: 0, w: 4, h: 2 },
+  // Rangée 2 (2 widgets de 6 colonnes chacun)
+  { i: 'guide', x: 0, y: 2, w: 6, h: 3 },
+  { i: 'morceaux', x: 6, y: 2, w: 6, h: 3 },
 ]
 ```
 
 ### Fonctionnalités drag & drop
-- **Activation**: Hover sur widget → poignée (⋮⋮) apparaît en haut à droite
-- **Déplacement**: Cliquer-glisser la poignée pour repositionner
-- **Collision detection**: Algorithme de cascade (push down)
-- **Compaction automatique**: Suppression des espaces verticaux inutiles
-- **Persistence**: Layout sauvegardé dans localStorage (debounce 300ms)
-- **Reset**: Bouton "Reset Layout" pour revenir au défaut
+- **Activation**: Widgets draggables par défaut (cursor: move)
+- **Déplacement**: Cliquer-glisser n'importe où sur le widget pour repositionner
+- **Redimensionnement**: Handles de resize visibles en bas à droite de chaque widget
+- **Collision detection**: Gestion automatique par react-grid-layout
+- **Placeholder**: Bordure bleue pointillée pendant le drag
+- **Persistence**: Layout sauvegardé automatiquement dans localStorage
+- **Reset**: Bouton "Réinitialiser" en haut à droite pour revenir au défaut
+
+### Header Dashboard
+```tsx
+DASHBOARD OVERVIEW
+├── Titre: "DASHBOARD OVERVIEW" (text-2xl font-bold text-white/90)
+├── Sous-titre: "Bienvenue, suis ta progression musicale" (text-sm text-gray-400)
+└── Bouton Reset: Avec icône RotateCcw (hover effects)
+```
 
 ### Responsive
-- **Desktop (>1024px)**: Grille 12 colonnes, drag activé
-- **Tablet (641-1024px)**: Grille 8 colonnes adaptée
-- **Mobile (<640px)**: Stack vertical, drag désactivé
+- **Desktop (>1200px)**: Grille 12 colonnes, drag & resize activés
+- **Tablet (768-1200px)**: Grille 12 colonnes adaptée
+- **Mobile (<768px)**: Grille réduite, comportement adapté
 
 ### Structure des fichiers
 ```
-components/dashboard/
-├── DashboardGrid.tsx          # Container DndContext
-├── DraggableWidget.tsx        # Wrapper useSortable
-├── WidgetDragHandle.tsx       # Poignée GripVertical
-└── widgets/
-    ├── GuideProgressionWidget.tsx
-    ├── AssistantPianelyWidget.tsx
-    ├── ObjectifQuotidienWidget.tsx
-    ├── BadgesWidget.tsx
-    └── MorceauxEnCoursWidget.tsx
+app/
+└── page.tsx                   # Page principale avec ResponsiveGridLayout
 
-hooks/
-├── useDashboardLayout.ts      # State + localStorage
-└── useMediaQuery.ts           # Breakpoints responsive
-
-lib/dashboard/
-├── constants.ts               # Config grille + layouts
-├── grid-utils.ts              # Calculs position/collision
-└── collision.ts               # Algorithme cascade
-
-types/
-└── dashboard.ts               # Interfaces TypeScript
+components/widgets/
+├── AujourdhuiWidget.tsx       # Widget "Aujourd'hui"
+├── ObjectifWidget.tsx         # Widget objectif quotidien
+├── BadgesWidget.tsx           # Widget badges
+├── GuideWidget.tsx            # Widget guide progression
+└── MorceauxWidget.tsx         # Widget morceaux en cours
 ```
 
 ### UX/UI du drag & drop
-- Poignée visible uniquement au **hover** (opacity-0 → opacity-100)
-- Cursor **grab** sur poignée, **grabbing** pendant drag
-- Widget en cours de drag : **opacity 50%**, z-index élevé
-- Animations fluides : **transition-all duration-300 ease**
-- Feedback visuel clair : bordures, ombres
+- Cursor **move** par défaut, **grab** au hover, **grabbing** pendant drag
+- Widget en cours de drag : **opacity 80%**, z-index élevé
+- Placeholder : bordure **dashed bleue** (rgba(14, 165, 233))
+- Animations fluides : **transition 200ms ease**
+- Resize handles : coins bas-droite avec **border-right/bottom**
 
 ---
 
@@ -385,7 +390,7 @@ types/
 
 ## 📊 SUIVI DES AVANCÉES
 
-### Sprint actuel: MVP - Phase 1 + Dashboard refactoring
+### Sprint actuel: MVP - Phase 1 + Dashboard dark fantasy
 **Date de début**: 2026-01-07
 **Dernière mise à jour**: 2026-01-09
 
@@ -400,28 +405,37 @@ types/
 - [x] Variables d'environnement configurées
 - [x] Build production testé et validé
 
-#### ✅ Fait (Refonte dashboard - 2026-01-09)
-- [x] **Thème clair médical**: Variables CSS, gradient violet-50/blue-50/purple-100
-- [x] **GlassCard refactoré**: Blanc avec ombres violet-tinted, rounded-3xl
-- [x] **GlassButton refactoré**: 5 variantes (primary, secondary, accent, outline, ghost)
-- [x] **Types TypeScript**: WidgetLayout, TimelineDay, Morceau, Badge
-- [x] **5 widgets extraits**: GuideProgression, AssistantPianely, ObjectifQuotidien, Badges, MorceauxEnCours
-- [x] **Système de grille**: constants.ts, grid-utils.ts, collision.ts
-- [x] **Hooks custom**: useDashboardLayout (localStorage), useMediaQuery (responsive)
-- [x] **Drag & drop**: DashboardGrid, DraggableWidget, WidgetDragHandle avec @dnd-kit
-- [x] **Page.tsx refactorisée**: Dynamic import, skeleton loading, bouton reset
-- [x] **Build validé**: Aucune erreur TypeScript ou build
+#### ✅ Fait (Refonte dashboard dark fantasy - 2026-01-09)
+- [x] **Thème dark fantasy**: Inspiré des dashboards fantasy basketball
+- [x] **Background**: Gradient slate-900 via slate-800 to slate-900
+- [x] **Header "DASHBOARD OVERVIEW"**: Gradient slate avec titre et bouton reset
+- [x] **Layout 3×3**: Rangée 1 (3 widgets 4×2), Rangée 2 (2 widgets 6×3)
+- [x] **Suppression AssistantWidget**: Réduction à 5 widgets essentiels
+- [x] **AujourdhuiWidget**: Dark theme avec gradient orange/amber, niveau actuel
+- [x] **ObjectifWidget**: Dark theme avec gradient emerald/teal, histogram 7 jours
+- [x] **BadgesWidget**: Dark theme avec gradient purple/violet, tooltips, amber glow
+- [x] **GuideWidget**: Dark theme avec gradient emerald/teal, statuts colorés
+- [x] **MorceauxWidget**: Dark theme avec gradient sky/blue, progress bars
+- [x] **react-grid-layout**: Système de grille responsive avec drag & drop
+- [x] **localStorage persistence**: Sauvegarde automatique des positions
+- [x] **Cursors contextuels**: move, grab, grabbing avec CSS
+- [x] **Build validé**: Compilation sans erreurs TypeScript
 
 #### 🚧 En cours
-- Aucune tâche en cours
+- [ ] **Fonctionnalités d'apprentissage**: Développement des parcours et leçons interactives
 
 #### 📋 À faire (Prochaines priorités)
-- [ ] Pages d'authentification (inscription/connexion)
-- [ ] Page parcours avec affichage des 5 niveaux
-- [ ] Système de routing pour les leçons
-- [ ] Auth flow complet avec Supabase Auth
-- [ ] Première leçon prototype interactive
-- [ ] Tests utilisateurs du système drag & drop
+- [ ] **Niveau 1 - Découverte**: Création des 5 premières leçons
+  - [ ] Leçon 1: Anatomie du clavier (notes, octaves)
+  - [ ] Leçon 2: Position des mains
+  - [ ] Leçon 3: Premier motif main droite
+  - [ ] Leçon 4: Premier motif main gauche
+  - [ ] Leçon 5: Ton premier morceau complet
+- [ ] **Page /parcours**: Affichage des 5 niveaux et progression
+- [ ] **Composant Leçon**: Template réutilisable pour toutes les leçons
+- [ ] **Système de validation**: Tracking progression utilisateur
+- [ ] **Auth flow complet**: Connexion/Inscription avec Supabase Auth
+- [ ] **Tests utilisateurs**: Dashboard et première leçon
 
 ---
 
@@ -455,14 +469,12 @@ types/
 ### Dépendances validées
 - ✅ Next.js 16.1.1 avec TypeScript
 - ✅ React 19.2.3
-- ✅ Tailwind CSS 4 (styling medical dashboard)
+- ✅ Tailwind CSS 4 (styling dark fantasy dashboard)
 - ✅ Supabase client
 - ✅ Framer Motion (animations)
 - ✅ React Hook Form + Zod (formulaires)
 - ✅ Lucide React (icônes)
-- ✅ @dnd-kit/core v6.3.1 (drag & drop)
-- ✅ @dnd-kit/sortable v10.0.0 (sorting)
-- ✅ @dnd-kit/utilities v3.2.2 (CSS utils)
+- ✅ react-grid-layout (drag & drop grid system)
 
 ---
 
@@ -495,4 +507,4 @@ types/
 ---
 
 **Dernière mise à jour**: 2026-01-09
-**Version**: 0.2.0 (Dashboard drag & drop complet)
+**Version**: 0.3.0 (Dashboard dark fantasy 3×3 avec drag & drop)
