@@ -37,7 +37,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <HorizontalNav />
-        <div className="pt-16">
+        <div className="pt-24">
           {children}
         </div>
       </body>
