@@ -14,12 +14,12 @@ import { MorceauxWidget } from '@/components/widgets/MorceauxWidget'
 import { BadgesWidget } from '@/components/widgets/BadgesWidget'
 
 const defaultLayout = [
-  { i: 'guide', x: 0, y: 0, w: 8, h: 2 },
+  { i: 'guide', x: 0, y: 0, w: 8, h: 2.5 },
   { i: 'assistant', x: 8, y: 0, w: 4, h: 2 },
-  { i: 'aujourdhui', x: 0, y: 2, w: 4, h: 1 },
-  { i: 'objectif', x: 4, y: 2, w: 4, h: 1 },
-  { i: 'morceaux', x: 0, y: 3, w: 8, h: 1 },
-  { i: 'badges', x: 8, y: 2, w: 4, h: 2 },
+  { i: 'aujourdhui', x: 0, y: 3, w: 4, h: 1.5 },
+  { i: 'objectif', x: 4, y: 3, w: 4, h: 1.5 },
+  { i: 'morceaux', x: 0, y: 5, w: 8, h: 1.5 },
+  { i: 'badges', x: 8, y: 2, w: 4, h: 2.5 },
 ]
 
 export default function HomePage() {
@@ -88,7 +88,7 @@ export default function HomePage() {
           layouts={{ lg: layout }}
           breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
           cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
-          rowHeight={140}
+          rowHeight={100}
           width={1400}
           margin={[16, 16]}
           onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
