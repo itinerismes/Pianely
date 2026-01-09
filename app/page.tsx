@@ -47,41 +47,39 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35]">
-      <div className="max-w-[1800px] mx-auto px-4 lg:px-8 py-8">
+      <div className="max-w-[1800px] mx-auto px-6 lg:px-12 py-10">
         {/* Titre principal */}
-        <div className="mb-8">
-          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
+        <div className="mb-10">
+          <h1 className="text-3xl lg:text-4xl font-bold text-white">
             Bonjour {userName}, prêt à jouer aujourd&apos;hui ?
           </h1>
-          <p className="text-[#b4c6e7]/70">Reprends là où tu t&apos;es arrêté</p>
         </div>
 
         {/* Layout principal - 2 colonnes desktop, pile mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-8 mb-8">
 
-          {/* COLONNE GAUCHE - Guide de progression + Widgets */}
-          <div className="flex flex-col gap-4">
+          {/* COLONNE GAUCHE - Guide de progression + Aujourd'hui */}
+          <div className="flex flex-col gap-8">
             {/* Guide de progression */}
             <GlassCard variant="elevated" padding="lg" className="max-h-[500px] overflow-y-auto">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">Guide de progression</h2>
-                <p className="text-[#b4c6e7]/70">Ton parcours de la semaine</p>
+                <h2 className="text-2xl font-bold text-white">Guide de progression</h2>
               </div>
 
               {/* Timeline horizontale par jour */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {weekTimeline.map((day, index) => (
                   <div key={index} className="flex items-center gap-4">
                     {/* Jour */}
-                    <div className="w-16 text-center">
-                      <div className="text-sm font-semibold text-white">{day.day}</div>
+                    <div className="w-12 text-center">
+                      <div className="text-xs font-semibold text-white">{day.day}</div>
                     </div>
 
                     {/* Barre de séance */}
                     <div className="flex-1">
                       <div
                         className={cn(
-                          'relative p-4 rounded-xl border transition-all',
+                          'relative p-3 rounded-xl border transition-all',
                           day.status === 'completed'
                             ? 'bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border-emerald-500/30'
                             : day.status === 'in_progress'
@@ -93,28 +91,22 @@ export default function HomePage() {
                           <div className="flex items-center gap-3">
                             {/* Statut */}
                             {day.status === 'completed' ? (
-                              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                             ) : day.status === 'in_progress' ? (
-                              <Circle className="w-5 h-5 text-[#667eea] fill-[#667eea]/20" />
+                              <Circle className="w-4 h-4 text-[#667eea] fill-[#667eea]/20" />
                             ) : (
-                              <Circle className="w-5 h-5 text-white/30" />
+                              <Circle className="w-4 h-4 text-white/30" />
                             )}
 
                             {/* Infos */}
-                            <div>
-                              <div className="text-sm font-semibold text-white capitalize">
-                                {day.type}
-                              </div>
-                              <div className="text-xs text-[#b4c6e7]/60">
-                                Niveau {day.niveau} • {day.durée}
-                              </div>
+                            <div className="text-sm font-semibold text-white capitalize">
+                              {day.type}
                             </div>
                           </div>
 
                           {/* Bouton action */}
                           {day.status === 'in_progress' && (
                             <GlassButton variant="primary" size="sm">
-                              <Play className="w-4 h-4" />
                               Continuer
                             </GlassButton>
                           )}
@@ -131,54 +123,20 @@ export default function HomePage() {
               </div>
             </GlassCard>
 
-            {/* Conseil du jour */}
+            {/* Aujourd'hui - Fusion Conseil + Prochaine étape */}
             <GlassCard variant="elevated" padding="md">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0">
-                  <Lightbulb className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-white mb-2">Conseil du jour</h3>
-                  <p className="text-sm text-[#b4c6e7]/80 leading-relaxed">
-                    Pratique 15 minutes par jour plutôt qu&apos;une heure une fois par semaine.
-                    La régularité est la clé de la progression au piano.
-                  </p>
-                </div>
-              </div>
-            </GlassCard>
+              <h3 className="text-base font-bold text-white mb-3">Aujourd&apos;hui</h3>
 
-            {/* Prochaine étape */}
-            <GlassCard variant="elevated" padding="md">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-                  <ArrowRight className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-white">Prochaine étape</h3>
-                  <p className="text-xs text-[#b4c6e7]/70">À débloquer</p>
-                </div>
-              </div>
+              <p className="text-sm text-[#b4c6e7]/80 mb-4">
+                Pratique régulière : la clé de ta progression
+              </p>
 
-              <div className="p-4 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10">
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <h4 className="text-sm font-semibold text-white">Niveau 2 - Fondations</h4>
-                    <p className="text-xs text-[#b4c6e7]/70">8 leçons • Accords de base</p>
-                  </div>
-                  <div className="text-2xl">🔒</div>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2">
+                  <ArrowRight className="w-4 h-4 text-[#667eea]" />
+                  <span className="text-sm text-white">Niveau 2 - Fondations</span>
                 </div>
-                <div className="mt-3">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-[#b4c6e7]/70">Progression Niveau 1</span>
-                    <span className="text-white font-semibold">4/7</span>
-                  </div>
-                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full"
-                      style={{ width: '57%' }}
-                    />
-                  </div>
-                </div>
+                <span className="text-xs text-[#b4c6e7]/70">4/7 leçons</span>
               </div>
             </GlassCard>
           </div>
@@ -217,8 +175,8 @@ export default function HomePage() {
               </div>
 
               <div className="relative z-10">
-                <h3 className="text-xl font-bold text-white mb-6">
-                  Que veux-tu travailler aujourd&apos;hui ?
+                <h3 className="text-xl font-bold text-white mb-5">
+                  Que veux-tu travailler ?
                 </h3>
 
                 {/* Boutons en grille 2x2 */}
@@ -260,14 +218,11 @@ export default function HomePage() {
 
             {/* Objectif */}
             <GlassCard variant="elevated" padding="md">
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
                   <Clock className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h3 className="text-base font-bold text-white">Objectif</h3>
-                  <p className="text-xs text-[#b4c6e7]/70">Pratique quotidienne</p>
-                </div>
+                <h3 className="text-base font-bold text-white">Objectif quotidien</h3>
               </div>
 
               {/* Barre de progression */}
@@ -304,14 +259,11 @@ export default function HomePage() {
 
             {/* Badges */}
             <GlassCard variant="elevated" padding="md">
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
                   <Award className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h3 className="text-base font-bold text-white">Badges</h3>
-                  <p className="text-xs text-[#b4c6e7]/70">3 / 6 débloqués</p>
-                </div>
+                <h3 className="text-base font-bold text-white">Badges</h3>
               </div>
 
               {/* Grille 2x3 de badges */}
@@ -335,42 +287,25 @@ export default function HomePage() {
         </div>
 
         {/* BANDE INFÉRIEURE - Morceaux en cours (pleine largeur) */}
-        <GlassCard variant="elevated" padding="lg">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-bold text-white mb-1">Morceaux en cours</h2>
-              <p className="text-sm text-[#b4c6e7]/70">Continue ton apprentissage</p>
-            </div>
-            <GlassButton variant="outline" size="sm">
-              Voir tous les morceaux
-            </GlassButton>
+        <GlassCard variant="elevated" padding="md">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-white">Morceaux en cours</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {morceaux.map((morceau, index) => (
               <div
                 key={index}
-                className="p-5 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:from-white/15 hover:to-white/10 transition-all"
+                className="p-4 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:from-white/15 hover:to-white/10 transition-all"
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="font-semibold text-white mb-1">{morceau.titre}</h3>
-                    <p className="text-xs text-[#b4c6e7]/70">Niveau {morceau.niveau}</p>
-                  </div>
-                  <Music2 className="w-5 h-5 text-[#667eea]" />
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-white text-sm">{morceau.titre}</h3>
+                  <Music2 className="w-4 h-4 text-[#667eea]" />
                 </div>
 
-                {/* Statut */}
+                {/* Barre de progression compacte */}
                 <div className="mb-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs font-medium text-white">
-                      {morceau.status === 'mastered' && 'Maîtrisé'}
-                      {morceau.status === 'in_progress' && 'En cours'}
-                      {morceau.status === 'not_started' && 'Non commencé'}
-                    </span>
-                    <span className="text-xs text-[#b4c6e7]/60">{morceau.progress}%</span>
-                  </div>
-                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                     <div
                       className={cn(
                         'h-full rounded-full transition-all',
