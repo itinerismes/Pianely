@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
 
   const isAuthRoute = request.nextUrl.pathname.startsWith('/connexion') ||
                       request.nextUrl.pathname.startsWith('/inscription')
-  const isProtectedRoute = request.nextUrl.pathname === '/' ||
+  const isProtectedRoute = request.nextUrl.pathname.startsWith('/dashboard') ||
                           request.nextUrl.pathname.startsWith('/parcours') ||
                           request.nextUrl.pathname.startsWith('/settings')
 
@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect authenticated users away from auth pages
   if (isAuthRoute && user) {
-    return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   return response
@@ -44,7 +44,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/',
+    '/dashboard/:path*',
     '/parcours/:path*',
     '/settings/:path*',
     '/connexion',

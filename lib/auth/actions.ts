@@ -18,7 +18,7 @@ export async function login(data: LoginInput) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/dashboard')
 }
 
 export async function signup(data: SignupInput) {
@@ -34,12 +34,12 @@ export async function signup(data: SignupInput) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/dashboard')
 }
 
 export async function logout() {
   const supabase = await createClient()
   await supabase.auth.signOut()
   revalidatePath('/', 'layout')
-  redirect('/')
+  redirect('/dashboard')
 }
