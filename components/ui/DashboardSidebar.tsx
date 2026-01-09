@@ -18,7 +18,7 @@ export function DashboardSidebar() {
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 z-[9999] h-screen w-20 bg-[#0f1629] border-r border-white/10 flex-col shadow-2xl">
       <div className="flex h-16 items-center justify-center border-b border-white/10">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[#667eea] to-[#764ba2]">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-sky-400 to-blue-500">
           <Piano className="h-6 w-6 text-white" />
         </div>
       </div>
@@ -33,7 +33,7 @@ export function DashboardSidebar() {
               className={cn(
                 'flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all group relative',
                 isActive
-                  ? 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white shadow-lg shadow-purple-500/20'
+                  ? 'bg-sky-400 text-white shadow-lg shadow-sky-500/20'
                   : 'text-[#b4c6e7] hover:bg-white/5 hover:text-white'
               )}
               title={item.name}

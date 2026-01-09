@@ -4,8 +4,8 @@ import { ArrowRight, Calendar } from 'lucide-react'
 
 export function AujourdhuiWidget() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-4 h-full hover:shadow-xl hover:border-sky-400 hover:scale-[1.01] transition-all duration-300 cursor-move">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-3 h-full hover:shadow-xl hover:border-sky-400 hover:scale-[1.005] transition-all duration-200 cursor-move">
+      <div className="flex items-center gap-2 mb-2">
         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-sky-300 to-blue-300 flex items-center justify-center">
           <Calendar className="w-3.5 h-3.5 text-white" />
         </div>

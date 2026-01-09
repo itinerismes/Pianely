@@ -13,19 +13,19 @@ const badges = [
 
 export function BadgesWidget() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-4 h-full hover:shadow-xl hover:border-sky-400 hover:scale-[1.01] transition-all duration-300 cursor-move">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-300 to-violet-300 flex items-center justify-center">
-          <Award className="w-3.5 h-3.5 text-white" />
+    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-3 h-full hover:shadow-xl hover:border-sky-400 hover:scale-[1.005] transition-all duration-200 cursor-move">
+      <div className="flex items-center gap-1.5 mb-2">
+        <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-300 to-blue-300 flex items-center justify-center">
+          <Award className="w-3 h-3 text-white" />
         </div>
         <h3 className="text-xs font-semibold text-gray-700 tracking-tight">Badges</h3>
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-1.5">
         {badges.map((badge) => (
           <div key={badge.id} className="relative group">
             <div
-              className={`h-16 rounded-xl flex items-center justify-center text-lg transition-transform hover:scale-105 ${
+              className={`h-14 rounded-xl flex items-center justify-center text-base transition-transform hover:scale-105 ${
                 badge.unlocked
                   ? 'bg-amber-50/50 border-2 border-amber-300'
                   : 'bg-gray-50 border border-gray-200 opacity-50'

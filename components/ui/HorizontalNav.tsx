@@ -20,7 +20,7 @@ export function HorizontalNav() {
       <div className="h-full max-w-[1920px] mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[#667eea] to-[#764ba2]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-sky-400 to-blue-500">
             <Piano className="h-6 w-6 text-white" />
           </div>
           <span className="text-xl font-bold text-white hidden sm:block">Pianely</span>
@@ -37,7 +37,7 @@ export function HorizontalNav() {
                 className={cn(
                   'flex items-center gap-2 px-4 py-2 rounded-xl transition-all',
                   isActive
-                    ? 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white shadow-lg shadow-purple-500/20'
+                    ? 'bg-sky-400 text-white shadow-lg shadow-sky-500/20'
                     : 'text-[#b4c6e7] hover:bg-white/5 hover:text-white'
                 )}
               >

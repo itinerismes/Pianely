@@ -14,12 +14,12 @@ import { MorceauxWidget } from '@/components/widgets/MorceauxWidget'
 import { BadgesWidget } from '@/components/widgets/BadgesWidget'
 
 const defaultLayout = [
-  { i: 'guide', x: 0, y: 0, w: 8, h: 2.5 },
-  { i: 'assistant', x: 8, y: 0, w: 4, h: 2 },
-  { i: 'aujourdhui', x: 0, y: 3, w: 4, h: 1.5 },
-  { i: 'objectif', x: 4, y: 3, w: 4, h: 1.5 },
-  { i: 'morceaux', x: 0, y: 5, w: 8, h: 1.5 },
-  { i: 'badges', x: 8, y: 2, w: 4, h: 2.5 },
+  { i: 'guide', x: 0, y: 0, w: 6, h: 2.5 },
+  { i: 'assistant', x: 6, y: 0, w: 4, h: 2 },
+  { i: 'aujourdhui', x: 0, y: 3, w: 3, h: 1.5 },
+  { i: 'objectif', x: 3, y: 3, w: 3, h: 1.5 },
+  { i: 'morceaux', x: 0, y: 5, w: 6, h: 1.5 },
+  { i: 'badges', x: 6, y: 2, w: 4, h: 2.5 },
 ]
 
 export default function HomePage() {
@@ -52,7 +52,7 @@ export default function HomePage() {
   if (!mounted) {
     return (
       <main className="min-h-screen bg-white pt-6">
-        <div className="max-w-[1300px] mx-auto px-6 py-6">
+        <div className="max-w-[1200px] mx-auto px-4 py-6">
           <div className="animate-pulse">Chargement...</div>
         </div>
       </main>
@@ -61,7 +61,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-white pt-6">
-      <div className="max-w-[1300px] mx-auto px-6 py-6">
+      <div className="max-w-[1200px] mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           {/* <div>
@@ -88,9 +88,9 @@ export default function HomePage() {
             className="layout"
             layouts={{ lg: layout }}
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-            cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
-            rowHeight={85}
-            width={1300}
+            cols={{ lg: 10, md: 8, sm: 6, xs: 4, xxs: 2 }}
+            rowHeight={75}
+            width={1200}
             margin={[16, 16]}
             onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
             {...({ draggableHandle: ".drag-handle" } as any)}

@@ -10,9 +10,9 @@ const morceaux = [
 
 export function MorceauxWidget() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-4 h-full overflow-hidden hover:shadow-xl hover:border-sky-400 hover:scale-[1.01] transition-all duration-300 cursor-move">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-300 to-violet-300 flex items-center justify-center">
+    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-3 h-full overflow-hidden hover:shadow-xl hover:border-sky-400 hover:scale-[1.005] transition-all duration-200 cursor-move">
+      <div className="flex items-center gap-2 mb-2">
+        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-sky-300 to-blue-300 flex items-center justify-center">
           <Music2 className="w-3.5 h-3.5 text-white" />
         </div>
         <h3 className="text-xs font-semibold text-gray-700 tracking-tight">Morceaux en cours</h3>
@@ -22,10 +22,10 @@ export function MorceauxWidget() {
         {morceaux.map((morceau, idx) => (
           <div
             key={idx}
-            className="flex items-center gap-3 px-2 py-1.5 rounded-lg bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-all duration-200"
+            className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-all duration-200"
           >
-            <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-              <Music2 className="w-3.5 h-3.5 text-purple-400" />
+            <div className="w-7 h-7 rounded-lg bg-sky-50 flex items-center justify-center flex-shrink-0">
+              <Music2 className="w-3.5 h-3.5 text-sky-500" />
             </div>
 
             <div className="flex-1">
@@ -45,7 +45,7 @@ export function MorceauxWidget() {
               </div>
             </div>
 
-            <button className="px-3 py-1 text-[10px] font-medium rounded-lg transition-all duration-300 text-purple-500 bg-purple-50 hover:bg-purple-100 border border-purple-200 hover:border-purple-300 hover:shadow-sm active:scale-95 flex-shrink-0 min-w-[70px]">
+            <button className="px-3 py-1 text-[10px] font-medium rounded-lg transition-all duration-200 text-sky-600 bg-sky-50 hover:bg-sky-100 border border-sky-200 hover:border-sky-300 hover:shadow-sm active:scale-95 flex-shrink-0 min-w-[70px]">
               {morceau.status === 'not_started' ? 'Commencer' : 'Continuer'}
             </button>
           </div>
