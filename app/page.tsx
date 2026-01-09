@@ -46,7 +46,7 @@ export default function HomePage() {
   ]
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35] pt-24">
+    <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35] pt-6">
       <div className="max-w-[1400px] mx-auto px-8 pb-6">
         {/* Titre principal */}
         <div className="mb-8">
