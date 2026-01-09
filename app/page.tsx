@@ -214,7 +214,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35] pt-20">
+    <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35]">
       <div className="p-4 lg:p-8 max-w-[1800px] mx-auto">
         <div className="mb-6 flex justify-end">
           <GlassButton
