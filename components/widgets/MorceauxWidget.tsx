@@ -13,16 +13,8 @@ export function MorceauxWidget() {
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 h-full overflow-hidden hover:shadow-md transition-all duration-200">
       <h3 className="text-sm font-semibold text-gray-800 mb-2">Morceaux en cours</h3>
 
-      {morceaux.length === 0 ? (
-        <div className="text-center py-8 text-gray-400">
-          <p className="text-sm">Aucun morceau en cours</p>
-          <button className="mt-2 text-purple-600 text-xs hover:underline transition-all duration-200 hover:scale-105 active:scale-95">
-            Explorer le catalogue
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {morceaux.map((morceau, idx) => (
+      <div className="space-y-2">
+        {morceaux.map((morceau, idx) => (
           <div
             key={idx}
             className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 border border-gray-100 hover:bg-gray-100 hover:scale-[1.02] transition-all duration-200"
@@ -46,13 +38,12 @@ export function MorceauxWidget() {
               </div>
             </div>
 
-            <button className="text-xs font-medium text-purple-600 hover:bg-purple-50 hover:text-purple-700 px-3 py-1 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 flex-shrink-0">
+            <button className="text-xs font-medium text-purple-600 hover:bg-purple-50 hover:text-purple-700 px-3 py-1 rounded-lg transition-colors flex-shrink-0">
               {morceau.status === 'not_started' ? 'Commencer' : 'Continuer'}
             </button>
           </div>
         ))}
-        </div>
-      )}
+      </div>
     </div>
   )
 }

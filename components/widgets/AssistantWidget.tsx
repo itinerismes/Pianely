@@ -18,22 +18,22 @@ export function AssistantWidget() {
 
         {/* Grid 2x2 */}
         <div className="grid grid-cols-2 gap-2 flex-1">
-          <button className="bg-white/20 backdrop-blur-sm rounded-lg p-2 hover:bg-white/30 transition-all duration-200 hover:scale-105 active:scale-95 flex flex-col items-center justify-center gap-1">
+          <button className="bg-white/20 backdrop-blur-sm rounded-lg p-2 hover:bg-white/30 transition flex flex-col items-center justify-center gap-1">
             <Play className="w-6 h-6 text-white" />
             <span className="text-white text-[10px] font-medium">Séance du jour</span>
           </button>
 
-          <button className="bg-white/20 backdrop-blur-sm rounded-lg p-2 hover:bg-white/30 transition-all duration-200 hover:scale-105 active:scale-95 flex flex-col items-center justify-center gap-1">
+          <button className="bg-white/20 backdrop-blur-sm rounded-lg p-2 hover:bg-white/30 transition flex flex-col items-center justify-center gap-1">
             <RotateCcw className="w-6 h-6 text-white" />
             <span className="text-white text-[10px] font-medium">Révision</span>
           </button>
 
-          <button className="bg-white/20 backdrop-blur-sm rounded-lg p-2 hover:bg-white/30 transition-all duration-200 hover:scale-105 active:scale-95 flex flex-col items-center justify-center gap-1">
+          <button className="bg-white/20 backdrop-blur-sm rounded-lg p-2 hover:bg-white/30 transition flex flex-col items-center justify-center gap-1">
             <Music2 className="w-6 h-6 text-white" />
             <span className="text-white text-[10px] font-medium">Morceaux</span>
           </button>
 
-          <button className="bg-white/20 backdrop-blur-sm rounded-lg p-2 hover:bg-white/30 transition-all duration-200 hover:scale-105 active:scale-95 flex flex-col items-center justify-center gap-1">
+          <button className="bg-white/20 backdrop-blur-sm rounded-lg p-2 hover:bg-white/30 transition flex flex-col items-center justify-center gap-1">
             <Target className="w-6 h-6 text-white" />
             <span className="text-white text-[10px] font-medium">Technique</span>
           </button>
