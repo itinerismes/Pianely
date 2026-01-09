@@ -65,7 +65,7 @@ export default function HomePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-semibold text-gray-900 tracking-tight mb-2" style={{fontFamily: 'Inter, sans-serif'}}>
               Bonjour Michel, prêt à jouer aujourd&apos;hui ?
             </h1>
             <p className="text-sm text-gray-500">

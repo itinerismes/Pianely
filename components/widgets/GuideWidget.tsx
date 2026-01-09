@@ -14,14 +14,14 @@ const weekData = [
 
 export function GuideWidget() {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 h-full overflow-auto">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Guide de progression</h2>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 h-full overflow-auto hover:shadow-md transition-all duration-200">
+      <h2 className="text-base font-semibold text-gray-800 mb-3">Guide de progression</h2>
 
       <div className="space-y-2">
         {weekData.map((item, idx) => (
           <div
             key={idx}
-            className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0"
+            className="flex items-center gap-3 py-1.5 pr-4 border-b border-gray-100 last:border-0 h-10"
           >
             {/* Checkbox */}
             {item.status === 'completed' ? (
@@ -48,12 +48,12 @@ export function GuideWidget() {
 
             {/* Action button */}
             {item.status === 'in_progress' && (
-              <button className="text-sm font-medium text-purple-600 hover:text-purple-700 px-3 py-1 rounded-lg hover:bg-purple-50 transition">
+              <button className="text-sm font-medium text-purple-600 hover:bg-purple-50 hover:text-purple-700 px-4 py-1.5 rounded-lg transition-colors">
                 Continuer
               </button>
             )}
             {item.status === 'pending' && (
-              <button className="text-sm font-medium text-gray-600 hover:text-purple-600 px-3 py-1 rounded-lg hover:bg-gray-50 transition">
+              <button className="text-sm font-medium text-gray-600 hover:text-purple-600 px-4 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
                 Démarrer
               </button>
             )}

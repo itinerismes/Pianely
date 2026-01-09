@@ -10,14 +10,14 @@ const morceaux = [
 
 export function MorceauxWidget() {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 h-full overflow-auto">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Morceaux en cours</h3>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 h-full overflow-auto hover:shadow-md transition-all duration-200">
+      <h3 className="text-base font-semibold text-gray-800 mb-3">Morceaux en cours</h3>
 
       <div className="space-y-3">
         {morceaux.map((morceau, idx) => (
           <div
             key={idx}
-            className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-200 hover:bg-gray-100 transition"
+            className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 hover:bg-gray-100 hover:scale-[1.02] transition-all duration-200"
           >
             <Music2 className="w-5 h-5 text-purple-500 flex-shrink-0" />
 
@@ -38,7 +38,7 @@ export function MorceauxWidget() {
               </div>
             </div>
 
-            <button className="text-sm font-medium text-purple-600 hover:text-purple-700 px-3 py-1 rounded-lg hover:bg-purple-50 transition flex-shrink-0">
+            <button className="text-sm font-medium text-purple-600 hover:bg-purple-50 hover:text-purple-700 px-4 py-1.5 rounded-lg transition-colors flex-shrink-0">
               {morceau.status === 'not_started' ? 'Commencer' : 'Continuer'}
             </button>
           </div>
