@@ -1,522 +1,345 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import {
-  DndContext,
-  DragEndEvent,
-  useSensor,
-  useSensors,
-  PointerSensor,
-  DragOverlay,
-} from '@dnd-kit/core'
-import { useDraggable } from '@dnd-kit/core'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { GlassButton } from '@/components/ui/GlassButton'
 import {
-  TrendingUp,
-  Clock,
-  Target,
-  Music,
-  Award,
-  ArrowRight,
-  BookOpen,
-  GripVertical,
+  Play,
   RotateCcw,
+  Music2,
+  Target as TargetIcon,
+  Award,
+  CheckCircle2,
+  Circle,
+  Clock,
+  TrendingUp,
 } from 'lucide-react'
-import Link from 'next/link'
-
-interface WidgetPosition {
-  id: string
-  x: number
-  y: number
-  w: number
-  h: number
-}
-
-interface Widget extends WidgetPosition {
-  component: React.ReactNode
-}
-
-function DraggableWidget({
-  id,
-  children,
-  x,
-  y,
-  w,
-  h,
-}: {
-  id: string
-  children: React.ReactNode
-  x: number
-  y: number
-  w: number
-  h: number
-}) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id,
-  })
-
-  const style: React.CSSProperties = {
-    gridColumn: `${x + 1} / span ${w}`,
-    gridRow: `${y + 1} / span ${h}`,
-    opacity: isDragging ? 0.5 : 1,
-  }
-
-  return (
-    <div ref={setNodeRef} style={style} className="relative group">
-      <div
-        {...attributes}
-        {...listeners}
-        className="absolute top-2 right-2 z-10 p-2 rounded-lg bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
-      >
-        <GripVertical className="w-4 h-4 text-white" />
-      </div>
-      {children}
-    </div>
-  )
-}
-
-const GRID_COLS = 12
-const GRID_ROWS = 20
 
 export default function HomePage() {
-  const [widgets, setWidgets] = useState<Widget[]>([])
-  const [activeId, setActiveId] = useState<string | null>(null)
-  const gridRef = useRef<HTMLDivElement>(null)
+  const userName = "Michel"
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    })
-  )
+  // Données pour la timeline de la semaine
+  const weekTimeline = [
+    { day: 'Lun', type: 'découverte', niveau: 1, durée: '15min', status: 'completed' },
+    { day: 'Mar', type: 'technique', niveau: 1, durée: '20min', status: 'completed' },
+    { day: 'Mer', type: 'morceau', niveau: 1, durée: '25min', status: 'in_progress' },
+    { day: 'Jeu', type: 'découverte', niveau: 2, durée: '15min', status: 'pending' },
+    { day: 'Ven', type: 'technique', niveau: 2, durée: '20min', status: 'pending' },
+    { day: 'Sam', type: 'morceau', niveau: 2, durée: '30min', status: 'pending' },
+    { day: 'Dim', type: 'révision', niveau: 1, durée: '20min', status: 'pending' },
+  ]
 
-  useEffect(() => {
-    const savedPositions = localStorage.getItem('widgetPositions')
-    if (savedPositions) {
-      try {
-        const positions: WidgetPosition[] = JSON.parse(savedPositions)
+  const morceaux = [
+    { titre: 'Au clair de la lune', niveau: 1, status: 'in_progress', progress: 65 },
+    { titre: 'Frère Jacques', niveau: 1, status: 'not_started', progress: 0 },
+    { titre: 'Joyeux anniversaire', niveau: 2, status: 'mastered', progress: 100 },
+  ]
 
-        const isValid = positions.length === defaultWidgets.length
-
-        if (isValid) {
-          const restoredWidgets = positions
-            .map((pos) => {
-              const defaultWidget = defaultWidgets.find((w) => w.id === pos.id)
-              return defaultWidget ? { ...defaultWidget, ...pos } : null
-            })
-            .filter(Boolean) as Widget[]
-
-          if (restoredWidgets.length > 0) {
-            setWidgets(restoredWidgets)
-            return
-          }
-        } else {
-          localStorage.removeItem('widgetPositions')
-        }
-      } catch (e) {
-        console.error('Failed to load positions', e)
-        localStorage.removeItem('widgetPositions')
-      }
-    }
-    setWidgets(defaultWidgets)
-  }, [])
-
-  const handleDragStart = (event: DragEndEvent) => {
-    setActiveId(event.active.id as string)
-  }
-
-  const checkCollision = (widget1: WidgetPosition, widget2: WidgetPosition): boolean => {
-    return !(
-      widget1.x >= widget2.x + widget2.w ||
-      widget1.x + widget1.w <= widget2.x ||
-      widget1.y >= widget2.y + widget2.h ||
-      widget1.y + widget1.h <= widget2.y
-    )
-  }
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    setActiveId(null)
-    const { active, delta } = event
-
-    if (!delta || !gridRef.current) return
-
-    const gridRect = gridRef.current.getBoundingClientRect()
-    const cellWidth = gridRect.width / GRID_COLS
-    const cellHeight = 160 + 24
-
-    const deltaX = Math.round(delta.x / cellWidth)
-    const deltaY = Math.round(delta.y / cellHeight)
-
-    if (deltaX === 0 && deltaY === 0) return
-
-    setWidgets((prevWidgets) => {
-      const draggedWidget = prevWidgets.find((w) => w.id === active.id)
-      if (!draggedWidget) return prevWidgets
-
-      const originalX = draggedWidget.x
-      const originalY = draggedWidget.y
-
-      const desiredX = Math.max(
-        0,
-        Math.min(GRID_COLS - draggedWidget.w, draggedWidget.x + deltaX)
-      )
-      const desiredY = Math.max(
-        0,
-        Math.min(GRID_ROWS - draggedWidget.h, draggedWidget.y + deltaY)
-      )
-
-      const desiredPosition: WidgetPosition = {
-        id: draggedWidget.id,
-        x: desiredX,
-        y: desiredY,
-        w: draggedWidget.w,
-        h: draggedWidget.h,
-      }
-
-      const otherWidgets = prevWidgets.filter((w) => w.id !== active.id)
-      let hasCollision = false
-
-      for (const other of otherWidgets) {
-        if (checkCollision(desiredPosition, other)) {
-          hasCollision = true
-          break
-        }
-      }
-
-      let finalPosition = desiredPosition
-      if (hasCollision) {
-        finalPosition = { ...desiredPosition, x: originalX, y: originalY }
-      }
-
-      const newWidgets = prevWidgets.map((widget) => {
-        if (widget.id === active.id) {
-          return { ...widget, x: finalPosition.x, y: finalPosition.y }
-        }
-        return widget
-      })
-
-      const positions = newWidgets.map(({ id, x, y, w, h }) => ({ id, x, y, w, h }))
-      localStorage.setItem('widgetPositions', JSON.stringify(positions))
-
-      return newWidgets
-    })
-  }
-
-  const handleDragCancel = () => {
-    setActiveId(null)
-  }
-
-  const resetPositions = () => {
-    localStorage.removeItem('widgetPositions')
-    setWidgets(defaultWidgets)
-  }
+  const badges = [
+    { id: 1, unlocked: true, icon: '🎹' },
+    { id: 2, unlocked: true, icon: '⭐' },
+    { id: 3, unlocked: true, icon: '🎵' },
+    { id: 4, unlocked: false, icon: '🏆' },
+    { id: 5, unlocked: false, icon: '🎼' },
+    { id: 6, unlocked: false, icon: '💎' },
+  ]
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35]">
-      <div className="p-4 lg:p-8 max-w-[1800px] mx-auto">
-        <div className="mb-6 flex justify-end">
-          <GlassButton
-            variant="primary"
-            size="sm"
-            onClick={resetPositions}
-            className="whitespace-nowrap"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Réinitialiser
-          </GlassButton>
+      <div className="max-w-[1800px] mx-auto px-4 lg:px-8 py-8">
+        {/* Titre principal */}
+        <div className="mb-8">
+          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
+            Bonjour {userName}, prêt à jouer aujourd&apos;hui ?
+          </h1>
+          <p className="text-[#b4c6e7]/70">Reprends là où tu t&apos;es arrêté</p>
         </div>
 
-        <DndContext
-          sensors={sensors}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          onDragCancel={handleDragCancel}
-        >
-          <div
-            ref={gridRef}
-            className="grid gap-6"
-            style={{
-              gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
-              gridAutoRows: 'minmax(160px, auto)',
-            }}
-          >
-            {widgets.map((widget) => (
-              <DraggableWidget
-                key={widget.id}
-                id={widget.id}
-                x={widget.x}
-                y={widget.y}
-                w={widget.w}
-                h={widget.h}
-              >
-                {widget.component}
-              </DraggableWidget>
-            ))}
+        {/* Layout principal - 2 colonnes desktop, pile mobile */}
+        <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6 mb-6">
+
+          {/* COLONNE GAUCHE - Guide de progression */}
+          <div className="space-y-6">
+            <GlassCard variant="elevated" padding="lg" className="h-full">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-white mb-2">Guide de progression</h2>
+                <p className="text-[#b4c6e7]/70">Ton parcours de la semaine</p>
+              </div>
+
+              {/* Timeline horizontale par jour */}
+              <div className="space-y-6">
+                {weekTimeline.map((day, index) => (
+                  <div key={index} className="flex items-center gap-4">
+                    {/* Jour */}
+                    <div className="w-16 text-center">
+                      <div className="text-sm font-semibold text-white">{day.day}</div>
+                    </div>
+
+                    {/* Barre de séance */}
+                    <div className="flex-1">
+                      <div
+                        className={cn(
+                          'relative p-4 rounded-xl border transition-all',
+                          day.status === 'completed'
+                            ? 'bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border-emerald-500/30'
+                            : day.status === 'in_progress'
+                            ? 'bg-gradient-to-r from-[#667eea]/20 to-[#764ba2]/20 border-[#667eea]/30'
+                            : 'bg-white/5 border-white/10'
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            {/* Statut */}
+                            {day.status === 'completed' ? (
+                              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                            ) : day.status === 'in_progress' ? (
+                              <Circle className="w-5 h-5 text-[#667eea] fill-[#667eea]/20" />
+                            ) : (
+                              <Circle className="w-5 h-5 text-white/30" />
+                            )}
+
+                            {/* Infos */}
+                            <div>
+                              <div className="text-sm font-semibold text-white capitalize">
+                                {day.type}
+                              </div>
+                              <div className="text-xs text-[#b4c6e7]/60">
+                                Niveau {day.niveau} • {day.durée}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Bouton action */}
+                          {day.status === 'in_progress' && (
+                            <GlassButton variant="primary" size="sm">
+                              <Play className="w-4 h-4" />
+                              Continuer
+                            </GlassButton>
+                          )}
+                          {day.status === 'pending' && (
+                            <GlassButton variant="outline" size="sm">
+                              Démarrer
+                            </GlassButton>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
           </div>
 
-          <DragOverlay>
-            {activeId ? (
-              <div className="opacity-50">
-                {widgets.find((w) => w.id === activeId)?.component}
+          {/* COLONNE DROITE - Assistant + Objectif + Badges */}
+          <div className="space-y-6">
+
+            {/* Assistant Pianely */}
+            <GlassCard
+              variant="elevated"
+              padding="lg"
+              className="relative overflow-hidden bg-gradient-to-br from-[#667eea] to-[#764ba2]"
+            >
+              {/* Visuel abstrait en arrière-plan */}
+              <div className="absolute top-0 right-0 w-32 h-32 opacity-20">
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                  <path
+                    d="M 10 50 Q 30 30, 50 50 T 90 50"
+                    stroke="white"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <path
+                    d="M 10 60 Q 30 40, 50 60 T 90 60"
+                    stroke="white"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <path
+                    d="M 10 70 Q 30 50, 50 70 T 90 70"
+                    stroke="white"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
               </div>
-            ) : null}
-          </DragOverlay>
-        </DndContext>
+
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold text-white mb-6">
+                  Que veux-tu travailler aujourd&apos;hui ?
+                </h3>
+
+                {/* Boutons en grille 2x2 */}
+                <div className="grid grid-cols-2 gap-3">
+                  <GlassButton
+                    variant="outline"
+                    className="h-20 flex flex-col items-center justify-center gap-2 bg-white/10 border-white/20 hover:bg-white/20"
+                  >
+                    <Play className="w-6 h-6 text-white" />
+                    <span className="text-sm font-medium text-white">Séance du jour</span>
+                  </GlassButton>
+
+                  <GlassButton
+                    variant="outline"
+                    className="h-20 flex flex-col items-center justify-center gap-2 bg-white/10 border-white/20 hover:bg-white/20"
+                  >
+                    <RotateCcw className="w-6 h-6 text-white" />
+                    <span className="text-sm font-medium text-white">Révision</span>
+                  </GlassButton>
+
+                  <GlassButton
+                    variant="outline"
+                    className="h-20 flex flex-col items-center justify-center gap-2 bg-white/10 border-white/20 hover:bg-white/20"
+                  >
+                    <Music2 className="w-6 h-6 text-white" />
+                    <span className="text-sm font-medium text-white">Morceaux</span>
+                  </GlassButton>
+
+                  <GlassButton
+                    variant="outline"
+                    className="h-20 flex flex-col items-center justify-center gap-2 bg-white/10 border-white/20 hover:bg-white/20"
+                  >
+                    <TargetIcon className="w-6 h-6 text-white" />
+                    <span className="text-sm font-medium text-white">Technique</span>
+                  </GlassButton>
+                </div>
+              </div>
+            </GlassCard>
+
+            {/* Objectif */}
+            <GlassCard variant="elevated" padding="md">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Objectif</h3>
+                  <p className="text-xs text-[#b4c6e7]/70">Pratique quotidienne</p>
+                </div>
+              </div>
+
+              {/* Barre de progression */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#b4c6e7]/70">15 min / 20 min</span>
+                  <span className="text-white font-semibold">75%</span>
+                </div>
+                <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full transition-all"
+                    style={{ width: '75%' }}
+                  />
+                </div>
+              </div>
+
+              {/* Mini graphique */}
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <div className="flex items-end justify-between gap-1 h-16">
+                  {[60, 80, 100, 75, 90, 85, 75].map((height, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 bg-gradient-to-t from-[#667eea] to-[#764ba2] rounded-t opacity-60 hover:opacity-100 transition-opacity"
+                      style={{ height: `${height}%` }}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-between text-xs text-[#b4c6e7]/50 mt-2">
+                  <span>Lun</span>
+                  <span>Dim</span>
+                </div>
+              </div>
+            </GlassCard>
+
+            {/* Badges */}
+            <GlassCard variant="elevated" padding="md">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
+                  <Award className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Badges</h3>
+                  <p className="text-xs text-[#b4c6e7]/70">3 / 6 débloqués</p>
+                </div>
+              </div>
+
+              {/* Grille 2x3 de badges */}
+              <div className="grid grid-cols-3 gap-3">
+                {badges.map((badge) => (
+                  <div
+                    key={badge.id}
+                    className={cn(
+                      'aspect-square rounded-xl flex items-center justify-center text-3xl transition-all',
+                      badge.unlocked
+                        ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30'
+                        : 'bg-white/5 border border-white/10 grayscale opacity-40'
+                    )}
+                  >
+                    {badge.icon}
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+
+        {/* BANDE INFÉRIEURE - Morceaux en cours (pleine largeur) */}
+        <GlassCard variant="elevated" padding="lg">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-white mb-1">Morceaux en cours</h2>
+              <p className="text-sm text-[#b4c6e7]/70">Continue ton apprentissage</p>
+            </div>
+            <GlassButton variant="outline" size="sm">
+              Voir tous les morceaux
+            </GlassButton>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {morceaux.map((morceau, index) => (
+              <div
+                key={index}
+                className="p-5 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:from-white/15 hover:to-white/10 transition-all"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-white mb-1">{morceau.titre}</h3>
+                    <p className="text-xs text-[#b4c6e7]/70">Niveau {morceau.niveau}</p>
+                  </div>
+                  <Music2 className="w-5 h-5 text-[#667eea]" />
+                </div>
+
+                {/* Statut */}
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs font-medium text-white">
+                      {morceau.status === 'mastered' && 'Maîtrisé'}
+                      {morceau.status === 'in_progress' && 'En cours'}
+                      {morceau.status === 'not_started' && 'Non commencé'}
+                    </span>
+                    <span className="text-xs text-[#b4c6e7]/60">{morceau.progress}%</span>
+                  </div>
+                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div
+                      className={cn(
+                        'h-full rounded-full transition-all',
+                        morceau.status === 'mastered'
+                          ? 'bg-gradient-to-r from-emerald-500 to-emerald-600'
+                          : 'bg-gradient-to-r from-[#667eea] to-[#764ba2]'
+                      )}
+                      style={{ width: `${morceau.progress}%` }}
+                    />
+                  </div>
+                </div>
+
+                <GlassButton variant="primary" size="sm" className="w-full">
+                  {morceau.status === 'not_started' ? 'Commencer' : 'Continuer'}
+                </GlassButton>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
       </div>
     </main>
   )
 }
-
-const defaultWidgets: Widget[] = [
-  {
-    id: 'overview',
-    x: 0,
-    y: 0,
-    w: 8,
-    h: 2,
-    component: (
-      <GlassCard variant="elevated" padding="md" className="h-full">
-        <div className="mb-4 space-y-1">
-          <h2 className="text-lg font-bold text-white">Vue d&apos;ensemble</h2>
-          <p className="text-sm text-[#b4c6e7]/70">Ta progression cette semaine</p>
-        </div>
-
-        <div className="h-24 flex items-center justify-center rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 mb-4">
-          <div className="text-center">
-            <TrendingUp className="h-10 w-10 text-[#667eea] mx-auto mb-2" />
-            <p className="text-xs text-[#b4c6e7]/80">Graphique de progression</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-3">
-          <div className="text-center p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10">
-            <div className="text-2xl font-bold gradient-text mb-1">0h</div>
-            <div className="text-xs text-[#b4c6e7]/70">Pratique</div>
-          </div>
-          <div className="text-center p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10">
-            <div className="text-2xl font-bold gradient-text mb-1">0</div>
-            <div className="text-xs text-[#b4c6e7]/70">Leçons</div>
-          </div>
-          <div className="text-center p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10">
-            <div className="text-2xl font-bold gradient-text mb-1">0</div>
-            <div className="text-xs text-[#b4c6e7]/70">Série</div>
-          </div>
-        </div>
-      </GlassCard>
-    ),
-  },
-
-  {
-    id: 'level',
-    x: 8,
-    y: 0,
-    w: 2,
-    h: 1,
-    component: (
-      <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Target className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-white">Niveau</h3>
-            <p className="text-xs text-[#b4c6e7]/70">Débutant</p>
-          </div>
-        </div>
-        <div className="space-y-2 mb-3">
-          <div className="flex justify-between text-sm">
-            <span className="text-[#b4c6e7]/70">Progression</span>
-            <span className="text-white font-semibold">0%</span>
-          </div>
-          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full"
-              style={{ width: '0%' }}
-            />
-          </div>
-        </div>
-        <div className="text-center pt-3 border-t border-white/10">
-          <div className="text-3xl font-bold gradient-text mb-1">1</div>
-          <div className="text-xs text-[#b4c6e7]/70">Niveau actuel</div>
-        </div>
-      </GlassCard>
-    ),
-  },
-  {
-    id: 'practice',
-    x: 10,
-    y: 0,
-    w: 2,
-    h: 1,
-    component: (
-      <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Clock className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-white">Pratique</h3>
-            <p className="text-xs text-[#b4c6e7]/70">Objectif: 15 min</p>
-          </div>
-        </div>
-        <div className="text-center">
-          <div className="text-3xl font-bold gradient-text mb-1">0 min</div>
-          <p className="text-xs text-[#b4c6e7]/70">Aujourd&apos;hui</p>
-        </div>
-      </GlassCard>
-    ),
-  },
-
-  {
-    id: 'badges',
-    x: 8,
-    y: 1,
-    w: 4,
-    h: 1,
-    component: (
-      <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Award className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-white">Badges</h3>
-            <p className="text-xs text-[#b4c6e7]/70">0 débloqués</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div
-              key={i}
-              className="aspect-square rounded-lg bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center"
-            >
-              <Award className="w-4 h-4 text-[#6b7fa8]/50" />
-            </div>
-          ))}
-        </div>
-      </GlassCard>
-    ),
-  },
-
-  {
-    id: 'morceaux',
-    x: 8,
-    y: 2,
-    w: 4,
-    h: 1,
-    component: (
-      <GlassCard variant="elevated" padding="md" className="h-full flex flex-col justify-center">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
-            <Music className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-white">Morceaux</h3>
-            <p className="text-xs text-[#b4c6e7]/70">À apprendre</p>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="p-3 rounded-lg bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:from-white/15 hover:to-white/10 transition-all cursor-pointer">
-            <div className="font-semibold text-white text-sm mb-0.5">Au clair de la lune</div>
-            <div className="text-xs text-[#b4c6e7]/70">Niveau 1</div>
-          </div>
-          <div className="p-3 rounded-lg bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/5 opacity-50">
-            <div className="font-semibold text-white text-sm mb-0.5">Frère Jacques</div>
-            <div className="text-xs text-[#b4c6e7]/70">Niveau 1</div>
-          </div>
-        </div>
-      </GlassCard>
-    ),
-  },
-
-  {
-    id: 'parcours',
-    x: 0,
-    y: 3,
-    w: 12,
-    h: 2,
-    component: (
-      <GlassCard variant="elevated" padding="md" className="h-full overflow-auto">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-bold text-white">Parcours</h3>
-            <p className="text-sm text-[#b4c6e7]/70">5 niveaux progressifs</p>
-          </div>
-          <Link href="/parcours">
-            <GlassButton variant="outline" size="sm">
-              <BookOpen className="w-4 h-4" />
-              Voir tout
-            </GlassButton>
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          {[
-            { level: 1, name: 'Découverte', lessons: 7, locked: false },
-            { level: 2, name: 'Fondations', lessons: 8, locked: true },
-            { level: 3, name: 'Progression', lessons: 7, locked: true },
-          ].map((level) => (
-            <div
-              key={level.level}
-              className={cn(
-                'p-4 rounded-xl border transition-all flex flex-col items-center text-center',
-                level.locked
-                  ? 'bg-white/[0.02] border-white/5 opacity-50'
-                  : 'bg-gradient-to-br from-white/10 to-white/5 border-white/10 hover:from-white/15 hover:to-white/10 cursor-pointer'
-              )}
-            >
-              <div
-                className={cn(
-                  'w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg mb-3',
-                  level.locked
-                    ? 'bg-white/5 text-[#6b7fa8]'
-                    : 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white'
-                )}
-              >
-                {level.level}
-              </div>
-              <div className="text-base font-bold text-white mb-1">{level.name}</div>
-              <div className="text-xs text-[#b4c6e7]/70 mb-4">{level.lessons} leçons</div>
-              {!level.locked && (
-                <GlassButton variant="outline" size="sm" className="mt-auto">
-                  Commencer
-                </GlassButton>
-              )}
-            </div>
-          ))}
-        </div>
-      </GlassCard>
-    ),
-  },
-
-  {
-    id: 'cta',
-    x: 0,
-    y: 5,
-    w: 12,
-    h: 1,
-    component: (
-      <GlassCard
-        variant="elevated"
-        padding="md"
-        className="h-full text-center flex flex-col items-center justify-center bg-gradient-to-br from-white/10 to-white/5"
-      >
-        <h3 className="text-xl font-bold text-white mb-2">Prêt à commencer ?</h3>
-        <p className="text-sm text-[#b4c6e7]/70 mb-4 max-w-xl">
-          Crée ton compte gratuit et démarre ton apprentissage du piano
-        </p>
-        <Link href="/inscription" className="inline-block">
-          <GlassButton variant="primary" size="md">
-            Créer mon compte
-            <ArrowRight className="h-4 w-4" />
-          </GlassButton>
-        </Link>
-      </GlassCard>
-    ),
-  },
-]
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ')

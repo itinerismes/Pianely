@@ -16,7 +16,7 @@ export function HorizontalNav() {
   const pathname = usePathname()
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[9999] h-16 bg-[#0f1629] border-b border-white/10 shadow-2xl">
+    <header className="fixed top-0 left-0 right-0 z-[9999] h-16 bg-[#0f1629]/80 backdrop-blur-md border-b border-white/10 shadow-2xl">
       <div className="h-full max-w-[1920px] mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
