@@ -59,14 +59,14 @@ export default function HomePage() {
 
           {/* COLONNE GAUCHE - Guide de progression */}
           <div className="space-y-6">
-            <GlassCard variant="elevated" padding="lg" className="h-full">
+            <GlassCard variant="elevated" padding="lg" className="max-h-[500px] overflow-y-auto">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white mb-2">Guide de progression</h2>
                 <p className="text-[#b4c6e7]/70">Ton parcours de la semaine</p>
               </div>
 
               {/* Timeline horizontale par jour */}
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {weekTimeline.map((day, index) => (
                   <div key={index} className="flex items-center gap-4">
                     {/* Jour */}
@@ -130,7 +130,7 @@ export default function HomePage() {
           </div>
 
           {/* COLONNE DROITE - Assistant + Objectif + Badges */}
-          <div className="space-y-6">
+          <div className="flex flex-col gap-8">
 
             {/* Assistant Pianely */}
             <GlassCard
