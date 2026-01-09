@@ -4,7 +4,7 @@ import { Play, RotateCcw, Music2, Target } from 'lucide-react'
 
 export function AssistantWidget() {
   return (
-    <div className="relative bg-gradient-to-br from-blue-500 via-purple-500 to-purple-600 rounded-2xl shadow-lg p-3 h-full overflow-hidden flex flex-col hover:shadow-xl hover:scale-[1.01] hover:-translate-y-0.5 transition-all duration-300 cursor-move">
+    <div className="relative bg-gradient-to-br from-blue-500 via-purple-500 to-purple-600 rounded-2xl shadow-lg p-5 h-full overflow-hidden flex flex-col hover:shadow-xl hover:scale-[1.01] hover:-translate-y-0.5 transition-all duration-300 cursor-move">
       {/* Decorative wave background */}
       <div className="absolute inset-0 opacity-10">
         <svg className="w-full h-full" viewBox="0 0 200 200" preserveAspectRatio="none">

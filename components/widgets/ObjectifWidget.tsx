@@ -4,12 +4,12 @@ import { Clock } from 'lucide-react'
 
 export function ObjectifWidget() {
   return (
-    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-blue-200/50 p-3 h-full hover:shadow-xl hover:border-blue-300/70 hover:scale-[1.01] hover:-translate-y-0.5 transition-all duration-300 cursor-move">
-      <div className="flex items-center gap-2 mb-2">
+    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-blue-200/50 p-5 h-full hover:shadow-xl hover:border-blue-300/70 hover:scale-[1.01] hover:-translate-y-0.5 transition-all duration-300 cursor-move">
+      <div className="flex items-center gap-2 mb-3">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
           <Clock className="w-4 h-4 text-white" />
         </div>
-        <h3 className="text-sm font-semibold text-gray-800">Objectif quotidien</h3>
+        <h3 className="text-sm font-semibold text-gray-800 tracking-tight">Objectif quotidien</h3>
       </div>
 
       {/* Progress bar */}
