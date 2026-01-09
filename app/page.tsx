@@ -12,6 +12,8 @@ import {
   Circle,
   Clock,
   TrendingUp,
+  Lightbulb,
+  ArrowRight,
 } from 'lucide-react'
 
 export default function HomePage() {
@@ -57,8 +59,9 @@ export default function HomePage() {
         {/* Layout principal - 2 colonnes desktop, pile mobile */}
         <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6 mb-6">
 
-          {/* COLONNE GAUCHE - Guide de progression */}
-          <div className="space-y-6">
+          {/* COLONNE GAUCHE - Guide de progression + Widgets */}
+          <div className="flex flex-col gap-4">
+            {/* Guide de progression */}
             <GlassCard variant="elevated" padding="lg" className="max-h-[500px] overflow-y-auto">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white mb-2">Guide de progression</h2>
@@ -125,6 +128,57 @@ export default function HomePage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </GlassCard>
+
+            {/* Conseil du jour */}
+            <GlassCard variant="elevated" padding="md">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0">
+                  <Lightbulb className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white mb-2">Conseil du jour</h3>
+                  <p className="text-sm text-[#b4c6e7]/80 leading-relaxed">
+                    Pratique 15 minutes par jour plutôt qu&apos;une heure une fois par semaine.
+                    La régularité est la clé de la progression au piano.
+                  </p>
+                </div>
+              </div>
+            </GlassCard>
+
+            {/* Prochaine étape */}
+            <GlassCard variant="elevated" padding="md">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center">
+                  <ArrowRight className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Prochaine étape</h3>
+                  <p className="text-xs text-[#b4c6e7]/70">À débloquer</p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <h4 className="text-sm font-semibold text-white">Niveau 2 - Fondations</h4>
+                    <p className="text-xs text-[#b4c6e7]/70">8 leçons • Accords de base</p>
+                  </div>
+                  <div className="text-2xl">🔒</div>
+                </div>
+                <div className="mt-3">
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-[#b4c6e7]/70">Progression Niveau 1</span>
+                    <span className="text-white font-semibold">4/7</span>
+                  </div>
+                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#667eea] to-[#764ba2] rounded-full"
+                      style={{ width: '57%' }}
+                    />
+                  </div>
+                </div>
               </div>
             </GlassCard>
           </div>
