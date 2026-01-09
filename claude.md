@@ -55,31 +55,47 @@ Tables principales:
 
 ---
 
-## 🎨 DESIGN SYSTEM - GLASSMORPHISM
+## 🎨 DESIGN SYSTEM - MEDICAL DASHBOARD (Thème Clair)
 
 ### Principes visuels
-- **Style**: Glassmorphism moderne
-- **Effets**: `backdrop-filter: blur()`, transparence, dégradés
-- **Palette**: Tons sombres/bleutés ou argentiques
-- **Typographie**: Minimaliste, clean, lisible
-- **Coins**: Arrondis (border-radius généreux)
-- **Ombres**: Douces et subtiles
+- **Style**: Medical dashboard moderne avec accents violet
+- **Palette principale**:
+  - Fond: Gradient `from-violet-50 via-blue-50 to-purple-100`
+  - Cards: Blanc `bg-white` avec ombres violet-tinted
+  - Texte: `slate-900` (primaire), `slate-600` (secondaire)
+  - Accents: `violet-600` (actif), `amber-400`/`orange-500` (info)
+- **Typographie**: Sans-serif moderne, hiérarchie claire
+- **Coins**: `rounded-3xl` (très arrondis pour look moderne)
+- **Ombres**: Douces avec teinte violet `shadow-lg shadow-violet-500/5`
+
+### Variables CSS (globals.css)
+```css
+--light-bg-start: #f5f3ff;        /* violet-50 */
+--light-bg-mid: #eff6ff;          /* blue-50 */
+--light-bg-end: #fae8ff;          /* purple-100 */
+--light-card-bg: #ffffff;
+--light-card-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
+--light-text-primary: #1e293b;    /* slate-900 */
+--light-text-secondary: #64748b;  /* slate-500 */
+--light-accent-violet: #7c3aed;   /* violet-600 */
+--light-accent-amber: #f59e0b;    /* amber-400 */
+```
 
 ### Règles d'accessibilité
-- ✅ Glass effect sur navigation, cards, modales
-- ✅ Fond plein pour textes longs (lisibilité)
-- ✅ Contraste WCAG AA minimum
+- ✅ Contraste WCAG AA minimum (texte foncé sur fond clair)
 - ✅ Focus visible sur tous les éléments interactifs
-- ✅ Fallback si backdrop-filter non supporté
+- ✅ Support clavier complet (Space/Enter + Arrow keys)
+- ✅ ARIA labels sur drag handles et actions
+- ✅ Animations respectueuses (300ms ease)
 
 ### Composants de base
 ```
-- GlassCard (conteneur avec effet verre)
-- GlassButton (CTA avec effet)
-- GlassNavbar (navigation translucide)
-- GlassModal (modales avec blur)
-- ProgressBar (suivi visuel progression)
-- Badge (achievements/jalons)
+- GlassCard → Refactorisé en carte blanche avec ombres
+- GlassButton → 5 variantes (primary, secondary, accent, outline, ghost)
+- HorizontalNav → Barre sticky en haut (bg-[#0f1629]/95)
+- DashboardGrid → Grille 12 colonnes avec drag & drop
+- DraggableWidget → Wrapper pour widgets repositionnables
+- WidgetDragHandle → Poignée visible au hover
 ```
 
 ---
@@ -206,6 +222,92 @@ Structure:
 
 ---
 
+## 🎛️ SYSTÈME DE DASHBOARD DRAG & DROP
+
+### Architecture
+Le dashboard utilise un système de grille 12 colonnes avec widgets repositionnables via drag & drop.
+
+#### Technologies utilisées
+- **@dnd-kit/core** v6.3.1 - Système de drag & drop moderne
+- **@dnd-kit/sortable** v10.0.0 - Stratégies de tri
+- **@dnd-kit/utilities** v3.2.2 - Utilitaires CSS
+- **localStorage** - Persistence du layout personnalisé
+
+### Configuration de la grille
+```typescript
+GRID_CONFIG = {
+  columns: 12,           // Grille 12 colonnes
+  rowHeight: 220px,      // Hauteur fixe par ligne
+  gap: 24px,             // Espacement (gap-6)
+}
+```
+
+### Widgets disponibles (5)
+1. **GuideProgressionWidget** (8×2) - Timeline hebdomadaire des séances
+2. **AssistantPianelyWidget** (4×2) - Grille 2×2 d'actions rapides (gradient violet)
+3. **ObjectifQuotidienWidget** (4×1) - Objectif quotidien + mini graphique
+4. **BadgesWidget** (4×2) - Grille 3×2 de badges débloqués/verrouillés
+5. **MorceauxEnCoursWidget** (8×2) - Liste des morceaux en cours
+
+### Layout par défaut
+```typescript
+DEFAULT_LAYOUT = [
+  { id: 'guide-progression', x: 0, y: 0, w: 8, h: 2 },
+  { id: 'assistant-pianely', x: 8, y: 0, w: 4, h: 2 },
+  { id: 'objectif-quotidien', x: 8, y: 2, w: 4, h: 1 },
+  { id: 'badges', x: 8, y: 3, w: 4, h: 2 },
+  { id: 'morceaux-en-cours', x: 0, y: 2, w: 8, h: 2 },
+]
+```
+
+### Fonctionnalités drag & drop
+- **Activation**: Hover sur widget → poignée (⋮⋮) apparaît en haut à droite
+- **Déplacement**: Cliquer-glisser la poignée pour repositionner
+- **Collision detection**: Algorithme de cascade (push down)
+- **Compaction automatique**: Suppression des espaces verticaux inutiles
+- **Persistence**: Layout sauvegardé dans localStorage (debounce 300ms)
+- **Reset**: Bouton "Reset Layout" pour revenir au défaut
+
+### Responsive
+- **Desktop (>1024px)**: Grille 12 colonnes, drag activé
+- **Tablet (641-1024px)**: Grille 8 colonnes adaptée
+- **Mobile (<640px)**: Stack vertical, drag désactivé
+
+### Structure des fichiers
+```
+components/dashboard/
+├── DashboardGrid.tsx          # Container DndContext
+├── DraggableWidget.tsx        # Wrapper useSortable
+├── WidgetDragHandle.tsx       # Poignée GripVertical
+└── widgets/
+    ├── GuideProgressionWidget.tsx
+    ├── AssistantPianelyWidget.tsx
+    ├── ObjectifQuotidienWidget.tsx
+    ├── BadgesWidget.tsx
+    └── MorceauxEnCoursWidget.tsx
+
+hooks/
+├── useDashboardLayout.ts      # State + localStorage
+└── useMediaQuery.ts           # Breakpoints responsive
+
+lib/dashboard/
+├── constants.ts               # Config grille + layouts
+├── grid-utils.ts              # Calculs position/collision
+└── collision.ts               # Algorithme cascade
+
+types/
+└── dashboard.ts               # Interfaces TypeScript
+```
+
+### UX/UI du drag & drop
+- Poignée visible uniquement au **hover** (opacity-0 → opacity-100)
+- Cursor **grab** sur poignée, **grabbing** pendant drag
+- Widget en cours de drag : **opacity 50%**, z-index élevé
+- Animations fluides : **transition-all duration-300 ease**
+- Feedback visuel clair : bordures, ombres
+
+---
+
 ## 💰 MONÉTISATION & SEO
 
 ### Page Boutique/Revendeurs
@@ -283,9 +385,9 @@ Structure:
 
 ## 📊 SUIVI DES AVANCÉES
 
-### Sprint actuel: MVP - Phase 1
+### Sprint actuel: MVP - Phase 1 + Dashboard refactoring
 **Date de début**: 2026-01-07
-**Dernière mise à jour**: 2026-01-07 18:45
+**Dernière mise à jour**: 2026-01-09
 
 #### ✅ Fait (Phase 1 - Setup complet)
 - [x] Documentation projet (ce fichier)
@@ -298,6 +400,18 @@ Structure:
 - [x] Variables d'environnement configurées
 - [x] Build production testé et validé
 
+#### ✅ Fait (Refonte dashboard - 2026-01-09)
+- [x] **Thème clair médical**: Variables CSS, gradient violet-50/blue-50/purple-100
+- [x] **GlassCard refactoré**: Blanc avec ombres violet-tinted, rounded-3xl
+- [x] **GlassButton refactoré**: 5 variantes (primary, secondary, accent, outline, ghost)
+- [x] **Types TypeScript**: WidgetLayout, TimelineDay, Morceau, Badge
+- [x] **5 widgets extraits**: GuideProgression, AssistantPianely, ObjectifQuotidien, Badges, MorceauxEnCours
+- [x] **Système de grille**: constants.ts, grid-utils.ts, collision.ts
+- [x] **Hooks custom**: useDashboardLayout (localStorage), useMediaQuery (responsive)
+- [x] **Drag & drop**: DashboardGrid, DraggableWidget, WidgetDragHandle avec @dnd-kit
+- [x] **Page.tsx refactorisée**: Dynamic import, skeleton loading, bouton reset
+- [x] **Build validé**: Aucune erreur TypeScript ou build
+
 #### 🚧 En cours
 - Aucune tâche en cours
 
@@ -305,9 +419,9 @@ Structure:
 - [ ] Pages d'authentification (inscription/connexion)
 - [ ] Page parcours avec affichage des 5 niveaux
 - [ ] Système de routing pour les leçons
-- [ ] Dashboard utilisateur avec progression
 - [ ] Auth flow complet avec Supabase Auth
 - [ ] Première leçon prototype interactive
+- [ ] Tests utilisateurs du système drag & drop
 
 ---
 
@@ -339,12 +453,16 @@ Structure:
 - [x] CI/CD pipeline (via Vercel)
 
 ### Dépendances validées
-- ✅ Next.js 14+ avec TypeScript
-- ✅ Tailwind CSS (styling glassmorphism)
+- ✅ Next.js 16.1.1 avec TypeScript
+- ✅ React 19.2.3
+- ✅ Tailwind CSS 4 (styling medical dashboard)
 - ✅ Supabase client
 - ✅ Framer Motion (animations)
 - ✅ React Hook Form + Zod (formulaires)
 - ✅ Lucide React (icônes)
+- ✅ @dnd-kit/core v6.3.1 (drag & drop)
+- ✅ @dnd-kit/sortable v10.0.0 (sorting)
+- ✅ @dnd-kit/utilities v3.2.2 (CSS utils)
 
 ---
 
@@ -376,5 +494,5 @@ Structure:
 
 ---
 
-**Dernière mise à jour**: 2026-01-07
-**Version**: 0.1.0 (MVP en cours)
+**Dernière mise à jour**: 2026-01-09
+**Version**: 0.2.0 (Dashboard drag & drop complet)

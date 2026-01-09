@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 
 interface GlassButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'accent' | 'outline' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
   fullWidth?: boolean
 }
@@ -19,10 +19,11 @@ export function GlassButton({
   const baseStyles = 'rounded-lg font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2'
 
   const variantStyles = {
-    primary: 'bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 hover:scale-[1.02]',
-    secondary: 'glass hover:bg-white/10 text-white',
-    outline: 'border border-white/20 hover:border-white/40 hover:bg-white/5 text-white',
-    ghost: 'hover:bg-white/5 text-[#b4c6e7] hover:text-white'
+    primary: 'bg-violet-600 hover:bg-violet-700 text-white shadow-md hover:shadow-lg transition-all',
+    secondary: 'bg-white border-2 border-violet-200 text-violet-700 hover:bg-violet-50',
+    accent: 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md hover:shadow-lg hover:scale-[1.02]',
+    outline: 'border-2 border-violet-300 hover:border-violet-400 hover:bg-violet-50 text-violet-700',
+    ghost: 'hover:bg-violet-50 text-slate-600 hover:text-violet-700'
   }
 
   const sizeStyles = {

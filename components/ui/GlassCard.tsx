@@ -14,12 +14,12 @@ export function GlassCard({
   variant = 'default',
   padding = 'lg'
 }: GlassCardProps) {
-  const baseStyles = 'glass rounded-xl'
+  const baseStyles = 'bg-white rounded-3xl shadow-lg shadow-violet-500/5 border border-violet-100/20'
 
   const variantStyles = {
     default: '',
-    hover: 'hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer group',
-    elevated: 'glass-strong'
+    hover: 'hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 cursor-pointer group',
+    elevated: 'shadow-xl shadow-violet-500/8 border-violet-100/30'
   }
 
   const paddingStyles = {

@@ -1,7 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  /* Refined color palette */
+  /* Light Theme - Medical Dashboard Style */
+  --light-bg-start: #f5f3ff;        /* violet-50 */
+  --light-bg-mid: #eff6ff;          /* blue-50 */
+  --light-bg-end: #fae8ff;          /* purple-100 */
+  --light-card-bg: #ffffff;
+  --light-card-border: rgba(139, 92, 246, 0.1);  /* violet-100/20 */
+  --light-card-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
+  --light-card-shadow-hover: 0 8px 32px rgba(139, 92, 246, 0.12);
+  --light-text-primary: #1e293b;    /* slate-900 */
+  --light-text-secondary: #64748b;  /* slate-500 */
+  --light-text-muted: #94a3b8;      /* slate-400 */
+  --light-accent-violet: #7c3aed;   /* violet-600 */
+  --light-accent-violet-hover: #6d28d9; /* violet-700 */
+  --light-accent-amber: #f59e0b;    /* amber-400 */
+  --light-accent-orange: #f97316;   /* orange-500 */
+
+  /* Dark Theme (Legacy - conservé pour compatibilité) */
   --bg-dark: #0a0e1a;
   --bg-surface: #12192e;
   --bg-elevated: #1a2642;
