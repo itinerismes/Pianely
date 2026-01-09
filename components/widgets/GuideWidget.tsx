@@ -48,12 +48,12 @@ export function GuideWidget() {
 
             {/* Action button */}
             {item.status === 'in_progress' && (
-              <button className="text-xs font-medium text-purple-600 hover:bg-purple-50 hover:text-purple-700 px-3 py-1 rounded-lg transition-colors">
+              <button className="px-4 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-purple-600 bg-purple-50 hover:bg-purple-100 hover:text-purple-700 border border-purple-200/50 hover:border-purple-300 hover:shadow-sm active:scale-95">
                 Continuer
               </button>
             )}
             {item.status === 'pending' && (
-              <button className="text-xs font-medium text-gray-600 hover:text-purple-600 px-3 py-1 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="px-4 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-gray-600 bg-gray-50 hover:bg-purple-50 hover:text-purple-600 border border-gray-200/50 hover:border-purple-200 hover:shadow-sm active:scale-95">
                 Démarrer
               </button>
             )}

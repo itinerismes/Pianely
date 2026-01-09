@@ -18,10 +18,10 @@ export function ObjectifWidget() {
           <span className="text-gray-600">15 min / 20 min</span>
           <span className="text-gray-900 font-semibold">75%</span>
         </div>
-        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-purple-500 rounded-full"
-            style={{ width: '75%' }}
+            className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full shadow-sm"
+            style={{ width: '75%', boxShadow: '0 0 8px rgba(168, 85, 247, 0.4)' }}
           />
         </div>
       </div>

@@ -26,19 +26,19 @@ export function MorceauxWidget() {
                 <span className="text-xs font-semibold text-gray-900">{morceau.titre}</span>
                 <span className="text-[10px] text-gray-500">{morceau.progress}%</span>
               </div>
-              <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full ${
+                  className={`h-full rounded-full shadow-sm ${
                     morceau.status === 'mastered'
-                      ? 'bg-green-500'
-                      : 'bg-purple-500'
+                      ? 'bg-gradient-to-r from-green-400 to-emerald-500'
+                      : 'bg-gradient-to-r from-purple-500 to-blue-500'
                   }`}
                   style={{ width: `${morceau.progress}%` }}
                 />
               </div>
             </div>
 
-            <button className="text-xs font-medium text-purple-600 hover:bg-purple-50 hover:text-purple-700 px-3 py-1 rounded-lg transition-colors flex-shrink-0">
+            <button className="px-4 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-purple-600 bg-purple-50 hover:bg-purple-100 hover:text-purple-700 border border-purple-200/50 hover:border-purple-300 hover:shadow-sm active:scale-95 flex-shrink-0">
               {morceau.status === 'not_started' ? 'Commencer' : 'Continuer'}
             </button>
           </div>
