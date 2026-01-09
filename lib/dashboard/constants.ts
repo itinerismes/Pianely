@@ -2,8 +2,8 @@ import { WidgetLayout } from '@/types/dashboard'
 
 export const GRID_CONFIG = {
   columns: 12,
-  rowHeight: 220, // px
-  gap: 24,        // px (Tailwind gap-6 = 1.5rem = 24px)
+  rowHeight: 200, // px
+  gap: 16,        // px (Tailwind gap-4 = 1rem = 16px)
 }
 
 export const DEFAULT_LAYOUT: WidgetLayout[] = [

@@ -76,7 +76,7 @@ export function DashboardGrid({ weekTimeline, morceaux, badges }: DashboardGridP
   // Mobile layout: Stack widgets vertically, no drag
   if (isMobile) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
         {layout
           .sort((a, b) => a.y - b.y || a.x - b.x)
           .map((widget) => (
@@ -94,7 +94,7 @@ export function DashboardGrid({ weekTimeline, morceaux, badges }: DashboardGridP
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={layout.map((w) => w.id)} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-12 gap-6 auto-rows-[220px]">
+        <div className="grid grid-cols-12 gap-4 auto-rows-[200px]">
           {layout.map((widget) => (
             <DraggableWidget key={widget.id} id={widget.id} layout={widget}>
               {renderWidget(widget.id)}

@@ -13,8 +13,8 @@ export function AssistantPianelyWidget({ className }: AssistantPianelyWidgetProp
   return (
     <GlassCard
       variant="elevated"
-      padding="lg"
-      className={cn('relative overflow-hidden bg-gradient-to-br from-violet-600 to-purple-600', className)}
+      padding="md"
+      className={cn('relative overflow-hidden bg-gradient-to-br from-blue-500 via-violet-500 to-purple-600', className)}
     >
       {/* Visuel abstrait en arrière-plan */}
       <div className="absolute top-0 right-0 w-32 h-32 opacity-20">
@@ -41,7 +41,7 @@ export function AssistantPianelyWidget({ className }: AssistantPianelyWidgetProp
       </div>
 
       <div className="relative z-10">
-        <h3 className="text-xl font-bold text-white mb-5">
+        <h3 className="text-lg font-semibold text-white mb-4">
           Que veux-tu travailler ?
         </h3>
 

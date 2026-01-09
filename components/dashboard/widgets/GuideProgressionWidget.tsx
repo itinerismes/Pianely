@@ -13,9 +13,9 @@ interface GuideProgressionWidgetProps {
 
 export function GuideProgressionWidget({ weekTimeline, className }: GuideProgressionWidgetProps) {
   return (
-    <GlassCard variant="elevated" padding="lg" className={cn('max-h-[500px] overflow-y-auto', className)}>
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">Guide de progression</h2>
+    <GlassCard variant="elevated" padding="md" className={cn('max-h-[500px] overflow-y-auto', className)}>
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">Guide de progression</h2>
       </div>
 
       {/* Timeline horizontale par jour */}
@@ -24,7 +24,7 @@ export function GuideProgressionWidget({ weekTimeline, className }: GuideProgres
           <div key={index} className="flex items-center gap-4">
             {/* Jour */}
             <div className="w-12 text-center">
-              <div className="text-xs font-semibold text-slate-900">{day.day}</div>
+              <div className="text-xs font-medium text-gray-600">{day.day}</div>
             </div>
 
             {/* Barre de séance */}
@@ -51,7 +51,7 @@ export function GuideProgressionWidget({ weekTimeline, className }: GuideProgres
                     )}
 
                     {/* Infos */}
-                    <div className="text-sm font-semibold text-slate-900 capitalize">
+                    <div className="text-sm font-medium text-gray-900 capitalize">
                       {day.type}
                     </div>
                   </div>
