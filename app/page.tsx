@@ -83,17 +83,18 @@ export default function HomePage() {
         </div>
 
         {/* Grid Layout */}
-        <ResponsiveGridLayout
-          className="layout"
-          layouts={{ lg: layout }}
-          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-          cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
-          rowHeight={100}
-          width={1400}
-          margin={[16, 16]}
-          onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
-          {...({ draggableHandle: ".drag-handle" } as any)}
-        >
+        <div className="mt-4 mb-6">
+          <ResponsiveGridLayout
+            className="layout"
+            layouts={{ lg: layout }}
+            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+            cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
+            rowHeight={100}
+            width={1400}
+            margin={[16, 16]}
+            onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
+            {...({ draggableHandle: ".drag-handle" } as any)}
+          >
           <div key="guide">
             <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
               <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,6 +149,7 @@ export default function HomePage() {
             <BadgesWidget />
           </div>
         </ResponsiveGridLayout>
+        </div>
       </div>
     </main>
   )
