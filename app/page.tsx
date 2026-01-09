@@ -47,19 +47,19 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35]">
-      <div className="max-w-[1800px] mx-auto px-6 lg:px-12 py-10">
+      <div className="max-w-[1400px] mx-auto px-8 py-6">
         {/* Titre principal */}
-        <div className="mb-10">
+        <div className="mb-8">
           <h1 className="text-3xl lg:text-4xl font-bold text-white">
             Bonjour {userName}, prêt à jouer aujourd&apos;hui ?
           </h1>
         </div>
 
-        {/* Layout principal - 2 colonnes desktop, pile mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-8 mb-8">
+        {/* Layout principal - Grid 12 colonnes desktop, pile mobile */}
+        <div className="grid grid-cols-12 gap-8">
 
-          {/* COLONNE GAUCHE - Guide de progression + Aujourd'hui */}
-          <div className="flex flex-col gap-8">
+          {/* COLONNE GAUCHE - Guide + Aujourd'hui + Morceaux */}
+          <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
             {/* Guide de progression */}
             <GlassCard variant="elevated" padding="lg" className="max-h-[500px] overflow-y-auto">
               <div className="mb-6">
@@ -139,10 +139,50 @@ export default function HomePage() {
                 <span className="text-xs text-[#b4c6e7]/70">4/7 leçons</span>
               </div>
             </GlassCard>
+
+            {/* Morceaux en cours */}
+            <GlassCard variant="elevated" padding="md">
+              <div className="mb-4">
+                <h2 className="text-lg font-bold text-white">Morceaux en cours</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {morceaux.map((morceau, index) => (
+                  <div
+                    key={index}
+                    className="p-4 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:from-white/15 hover:to-white/10 transition-all"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold text-white text-sm">{morceau.titre}</h3>
+                      <Music2 className="w-4 h-4 text-[#667eea]" />
+                    </div>
+
+                    {/* Barre de progression compacte */}
+                    <div className="mb-3">
+                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div
+                          className={cn(
+                            'h-full rounded-full transition-all',
+                            morceau.status === 'mastered'
+                              ? 'bg-gradient-to-r from-emerald-500 to-emerald-600'
+                              : 'bg-gradient-to-r from-[#667eea] to-[#764ba2]'
+                          )}
+                          style={{ width: `${morceau.progress}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <GlassButton variant="primary" size="sm" className="w-full">
+                      {morceau.status === 'not_started' ? 'Commencer' : 'Continuer'}
+                    </GlassButton>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
           </div>
 
           {/* COLONNE DROITE - Assistant + Objectif + Badges */}
-          <div className="flex flex-col gap-8">
+          <div className="col-span-12 lg:col-span-4 flex flex-col gap-8">
 
             {/* Assistant Pianely */}
             <GlassCard
@@ -285,46 +325,6 @@ export default function HomePage() {
             </GlassCard>
           </div>
         </div>
-
-        {/* BANDE INFÉRIEURE - Morceaux en cours (pleine largeur) */}
-        <GlassCard variant="elevated" padding="md">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-white">Morceaux en cours</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {morceaux.map((morceau, index) => (
-              <div
-                key={index}
-                className="p-4 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:from-white/15 hover:to-white/10 transition-all"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-white text-sm">{morceau.titre}</h3>
-                  <Music2 className="w-4 h-4 text-[#667eea]" />
-                </div>
-
-                {/* Barre de progression compacte */}
-                <div className="mb-3">
-                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                    <div
-                      className={cn(
-                        'h-full rounded-full transition-all',
-                        morceau.status === 'mastered'
-                          ? 'bg-gradient-to-r from-emerald-500 to-emerald-600'
-                          : 'bg-gradient-to-r from-[#667eea] to-[#764ba2]'
-                      )}
-                      style={{ width: `${morceau.progress}%` }}
-                    />
-                  </div>
-                </div>
-
-                <GlassButton variant="primary" size="sm" className="w-full">
-                  {morceau.status === 'not_started' ? 'Commencer' : 'Continuer'}
-                </GlassButton>
-              </div>
-            ))}
-          </div>
-        </GlassCard>
       </div>
     </main>
   )
