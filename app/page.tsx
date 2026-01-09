@@ -1,57 +1,72 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { useState, useEffect } from 'react'
+import { Responsive as ResponsiveGridLayout } from 'react-grid-layout'
+import 'react-grid-layout/css/styles.css'
 import { RotateCcw } from 'lucide-react'
-import { DashboardSkeleton } from '@/components/ui/DashboardSkeleton'
-import { useDashboardLayout } from '@/hooks/useDashboardLayout'
 
-// Dynamic import for client-only rendering (localStorage)
-const DashboardGrid = dynamic(
-  () => import('@/components/dashboard/DashboardGrid').then((mod) => ({ default: mod.DashboardGrid })),
-  {
-    ssr: false,
-    loading: () => <DashboardSkeleton />,
-  }
-)
+// Widgets
+import { GuideWidget } from '@/components/widgets/GuideWidget'
+import { AssistantWidget } from '@/components/widgets/AssistantWidget'
+import { AujourdhuiWidget } from '@/components/widgets/AujourdhuiWidget'
+import { ObjectifWidget } from '@/components/widgets/ObjectifWidget'
+import { MorceauxWidget } from '@/components/widgets/MorceauxWidget'
+import { BadgesWidget } from '@/components/widgets/BadgesWidget'
+
+const defaultLayout = [
+  { i: 'guide', x: 0, y: 0, w: 8, h: 2 },
+  { i: 'assistant', x: 8, y: 0, w: 4, h: 2 },
+  { i: 'aujourdhui', x: 0, y: 2, w: 4, h: 1 },
+  { i: 'objectif', x: 4, y: 2, w: 4, h: 1 },
+  { i: 'morceaux', x: 0, y: 3, w: 8, h: 1 },
+  { i: 'badges', x: 8, y: 2, w: 4, h: 2 },
+]
 
 export default function HomePage() {
-  const userName = "Michel"
-  const { resetLayout } = useDashboardLayout()
+  const [layout, setLayout] = useState(defaultLayout)
+  const [mounted, setMounted] = useState(false)
 
-  // Données pour la timeline de la semaine
-  const weekTimeline = [
-    { day: 'Lun', type: 'découverte' as const, niveau: 1, durée: '15min', status: 'completed' as const },
-    { day: 'Mar', type: 'technique' as const, niveau: 1, durée: '20min', status: 'completed' as const },
-    { day: 'Mer', type: 'morceau' as const, niveau: 1, durée: '25min', status: 'in_progress' as const },
-    { day: 'Jeu', type: 'découverte' as const, niveau: 2, durée: '15min', status: 'pending' as const },
-    { day: 'Ven', type: 'technique' as const, niveau: 2, durée: '20min', status: 'pending' as const },
-    { day: 'Sam', type: 'morceau' as const, niveau: 2, durée: '30min', status: 'pending' as const },
-    { day: 'Dim', type: 'révision' as const, niveau: 1, durée: '20min', status: 'pending' as const },
-  ]
+  // Load layout from localStorage
+  useEffect(() => {
+    setMounted(true)
+    const savedLayout = localStorage.getItem('pianely-layout')
+    if (savedLayout) {
+      try {
+        setLayout(JSON.parse(savedLayout))
+      } catch (e) {
+        console.error('Failed to parse saved layout', e)
+      }
+    }
+  }, [])
 
-  const morceaux = [
-    { titre: 'Au clair de la lune', niveau: 1, status: 'in_progress' as const, progress: 65 },
-    { titre: 'Frère Jacques', niveau: 1, status: 'not_started' as const, progress: 0 },
-    { titre: 'Joyeux anniversaire', niveau: 2, status: 'mastered' as const, progress: 100 },
-  ]
+  const handleLayoutChange = (newLayout: any) => {
+    setLayout(newLayout)
+    localStorage.setItem('pianely-layout', JSON.stringify(newLayout))
+  }
 
-  const badges = [
-    { id: 1, unlocked: true, icon: '🎹' },
-    { id: 2, unlocked: true, icon: '⭐' },
-    { id: 3, unlocked: true, icon: '🎵' },
-    { id: 4, unlocked: false, icon: '🏆' },
-    { id: 5, unlocked: false, icon: '🎼' },
-    { id: 6, unlocked: false, icon: '💎' },
-  ]
+  const handleReset = () => {
+    setLayout(defaultLayout)
+    localStorage.removeItem('pianely-layout')
+  }
+
+  if (!mounted) {
+    return (
+      <main className="min-h-screen bg-gray-50 pt-6">
+        <div className="max-w-[1400px] mx-auto px-6 py-6">
+          <div className="animate-pulse">Chargement...</div>
+        </div>
+      </main>
+    )
+  }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 pt-6">
+    <main className="min-h-screen bg-gray-50 pt-6">
       <div className="max-w-[1400px] mx-auto px-6 py-6">
-        {/* Header avec titre et bouton reset */}
+        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">
-              Bonjour {userName}, prêt à jouer aujourd&apos;hui ?
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Bonjour Michel, prêt à jouer aujourd&apos;hui ?
             </h1>
             <p className="text-sm text-gray-500">
               Personnalise ton dashboard en déplaçant les widgets
@@ -59,21 +74,80 @@ export default function HomePage() {
           </div>
 
           <button
-            onClick={resetLayout}
+            onClick={handleReset}
             className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1 transition-colors"
-            aria-label="Reset dashboard layout"
           >
             <RotateCcw className="w-4 h-4" />
             <span>Reset Layout</span>
           </button>
         </div>
 
-        {/* Dashboard Grid avec drag & drop */}
-        <DashboardGrid
-          weekTimeline={weekTimeline}
-          morceaux={morceaux}
-          badges={badges}
-        />
+        {/* Grid Layout */}
+        <ResponsiveGridLayout
+          className="layout"
+          layouts={{ lg: layout }}
+          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+          cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
+          rowHeight={140}
+          width={1400}
+          margin={[16, 16]}
+          onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
+          {...({ draggableHandle: ".drag-handle" } as any)}
+        >
+          <div key="guide">
+            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+              </svg>
+            </div>
+            <GuideWidget />
+          </div>
+
+          <div key="assistant">
+            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/20 hover:bg-white/30 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+              </svg>
+            </div>
+            <AssistantWidget />
+          </div>
+
+          <div key="aujourdhui">
+            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+              </svg>
+            </div>
+            <AujourdhuiWidget />
+          </div>
+
+          <div key="objectif">
+            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+              </svg>
+            </div>
+            <ObjectifWidget />
+          </div>
+
+          <div key="morceaux">
+            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+              </svg>
+            </div>
+            <MorceauxWidget />
+          </div>
+
+          <div key="badges">
+            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+              </svg>
+            </div>
+            <BadgesWidget />
+          </div>
+        </ResponsiveGridLayout>
       </div>
     </main>
   )
