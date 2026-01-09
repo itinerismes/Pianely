@@ -60,7 +60,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-6">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 pt-6">
       <div className="max-w-[1400px] mx-auto px-6 py-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -75,10 +75,10 @@ export default function HomePage() {
 
           <button
             onClick={handleReset}
-            className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1 transition-colors ml-auto"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/80 backdrop-blur-md border border-blue-200/50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow ml-auto"
           >
-            <RotateCcw className="w-4 h-4" />
-            <span>Reset Layout</span>
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Réinitialiser</span>
           </button>
         </div>
 

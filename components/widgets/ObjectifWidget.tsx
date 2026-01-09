@@ -4,7 +4,7 @@ import { Clock } from 'lucide-react'
 
 export function ObjectifWidget() {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 h-full hover:shadow-md transition-all duration-200">
+    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-blue-200/50 p-3 h-full hover:shadow-xl hover:border-blue-300/70 transition-all duration-300">
       <div className="flex items-center gap-2 mb-2">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
           <Clock className="w-4 h-4 text-white" />

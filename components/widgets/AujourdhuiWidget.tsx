@@ -4,8 +4,8 @@ import { ArrowRight } from 'lucide-react'
 
 export function AujourdhuiWidget() {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 h-full hover:shadow-md transition-all duration-200">
-      <h3 className="text-sm font-semibold text-gray-800 mb-2">Aujourd&apos;hui</h3>
+    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-blue-200/50 p-3 h-full hover:shadow-xl hover:border-blue-300/70 transition-all duration-300">
+      <h3 className="text-sm font-semibold text-gray-800 tracking-tight mb-2">Aujourd&apos;hui</h3>
 
       <p className="text-xs text-gray-600 mb-2">
         Pratique régulière : la clé de ta progression
