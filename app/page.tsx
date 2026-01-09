@@ -14,12 +14,12 @@ import { MorceauxWidget } from '@/components/widgets/MorceauxWidget'
 import { BadgesWidget } from '@/components/widgets/BadgesWidget'
 
 const defaultLayout = [
-  { i: 'guide', x: 0, y: 0, w: 6, h: 4, static: true },
-  { i: 'aujourdhui', x: 0, y: 4, w: 3, h: 2, static: true },
-  { i: 'morceaux', x: 0, y: 6, w: 6, h: 2, static: true },
-  { i: 'assistant', x: 6, y: 0, w: 4, h: 2, static: true },
-  { i: 'badges', x: 6, y: 2, w: 4, h: 2, static: true },
-  { i: 'objectif', x: 6, y: 4, w: 4, h: 2, static: true },
+  { i: 'guide', x: 0, y: 0, w: 6, h: 4 },
+  { i: 'aujourdhui', x: 0, y: 4, w: 3, h: 2 },
+  { i: 'morceaux', x: 0, y: 6, w: 6, h: 2 },
+  { i: 'assistant', x: 6, y: 0, w: 4, h: 2 },
+  { i: 'badges', x: 6, y: 2, w: 4, h: 2 },
+  { i: 'objectif', x: 6, y: 4, w: 4, h: 2 },
 ]
 
 export default function HomePage() {
@@ -29,7 +29,7 @@ export default function HomePage() {
   // Load layout from localStorage
   useEffect(() => {
     setMounted(true)
-    const savedLayout = localStorage.getItem('pianely-layout')
+    const savedLayout = localStorage.getItem('dashboardLayout')
     if (savedLayout) {
       try {
         setLayout(JSON.parse(savedLayout))
@@ -41,12 +41,12 @@ export default function HomePage() {
 
   const handleLayoutChange = (newLayout: any) => {
     setLayout(newLayout)
-    localStorage.setItem('pianely-layout', JSON.stringify(newLayout))
+    localStorage.setItem('dashboardLayout', JSON.stringify(newLayout))
   }
 
   const handleReset = () => {
     setLayout(defaultLayout)
-    localStorage.removeItem('pianely-layout')
+    localStorage.removeItem('dashboardLayout')
   }
 
   if (!mounted) {
@@ -92,6 +92,7 @@ export default function HomePage() {
             rowHeight={80}
             width={1200}
             margin={[16, 16]}
+            onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
           >
           <div key="guide">
             <GuideWidget />

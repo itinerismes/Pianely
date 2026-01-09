@@ -190,7 +190,15 @@ button {
   transition: all 200ms ease;
   transition-property: left, top;
   overflow: hidden !important;
-  cursor: default !important;
+  cursor: move !important;
+}
+
+.react-grid-item:hover {
+  cursor: grab !important;
+}
+
+.react-grid-item:active {
+  cursor: grabbing !important;
 }
 
 .react-grid-item.cssTransforms {
@@ -206,20 +214,35 @@ button {
   transition: none;
   z-index: 100;
   opacity: 0.8;
+  cursor: grabbing !important;
 }
 
 .react-grid-item > .react-resizable-handle {
-  display: none !important;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.4);
 }
 
 .react-grid-layout {
   position: relative;
 }
 
-.react-grid-item > .drag-handle:hover {
-  opacity: 1 !important;
-}
-
 .react-grid-item.react-grid-placeholder {
-  display: none !important;
+  background: rgba(14, 165, 233, 0.15);
+  border: 2px dashed rgba(14, 165, 233, 0.4);
+  border-radius: 16px;
+  opacity: 1;
+  transition-duration: 100ms;
+  z-index: 2;
 }
