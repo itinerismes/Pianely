@@ -46,7 +46,7 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="max-w-[1400px] mx-auto px-8 py-6 min-h-screen">
+    <div className="max-w-[1400px] mx-auto px-8 pt-8 pb-6 min-h-screen">
       {/* Titre principal */}
       <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl font-bold text-white">
