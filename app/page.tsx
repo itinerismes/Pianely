@@ -95,55 +95,85 @@ export default function HomePage() {
             onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
             {...({ draggableHandle: ".drag-handle" } as any)}
           >
-          <div key="guide">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="guide" className="group">
+            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="3" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="13" r="1.5"/>
+                <circle cx="9" cy="3" r="1.5"/>
+                <circle cx="9" cy="8" r="1.5"/>
+                <circle cx="9" cy="13" r="1.5"/>
               </svg>
             </div>
             <GuideWidget />
           </div>
 
-          <div key="assistant">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/20 hover:bg-white/30 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="assistant" className="group">
+            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-white/80" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="3" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="13" r="1.5"/>
+                <circle cx="9" cy="3" r="1.5"/>
+                <circle cx="9" cy="8" r="1.5"/>
+                <circle cx="9" cy="13" r="1.5"/>
               </svg>
             </div>
             <AssistantWidget />
           </div>
 
-          <div key="aujourdhui">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="aujourdhui" className="group">
+            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="3" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="13" r="1.5"/>
+                <circle cx="9" cy="3" r="1.5"/>
+                <circle cx="9" cy="8" r="1.5"/>
+                <circle cx="9" cy="13" r="1.5"/>
               </svg>
             </div>
             <AujourdhuiWidget />
           </div>
 
-          <div key="objectif">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="objectif" className="group">
+            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="3" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="13" r="1.5"/>
+                <circle cx="9" cy="3" r="1.5"/>
+                <circle cx="9" cy="8" r="1.5"/>
+                <circle cx="9" cy="13" r="1.5"/>
               </svg>
             </div>
             <ObjectifWidget />
           </div>
 
-          <div key="morceaux">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="morceaux" className="group">
+            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="3" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="13" r="1.5"/>
+                <circle cx="9" cy="3" r="1.5"/>
+                <circle cx="9" cy="8" r="1.5"/>
+                <circle cx="9" cy="13" r="1.5"/>
               </svg>
             </div>
             <MorceauxWidget />
           </div>
 
-          <div key="badges">
-            <div className="drag-handle cursor-move absolute top-2 right-2 w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center opacity-0 hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          <div key="badges" className="group">
+            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
+                <circle cx="4" cy="3" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="13" r="1.5"/>
+                <circle cx="9" cy="3" r="1.5"/>
+                <circle cx="9" cy="8" r="1.5"/>
+                <circle cx="9" cy="13" r="1.5"/>
               </svg>
             </div>
             <BadgesWidget />
