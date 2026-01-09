@@ -3,12 +3,12 @@
 import { Award } from 'lucide-react'
 
 const badges = [
-  { id: 1, unlocked: true, icon: '🎹' },
-  { id: 2, unlocked: true, icon: '⭐' },
-  { id: 3, unlocked: true, icon: '🎵' },
-  { id: 4, unlocked: false, icon: '🏆' },
-  { id: 5, unlocked: false, icon: '🎼' },
-  { id: 6, unlocked: false, icon: '💎' },
+  { id: 1, unlocked: true, icon: '🎹', name: 'Premier morceau complété', condition: 'complète ton premier morceau' },
+  { id: 2, unlocked: true, icon: '⭐', name: 'Pratique régulière', condition: 'pratique 7 jours de suite' },
+  { id: 3, unlocked: true, icon: '🎵', name: 'Mélomane', condition: 'apprends 5 morceaux' },
+  { id: 4, unlocked: false, icon: '🏆', name: 'Champion', condition: 'complète 10 morceaux' },
+  { id: 5, unlocked: false, icon: '🎼', name: 'Virtuose', condition: 'atteins le niveau 10' },
+  { id: 6, unlocked: false, icon: '💎', name: 'Diamant', condition: 'pratique 30 jours de suite' },
 ]
 
 export function BadgesWidget() {
@@ -23,15 +23,24 @@ export function BadgesWidget() {
 
       <div className="grid grid-cols-3 gap-2">
         {badges.map((badge) => (
-          <div
-            key={badge.id}
-            className={`h-16 rounded-lg flex items-center justify-center text-xl transition ${
-              badge.unlocked
-                ? 'bg-amber-50 border-2 border-amber-300'
-                : 'bg-gray-50 border-2 border-gray-200 grayscale opacity-40'
-            }`}
-          >
-            {badge.icon}
+          <div key={badge.id} className="relative group">
+            <div
+              className={`h-16 rounded-lg flex items-center justify-center text-xl transition ${
+                badge.unlocked
+                  ? 'bg-amber-50 border-2 border-amber-300'
+                  : 'bg-gray-50 border-2 border-gray-200 grayscale opacity-40'
+              }`}
+            >
+              {badge.icon}
+            </div>
+            {/* Tooltip */}
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-[10px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+              {badge.unlocked ? (
+                <>{badge.name} ✓</>
+              ) : (
+                <>À débloquer : {badge.condition}</>
+              )}
+            </div>
           </div>
         ))}
       </div>
