@@ -34,12 +34,12 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35] min-h-screen`}
       >
         <HorizontalNav />
-        <div className="pt-16">
+        <main className="pt-16">
           {children}
-        </div>
+        </main>
       </body>
     </html>
   );

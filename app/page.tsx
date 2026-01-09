@@ -46,17 +46,16 @@ export default function HomePage() {
   ]
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1629] to-[#1a1f35]">
-      <div className="max-w-[1400px] mx-auto px-8 py-6">
-        {/* Titre principal */}
-        <div className="mb-8">
-          <h1 className="text-3xl lg:text-4xl font-bold text-white">
-            Bonjour {userName}, prêt à jouer aujourd&apos;hui ?
-          </h1>
-        </div>
+    <div className="max-w-[1400px] mx-auto px-8 py-6 min-h-screen">
+      {/* Titre principal */}
+      <div className="mb-8">
+        <h1 className="text-3xl lg:text-4xl font-bold text-white">
+          Bonjour {userName}, prêt à jouer aujourd&apos;hui ?
+        </h1>
+      </div>
 
-        {/* Layout principal - Grid 12 colonnes desktop, pile mobile */}
-        <div className="grid grid-cols-12 gap-8">
+      {/* Layout principal - Grid 12 colonnes desktop, pile mobile */}
+      <div className="grid grid-cols-12 gap-8">
 
           {/* COLONNE GAUCHE - Guide + Aujourd'hui + Morceaux */}
           <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
@@ -325,8 +324,7 @@ export default function HomePage() {
             </GlassCard>
           </div>
         </div>
-      </div>
-    </main>
+    </div>
   )
 }
 
