@@ -25,10 +25,10 @@ export function BadgesWidget() {
         {badges.map((badge) => (
           <div key={badge.id} className="relative group">
             <div
-              className={`h-16 rounded-lg flex items-center justify-center text-xl transition ${
+              className={`h-16 rounded-xl flex items-center justify-center text-xl transition-transform hover:scale-105 p-4 shadow-sm ${
                 badge.unlocked
-                  ? 'bg-amber-50 border-2 border-amber-300'
-                  : 'bg-gray-50 border-2 border-gray-200 grayscale opacity-40'
+                  ? 'bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-300'
+                  : 'bg-gray-50/50 backdrop-blur-sm border border-gray-200 opacity-60'
               }`}
             >
               {badge.icon}
