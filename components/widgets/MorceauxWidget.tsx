@@ -10,7 +10,7 @@ const morceaux = [
 
 export function MorceauxWidget() {
   return (
-    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-blue-200/50 p-3 h-full overflow-hidden hover:shadow-xl hover:border-blue-300/70 transition-all duration-300">
+    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-blue-200/50 p-3 h-full overflow-hidden hover:shadow-xl hover:border-blue-300/70 hover:scale-[1.01] hover:-translate-y-0.5 transition-all duration-300 cursor-move">
       <h3 className="text-sm font-semibold text-gray-800 tracking-tight mb-2">Morceaux en cours</h3>
 
       <div className="space-y-2">
