@@ -51,8 +51,8 @@ export default function HomePage() {
 
   if (!mounted) {
     return (
-      <main className="min-h-screen bg-gray-50 pt-6">
-        <div className="max-w-[1400px] mx-auto px-6 py-6">
+      <main className="min-h-screen bg-white pt-6">
+        <div className="max-w-[1300px] mx-auto px-6 py-6">
           <div className="animate-pulse">Chargement...</div>
         </div>
       </main>
@@ -60,8 +60,8 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 pt-6">
-      <div className="max-w-[1400px] mx-auto px-6 py-6">
+    <main className="min-h-screen bg-white pt-6">
+      <div className="max-w-[1300px] mx-auto px-6 py-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           {/* <div>
@@ -75,7 +75,7 @@ export default function HomePage() {
 
           <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white/80 backdrop-blur-md border border-blue-200/50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow ml-auto"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-sky-50 border-2 border-sky-200 text-sky-600 hover:bg-sky-100 hover:border-sky-300 transition-all duration-300 shadow-sm hover:shadow ml-auto"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Réinitialiser</span>
@@ -89,8 +89,8 @@ export default function HomePage() {
             layouts={{ lg: layout }}
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
-            rowHeight={100}
-            width={1400}
+            rowHeight={85}
+            width={1300}
             margin={[16, 16]}
             onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
             {...({ draggableHandle: ".drag-handle" } as any)}
@@ -111,7 +111,7 @@ export default function HomePage() {
 
           <div key="assistant" className="group">
             <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-white/80" fill="currentColor" viewBox="0 0 16 16">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
                 <circle cx="4" cy="3" r="1.5"/>
                 <circle cx="4" cy="8" r="1.5"/>
                 <circle cx="4" cy="13" r="1.5"/>

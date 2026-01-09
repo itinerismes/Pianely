@@ -13,28 +13,28 @@ const badges = [
 
 export function BadgesWidget() {
   return (
-    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-blue-200/50 p-5 h-full hover:shadow-xl hover:border-blue-300/70 hover:scale-[1.01] hover:-translate-y-0.5 transition-all duration-300 cursor-move">
+    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-4 h-full hover:shadow-xl hover:border-sky-400 hover:scale-[1.01] transition-all duration-300 cursor-move">
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-          <Award className="w-4 h-4 text-white" />
+        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-300 to-violet-300 flex items-center justify-center">
+          <Award className="w-3.5 h-3.5 text-white" />
         </div>
-        <h3 className="text-sm font-semibold text-gray-800 tracking-tight">Badges</h3>
+        <h3 className="text-xs font-semibold text-gray-700 tracking-tight">Badges</h3>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
         {badges.map((badge) => (
           <div key={badge.id} className="relative group">
             <div
-              className={`h-16 rounded-xl flex items-center justify-center text-xl transition-transform hover:scale-105 p-4 shadow-sm ${
+              className={`h-16 rounded-xl flex items-center justify-center text-lg transition-transform hover:scale-105 ${
                 badge.unlocked
-                  ? 'bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-300'
-                  : 'bg-gray-50/50 backdrop-blur-sm border border-gray-200 opacity-60'
+                  ? 'bg-amber-50/50 border-2 border-amber-300'
+                  : 'bg-gray-50 border border-gray-200 opacity-50'
               }`}
             >
               {badge.icon}
             </div>
             {/* Tooltip */}
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-[10px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-[9px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
               {badge.unlocked ? (
                 <>{badge.name} ✓</>
               ) : (
