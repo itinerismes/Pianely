@@ -4,7 +4,7 @@ import { Play, RotateCcw, Music2, Target, Sparkles } from 'lucide-react'
 
 export function AssistantWidget() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-2 h-full overflow-hidden flex flex-col hover:shadow-xl hover:border-sky-400 hover:scale-[1.005] transition-all duration-200 cursor-move">
+    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-2 h-full w-full overflow-hidden flex flex-col hover:shadow-xl hover:border-sky-400 transition-all duration-200">
       {/* Header with icon */}
       <div className="flex items-center gap-1.5 mb-2">
         <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-300 to-blue-300 flex items-center justify-center">

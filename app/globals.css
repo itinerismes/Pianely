@@ -190,6 +190,7 @@ button {
   transition: all 200ms ease;
   transition-property: left, top;
   overflow: hidden !important;
+  cursor: default !important;
 }
 
 .react-grid-item.cssTransforms {
@@ -208,7 +209,7 @@ button {
 }
 
 .react-grid-item > .react-resizable-handle {
-  display: none;
+  display: none !important;
 }
 
 .react-grid-layout {
@@ -217,4 +218,8 @@ button {
 
 .react-grid-item > .drag-handle:hover {
   opacity: 1 !important;
+}
+
+.react-grid-item.react-grid-placeholder {
+  display: none !important;
 }

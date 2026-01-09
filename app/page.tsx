@@ -14,12 +14,12 @@ import { MorceauxWidget } from '@/components/widgets/MorceauxWidget'
 import { BadgesWidget } from '@/components/widgets/BadgesWidget'
 
 const defaultLayout = [
-  { i: 'guide', x: 0, y: 0, w: 6, h: 2.5 },
-  { i: 'assistant', x: 6, y: 0, w: 4, h: 2 },
-  { i: 'aujourdhui', x: 0, y: 3, w: 3, h: 1.5 },
-  { i: 'objectif', x: 3, y: 3, w: 3, h: 1.5 },
-  { i: 'morceaux', x: 0, y: 5, w: 6, h: 1.5 },
-  { i: 'badges', x: 6, y: 2, w: 4, h: 2.5 },
+  { i: 'guide', x: 0, y: 0, w: 6, h: 4, static: true },
+  { i: 'aujourdhui', x: 0, y: 4, w: 3, h: 2, static: true },
+  { i: 'morceaux', x: 0, y: 6, w: 6, h: 2, static: true },
+  { i: 'assistant', x: 6, y: 0, w: 4, h: 2, static: true },
+  { i: 'badges', x: 6, y: 2, w: 4, h: 2, static: true },
+  { i: 'objectif', x: 6, y: 4, w: 4, h: 2, static: true },
 ]
 
 export default function HomePage() {
@@ -89,93 +89,31 @@ export default function HomePage() {
             layouts={{ lg: layout }}
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             cols={{ lg: 10, md: 8, sm: 6, xs: 4, xxs: 2 }}
-            rowHeight={75}
+            rowHeight={80}
             width={1200}
             margin={[16, 16]}
-            onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
-            {...({ draggableHandle: ".drag-handle" } as any)}
           >
-          <div key="guide" className="group">
-            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
-                <circle cx="4" cy="3" r="1.5"/>
-                <circle cx="4" cy="8" r="1.5"/>
-                <circle cx="4" cy="13" r="1.5"/>
-                <circle cx="9" cy="3" r="1.5"/>
-                <circle cx="9" cy="8" r="1.5"/>
-                <circle cx="9" cy="13" r="1.5"/>
-              </svg>
-            </div>
+          <div key="guide">
             <GuideWidget />
           </div>
 
-          <div key="assistant" className="group">
-            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
-                <circle cx="4" cy="3" r="1.5"/>
-                <circle cx="4" cy="8" r="1.5"/>
-                <circle cx="4" cy="13" r="1.5"/>
-                <circle cx="9" cy="3" r="1.5"/>
-                <circle cx="9" cy="8" r="1.5"/>
-                <circle cx="9" cy="13" r="1.5"/>
-              </svg>
-            </div>
+          <div key="assistant">
             <AssistantWidget />
           </div>
 
-          <div key="aujourdhui" className="group">
-            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
-                <circle cx="4" cy="3" r="1.5"/>
-                <circle cx="4" cy="8" r="1.5"/>
-                <circle cx="4" cy="13" r="1.5"/>
-                <circle cx="9" cy="3" r="1.5"/>
-                <circle cx="9" cy="8" r="1.5"/>
-                <circle cx="9" cy="13" r="1.5"/>
-              </svg>
-            </div>
+          <div key="aujourdhui">
             <AujourdhuiWidget />
           </div>
 
-          <div key="objectif" className="group">
-            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
-                <circle cx="4" cy="3" r="1.5"/>
-                <circle cx="4" cy="8" r="1.5"/>
-                <circle cx="4" cy="13" r="1.5"/>
-                <circle cx="9" cy="3" r="1.5"/>
-                <circle cx="9" cy="8" r="1.5"/>
-                <circle cx="9" cy="13" r="1.5"/>
-              </svg>
-            </div>
+          <div key="objectif">
             <ObjectifWidget />
           </div>
 
-          <div key="morceaux" className="group">
-            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
-                <circle cx="4" cy="3" r="1.5"/>
-                <circle cx="4" cy="8" r="1.5"/>
-                <circle cx="4" cy="13" r="1.5"/>
-                <circle cx="9" cy="3" r="1.5"/>
-                <circle cx="9" cy="8" r="1.5"/>
-                <circle cx="9" cy="13" r="1.5"/>
-              </svg>
-            </div>
+          <div key="morceaux">
             <MorceauxWidget />
           </div>
 
-          <div key="badges" className="group">
-            <div className="drag-handle cursor-move absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition z-10">
-              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 16 16">
-                <circle cx="4" cy="3" r="1.5"/>
-                <circle cx="4" cy="8" r="1.5"/>
-                <circle cx="4" cy="13" r="1.5"/>
-                <circle cx="9" cy="3" r="1.5"/>
-                <circle cx="9" cy="8" r="1.5"/>
-                <circle cx="9" cy="13" r="1.5"/>
-              </svg>
-            </div>
+          <div key="badges">
             <BadgesWidget />
           </div>
         </ResponsiveGridLayout>

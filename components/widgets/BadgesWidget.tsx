@@ -13,19 +13,19 @@ const badges = [
 
 export function BadgesWidget() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-3 h-full hover:shadow-xl hover:border-sky-400 hover:scale-[1.005] transition-all duration-200 cursor-move">
-      <div className="flex items-center gap-1.5 mb-2">
-        <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-300 to-blue-300 flex items-center justify-center">
-          <Award className="w-3 h-3 text-white" />
+    <div className="bg-white rounded-2xl shadow-lg border-2 border-sky-300 p-2 h-full w-full overflow-hidden hover:shadow-xl hover:border-sky-400 transition-all duration-200">
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-sky-300 to-blue-300 flex items-center justify-center">
+          <Award className="w-2.5 h-2.5 text-white" />
         </div>
-        <h3 className="text-xs font-semibold text-gray-700 tracking-tight">Badges</h3>
+        <h3 className="text-[10px] font-semibold text-gray-700 tracking-tight">Badges</h3>
       </div>
 
-      <div className="grid grid-cols-3 gap-1.5">
+      <div className="grid grid-cols-3 grid-rows-2 gap-1.5">
         {badges.map((badge) => (
           <div key={badge.id} className="relative group">
             <div
-              className={`h-14 rounded-xl flex items-center justify-center text-base transition-transform hover:scale-105 ${
+              className={`h-12 rounded-xl flex items-center justify-center text-sm transition-transform hover:scale-105 ${
                 badge.unlocked
                   ? 'bg-amber-50/50 border-2 border-amber-300'
                   : 'bg-gray-50 border border-gray-200 opacity-50'
