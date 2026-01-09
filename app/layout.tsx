@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { HorizontalNav } from "@/components/ui/HorizontalNav";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,8 +33,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased`}
       >
-        <HorizontalNav />
-        {children}
+        <AuthProvider>
+          <HorizontalNav />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
