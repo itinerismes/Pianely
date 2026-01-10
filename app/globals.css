@@ -247,10 +247,15 @@ button {
   z-index: 2;
 }
 
-/* Fix: Force centrage des containers max-w-* */
-.max-w-2xl,
-.max-w-3xl,
-.max-w-4xl {
-  margin-left: auto !important;
-  margin-right: auto !important;
+@layer utilities {
+  /* Fix: Force centrage des containers max-w-* */
+  .max-w-2xl,
+  .max-w-3xl,
+  .max-w-4xl,
+  .max-w-5xl,
+  .max-w-xl {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
 }
