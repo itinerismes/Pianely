@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Sparkles, Music, Award, TrendingUp } from 'lucide-react'
+import { Sparkles, Music, Award, TrendingUp } from 'lucide-react'
 
 export default function LandingPage() {
   return (
@@ -35,11 +35,11 @@ export default function LandingPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center px-6 py-32">
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+      <section className="relative min-h-screen flex items-center justify-center px-6 py-32">
+        <div className="max-w-6xl mx-auto text-center relative z-10">
           {/* Glass Badge */}
           <div
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-8 backdrop-blur-xl border transition-all duration-300 hover:scale-105"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-12 backdrop-blur-xl border transition-all duration-300 hover:scale-105"
             style={{
               background: 'rgba(255, 255, 255, 0.1)',
               borderColor: 'rgba(255, 255, 255, 0.2)',
@@ -52,10 +52,10 @@ export default function LandingPage() {
             </span>
           </div>
 
-          {/* Main Title with Glass Effect */}
-          <div className="relative mb-8">
+          {/* Main Title - Reduced Size, Single Line */}
+          <div className="relative mb-16">
             <h1
-              className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-none mb-6"
+              className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-none"
               style={{
                 background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 50%, var(--accent-primary) 100%)',
                 WebkitBackgroundClip: 'text',
@@ -65,104 +65,12 @@ export default function LandingPage() {
                 letterSpacing: '-0.04em'
               }}
             >
-              Tes premiers
-              <br />
-              morceaux,
-              <br />
-              <span className="relative inline-block">
-                simplement
-                <div
-                  className="absolute -bottom-4 left-0 right-0 h-3 -z-10 blur-sm"
-                  style={{
-                    background: 'linear-gradient(90deg, transparent, var(--accent-primary), transparent)',
-                    opacity: 0.3
-                  }}
-                />
-              </span>
+              Tes premiers morceaux, simplement
             </h1>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
-            <Link
-              href="/inscription"
-              className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-white text-lg font-bold transition-all duration-300 hover:scale-105 overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
-                boxShadow: '0 8px 32px rgba(124, 58, 237, 0.3)'
-              }}
-            >
-              <span className="relative z-10">Commencer gratuitement</span>
-              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 relative z-10" />
-              {/* Shine effect */}
-              <div
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"
-                style={{
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)'
-                }}
-              />
-            </Link>
-
-            <Link
-              href="/parcours"
-              className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-lg font-bold transition-all duration-300 hover:scale-105 backdrop-blur-xl border"
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderColor: 'var(--border-medium)',
-                color: 'var(--text-primary)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-              }}
-            >
-              <span>Explorer les leçons</span>
-              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-          </div>
-
-          {/* Stats Cards with Glass Effect */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            {[
-              { icon: Music, value: '5', label: 'Niveaux', gradient: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)' },
-              { icon: TrendingUp, value: '42', label: 'Leçons', gradient: 'linear-gradient(135deg, var(--accent-success) 0%, var(--accent-success-hover) 100%)' },
-              { icon: Award, value: '10+', label: 'Morceaux', gradient: 'linear-gradient(135deg, var(--accent-info) 0%, var(--accent-info-hover) 100%)' }
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className="group relative backdrop-blur-xl border rounded-2xl p-6 transition-all duration-300 hover:scale-105"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderColor: 'rgba(255, 255, 255, 0.1)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)'
-                }}
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    className="w-14 h-14 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                    style={{
-                      background: stat.gradient,
-                      boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
-                    }}
-                  >
-                    <stat.icon className="w-7 h-7 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                      {stat.value}
-                    </div>
-                    <div className="text-sm font-medium" style={{ color: 'var(--text-tertiary)' }}>
-                      {stat.label}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="relative py-32 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* Features Cards - Moved up */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[
               {
                 icon: Music,
@@ -212,7 +120,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
     </main>
   )
 }
