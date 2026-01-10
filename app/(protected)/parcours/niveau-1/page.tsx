@@ -116,7 +116,7 @@ export default function Niveau1Page() {
         </div>
 
         {/* Lessons List */}
-        <div className="space-y-4">
+        <div className="flex flex-col gap-6 md:gap-8">
           {lessons.map((lesson, index) => (
             <div
               key={lesson.id}
@@ -189,10 +189,10 @@ export default function Niveau1Page() {
 
               {/* Unlock message */}
               {!lesson.unlocked && index > 0 && (
-                <div className="mt-3 pt-3 border-t border-slate-700/50">
-                  <p className="text-xs text-gray-500">
-                    🔒 Complète la leçon {index} pour débloquer
-                  </p>
+                <div className="mt-5 ml-6 opacity-70">
+                  <div className="bg-slate-800/30 text-slate-500 font-medium text-sm italic px-4 py-2 rounded-lg inline-flex items-center gap-2">
+                    <span>🔒 Complète la leçon {index} pour débloquer</span>
+                  </div>
                 </div>
               )}
             </div>
