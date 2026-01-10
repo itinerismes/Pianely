@@ -15,13 +15,13 @@ export function ObjectifWidget() {
       {/* Progress bar */}
       <div className="mb-2">
         <div className="flex justify-between text-xs mb-1">
-          <span className="text-gray-300">15 min / 20 min</span>
-          <span className="text-white font-semibold">75%</span>
+          <span className="text-gray-300">0 min / 20 min</span>
+          <span className="text-white font-semibold">0%</span>
         </div>
         <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-sky-400 to-blue-500 rounded-full"
-            style={{ width: '75%' }}
+            style={{ width: '0%' }}
           />
         </div>
       </div>
@@ -29,11 +29,11 @@ export function ObjectifWidget() {
       {/* Mini histogram */}
       <div className="pt-2 border-t border-slate-700">
         <div className="flex items-end justify-between gap-1 h-8">
-          {[60, 80, 100, 75, 90, 85, 75].map((height, i) => (
+          {[0, 0, 0, 0, 0, 0, 0].map((height, i) => (
             <div
               key={i}
-              className="flex-1 bg-gradient-to-t from-sky-500 to-sky-400 rounded-t opacity-70 hover:opacity-100 transition"
-              style={{ height: `${height}%` }}
+              className="flex-1 bg-slate-700 rounded-t"
+              style={{ height: height === 0 ? '4px' : `${height}%` }}
             />
           ))}
         </div>

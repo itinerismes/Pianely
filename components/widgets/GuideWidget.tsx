@@ -3,9 +3,9 @@
 import { CheckCircle2, Circle, CheckCircle } from 'lucide-react'
 
 const weekData = [
-  { day: 'Lun', type: 'Découverte', status: 'completed' },
-  { day: 'Mar', type: 'Technique', status: 'completed' },
-  { day: 'Mer', type: 'Morceau', status: 'in_progress' },
+  { day: 'Lun', type: 'Découverte', status: 'pending' },
+  { day: 'Mar', type: 'Technique', status: 'pending' },
+  { day: 'Mer', type: 'Morceau', status: 'pending' },
   { day: 'Jeu', type: 'Découverte', status: 'pending' },
   { day: 'Ven', type: 'Technique', status: 'pending' },
   { day: 'Sam', type: 'Morceau', status: 'pending' },

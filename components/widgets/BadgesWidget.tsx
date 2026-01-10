@@ -3,9 +3,9 @@
 import { Award } from 'lucide-react'
 
 const badges = [
-  { id: 1, unlocked: true, icon: '🎹', name: 'Premier morceau complété', condition: 'complète ton premier morceau' },
-  { id: 2, unlocked: true, icon: '⭐', name: 'Pratique régulière', condition: 'pratique 7 jours de suite' },
-  { id: 3, unlocked: true, icon: '🎵', name: 'Mélomane', condition: 'apprends 5 morceaux' },
+  { id: 1, unlocked: false, icon: '🎹', name: 'Premier morceau complété', condition: 'complète ton premier morceau' },
+  { id: 2, unlocked: false, icon: '⭐', name: 'Pratique régulière', condition: 'pratique 7 jours de suite' },
+  { id: 3, unlocked: false, icon: '🎵', name: 'Mélomane', condition: 'apprends 5 morceaux' },
   { id: 4, unlocked: false, icon: '🏆', name: 'Champion', condition: 'complète 10 morceaux' },
   { id: 5, unlocked: false, icon: '🎼', name: 'Virtuose', condition: 'atteins le niveau 10' },
   { id: 6, unlocked: false, icon: '💎', name: 'Diamant', condition: 'pratique 30 jours de suite' },

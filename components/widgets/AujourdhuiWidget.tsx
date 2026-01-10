@@ -12,16 +12,12 @@ export function AujourdhuiWidget() {
         <h3 className="text-xs font-semibold text-white/90 tracking-tight">Aujourd&apos;hui</h3>
       </div>
 
-      <p className="text-xs text-gray-300 mb-2">
-        Pratique régulière : la clé de ta progression
+      <p className="text-xs text-gray-300 mb-4">
+        Commence ton apprentissage du piano dès aujourd&apos;hui
       </p>
 
-      <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-slate-700/50 border border-slate-600">
-        <div className="flex items-center gap-2">
-          <ArrowRight className="w-4 h-4 text-sky-400" />
-          <span className="text-xs font-medium text-white">Niveau 2 - Fondations</span>
-        </div>
-        <span className="text-[10px] text-gray-400">4/7</span>
+      <div className="flex items-center justify-center py-3 px-3 rounded-lg bg-slate-700/30 border border-slate-600">
+        <span className="text-xs text-gray-400">Aucune leçon commencée</span>
       </div>
     </div>
   )
