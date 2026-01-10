@@ -109,7 +109,7 @@ export default function ParcoursPage() {
         </div>
 
         {/* Levels Grid */}
-        <div className="space-y-4 md:space-y-6">
+        <div className="flex flex-col gap-6 md:gap-8">
           {levels.map((level) => {
             const progressPercent = Math.round((level.completedLessons / level.totalLessons) * 100)
 
@@ -189,7 +189,7 @@ export default function ParcoursPage() {
 
                 {/* Unlock condition */}
                 {!level.unlocked && (
-                  <div className="my-5 ml-6 opacity-70">
+                  <div className="mt-5 ml-6 opacity-70">
                     <div className="bg-slate-800/30 text-slate-500 font-medium text-sm italic px-4 py-2 rounded-lg inline-flex items-center gap-2">
                       <Lock className="w-3.5 h-3.5 flex-shrink-0" />
                       <span>Complète tous les niveaux précédents pour débloquer</span>
