@@ -1,6 +1,6 @@
 'use client'
 
-import { Award } from 'lucide-react'
+import { Award, Trophy } from 'lucide-react'
 
 const badges = [
   { id: 1, unlocked: false, icon: '🎹', name: 'Premier morceau complété', condition: 'complète ton premier morceau' },
@@ -12,33 +12,69 @@ const badges = [
 ]
 
 export function BadgesWidget() {
+  const unlockedCount = badges.filter(b => b.unlocked).length
+
   return (
-    <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl shadow-xl shadow-black/20 border border-slate-700 p-3 h-full w-full overflow-hidden hover:shadow-2xl hover:border-slate-600 transition-all duration-200">
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center">
-          <Award className="w-5 h-5 text-white" />
+    <div className="card h-full w-full overflow-hidden p-6 hover:shadow-lg transition-all duration-200">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
+              boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
+            }}
+          >
+            <Trophy className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+              Badges
+            </h3>
+            <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+              {unlockedCount} / {badges.length} débloqués
+            </p>
+          </div>
         </div>
-        <h3 className="text-xs font-semibold text-white/90 tracking-tight">Badges</h3>
       </div>
 
-      <div className="grid grid-cols-3 grid-rows-2 gap-1.5">
+      <div className="grid grid-cols-3 grid-rows-2 gap-2">
         {badges.map((badge) => (
           <div key={badge.id} className="relative group">
             <div
-              className={`h-12 rounded-lg flex items-center justify-center text-sm transition-transform hover:scale-105 ${
+              className={`h-16 rounded-xl flex items-center justify-center text-2xl transition-all duration-200 hover:scale-105 cursor-pointer ${
                 badge.unlocked
-                  ? 'bg-gradient-to-br from-amber-500/20 to-yellow-500/20 border border-amber-500/50'
-                  : 'bg-slate-700/30 border border-slate-600 opacity-50'
+                  ? ''
+                  : 'grayscale opacity-40'
               }`}
+              style={
+                badge.unlocked
+                  ? {
+                      background: 'linear-gradient(135deg, var(--accent-warning-bg) 0%, var(--accent-warning-bg) 100%)',
+                      border: '2px solid var(--accent-warning)',
+                      boxShadow: '0 2px 8px rgba(245, 158, 11, 0.2)'
+                    }
+                  : {
+                      background: 'var(--hover-bg)',
+                      border: '1px solid var(--border-light)'
+                    }
+              }
             >
               {badge.icon}
             </div>
             {/* Tooltip */}
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[9px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 border border-slate-700">
+            <div
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-lg text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg"
+              style={{
+                background: 'var(--card-bg)',
+                border: '1px solid var(--border-medium)',
+                color: 'var(--text-primary)'
+              }}
+            >
               {badge.unlocked ? (
-                <>{badge.name} ✓</>
+                <span className="font-medium">{badge.name} ✓</span>
               ) : (
-                <>À débloquer : {badge.condition}</>
+                <span style={{ color: 'var(--text-secondary)' }}>À débloquer : {badge.condition}</span>
               )}
             </div>
           </div>

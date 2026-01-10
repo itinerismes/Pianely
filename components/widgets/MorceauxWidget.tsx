@@ -1,19 +1,46 @@
 'use client'
 
-import { Music2 } from 'lucide-react'
+import { Music2, Play } from 'lucide-react'
 
 export function MorceauxWidget() {
   return (
-    <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl shadow-xl shadow-black/20 border border-slate-700 p-3 h-full w-full overflow-hidden hover:shadow-2xl hover:border-slate-600 transition-all duration-200">
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-500 flex items-center justify-center">
-          <Music2 className="w-5 h-5 text-white" />
+    <div className="card h-full w-full overflow-hidden p-6 hover:shadow-lg transition-all duration-200">
+      <div className="flex items-center gap-3 mb-6">
+        <div
+          className="w-12 h-12 rounded-xl flex items-center justify-center"
+          style={{
+            background: 'linear-gradient(135deg, var(--accent-info) 0%, var(--accent-info-hover) 100%)',
+            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.2)'
+          }}
+        >
+          <Music2 className="w-6 h-6 text-white" />
         </div>
-        <h3 className="text-xs font-semibold text-white/90 tracking-tight">Morceaux en cours</h3>
+        <div>
+          <h3 className="text-base font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            Morceaux en cours
+          </h3>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+            Continue ton apprentissage
+          </p>
+        </div>
       </div>
 
-      <div className="flex items-center justify-center h-32">
-        <p className="text-sm text-gray-400">Aucun morceau commencé</p>
+      <div className="flex flex-col items-center justify-center py-12">
+        <div
+          className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+          style={{
+            background: 'var(--hover-bg)',
+            border: '1px solid var(--border-light)'
+          }}
+        >
+          <Music2 className="w-8 h-8" style={{ color: 'var(--text-muted)' }} />
+        </div>
+        <p className="text-sm text-center mb-2" style={{ color: 'var(--text-secondary)' }}>
+          Aucun morceau commencé
+        </p>
+        <p className="text-xs text-center" style={{ color: 'var(--text-tertiary)' }}>
+          Démarre ta première leçon pour débloquer des morceaux
+        </p>
       </div>
     </div>
   )

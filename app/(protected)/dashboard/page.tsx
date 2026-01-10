@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Responsive as ResponsiveGridLayout } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
-import { RotateCcw } from 'lucide-react'
+import { RotateCcw, LayoutGrid } from 'lucide-react'
 
 // Widgets
 import { GuideWidget } from '@/components/widgets/GuideWidget'
@@ -49,29 +49,63 @@ export default function HomePage() {
 
   if (!mounted) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-6">
+      <main className="min-h-screen pt-6">
         <div className="max-w-[1400px] mx-auto px-6 py-6">
-          <div className="animate-pulse text-white">Chargement...</div>
+          <div className="animate-pulse" style={{ color: 'var(--text-primary)' }}>
+            Chargement...
+          </div>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-6">
+    <main className="min-h-screen pt-6">
       <div className="max-w-[1400px] mx-auto px-6 py-6">
         {/* Dashboard Overview Header */}
-        <div className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 rounded-2xl py-8 px-6 mb-8">
-          <div className="flex justify-between items-start">
+        <div
+          className="card-lg rounded-2xl p-8 mb-8 transition-all duration-200"
+        >
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-white/90 mb-2">DASHBOARD OVERVIEW</h1>
-              <p className="text-sm text-gray-400">Bienvenue, suis ta progression musicale</p>
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
+                    boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
+                  }}
+                >
+                  <LayoutGrid className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                    Dashboard
+                  </h1>
+                  <p className="text-sm md:text-base" style={{ color: 'var(--text-secondary)' }}>
+                    Bienvenue, suis ta progression musicale
+                  </p>
+                </div>
+              </div>
             </div>
             <button
               onClick={handleReset}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-700/50 border border-slate-600 text-gray-300 hover:bg-slate-600/50 hover:text-white transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105"
+              style={{
+                background: 'var(--hover-bg)',
+                border: '1px solid var(--border-medium)',
+                color: 'var(--text-secondary)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--text-primary)'
+                e.currentTarget.style.borderColor = 'var(--border-strong)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--text-secondary)'
+                e.currentTarget.style.borderColor = 'var(--border-medium)'
+              }}
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <RotateCcw className="w-4 h-4" />
               <span>Réinitialiser</span>
             </button>
           </div>
