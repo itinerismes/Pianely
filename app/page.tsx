@@ -1,220 +1,218 @@
 import Link from 'next/link'
-import { Music, TrendingUp, Award, ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles, Music, Award, TrendingUp } from 'lucide-react'
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative overflow-hidden">
+      {/* Animated Background Shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Large gradient blob top-right */}
+        <div
+          className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-20 blur-3xl animate-pulse"
+          style={{
+            background: 'radial-gradient(circle, rgba(124, 58, 237, 0.4) 0%, transparent 70%)',
+            animationDuration: '8s'
+          }}
+        />
+        {/* Medium gradient blob bottom-left */}
+        <div
+          className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full opacity-20 blur-3xl animate-pulse"
+          style={{
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%)',
+            animationDuration: '6s',
+            animationDelay: '1s'
+          }}
+        />
+        {/* Small accent blob center */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-10 blur-3xl animate-pulse"
+          style={{
+            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)',
+            animationDuration: '10s',
+            animationDelay: '2s'
+          }}
+        />
+      </div>
+
       {/* Hero Section */}
-      <section className="pt-32 pb-24">
-        <div className="max-w-4xl mx-auto px-6 md:px-8 text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8"
-               style={{
-                 background: 'var(--accent-primary-bg)',
-                 border: '1px solid var(--border-light)'
-               }}>
+      <section className="relative min-h-[90vh] flex items-center justify-center px-6 py-32">
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          {/* Glass Badge */}
+          <div
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mb-8 backdrop-blur-xl border transition-all duration-300 hover:scale-105"
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(124, 58, 237, 0.1)'
+            }}
+          >
             <Sparkles className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
-            <span className="text-sm font-medium" style={{ color: 'var(--accent-primary)' }}>
-              Méthode progressive pour débutants
+            <span className="text-sm font-semibold tracking-wide" style={{ color: 'var(--text-primary)' }}>
+              APPRENDS LE PIANO AUTREMENT
             </span>
           </div>
 
-          {/* Title */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
+          {/* Main Title with Glass Effect */}
+          <div className="relative mb-8">
+            <h1
+              className="text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-none mb-6"
               style={{
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.02em',
-                lineHeight: '1.1'
-              }}>
-            Tes premiers morceaux,
-            <br />
-            <span className="gradient-text">
-              simplement
-            </span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto"
-             style={{
-               color: 'var(--text-secondary)',
-               lineHeight: '1.6'
-             }}>
-            Apprends le piano facilement, sans lire la musique au départ.
-            <br className="hidden md:block" />
-            Méthode progressive adaptée aux grands débutants.
-          </p>
-
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/inscription"
-              className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white text-lg font-semibold transition-all duration-200 hover:scale-105 hover:shadow-lg"
-              style={{
-                background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
-                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
+                background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 50%, var(--accent-primary) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundSize: '200% 200%',
+                animation: 'gradient 8s ease infinite',
+                letterSpacing: '-0.04em'
               }}
             >
-              Commencer gratuitement
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              Tes premiers
+              <br />
+              morceaux,
+              <br />
+              <span className="relative inline-block">
+                simplement
+                <div
+                  className="absolute -bottom-4 left-0 right-0 h-3 -z-10 blur-sm"
+                  style={{
+                    background: 'linear-gradient(90deg, transparent, var(--accent-primary), transparent)',
+                    opacity: 0.3
+                  }}
+                />
+              </span>
+            </h1>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+            <Link
+              href="/inscription"
+              className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-white text-lg font-bold transition-all duration-300 hover:scale-105 overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
+                boxShadow: '0 8px 32px rgba(124, 58, 237, 0.3)'
+              }}
+            >
+              <span className="relative z-10">Commencer gratuitement</span>
+              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 relative z-10" />
+              {/* Shine effect */}
+              <div
+                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"
+                style={{
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)'
+                }}
+              />
             </Link>
 
             <Link
               href="/parcours"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200 hover:scale-105"
+              className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-lg font-bold transition-all duration-300 hover:scale-105 backdrop-blur-xl border"
               style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderColor: 'var(--border-medium)',
                 color: 'var(--text-primary)',
-                background: 'var(--card-bg)',
-                border: '1px solid var(--border-medium)',
-                boxShadow: 'var(--card-shadow)'
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
               }}
             >
-              Explorer les leçons
+              <span>Explorer les leçons</span>
+              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
 
-          {/* Stats */}
-          <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
-            <div>
-              <div className="text-3xl md:text-4xl font-bold mb-2" style={{ color: 'var(--accent-primary)' }}>
-                5
+          {/* Stats Cards with Glass Effect */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            {[
+              { icon: Music, value: '5', label: 'Niveaux', gradient: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)' },
+              { icon: TrendingUp, value: '42', label: 'Leçons', gradient: 'linear-gradient(135deg, var(--accent-success) 0%, var(--accent-success-hover) 100%)' },
+              { icon: Award, value: '10+', label: 'Morceaux', gradient: 'linear-gradient(135deg, var(--accent-info) 0%, var(--accent-info-hover) 100%)' }
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className="group relative backdrop-blur-xl border rounded-2xl p-6 transition-all duration-300 hover:scale-105"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderColor: 'rgba(255, 255, 255, 0.1)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)'
+                }}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-14 h-14 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                    style={{
+                      background: stat.gradient,
+                      boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
+                    }}
+                  >
+                    <stat.icon className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                      {stat.value}
+                    </div>
+                    <div className="text-sm font-medium" style={{ color: 'var(--text-tertiary)' }}>
+                      {stat.label}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="text-sm md:text-base" style={{ color: 'var(--text-tertiary)' }}>
-                Niveaux
-              </div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold mb-2" style={{ color: 'var(--accent-success)' }}>
-                42
-              </div>
-              <div className="text-sm md:text-base" style={{ color: 'var(--text-tertiary)' }}>
-                Leçons
-              </div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold mb-2" style={{ color: 'var(--accent-info)' }}>
-                10+
-              </div>
-              <div className="text-sm md:text-base" style={{ color: 'var(--text-tertiary)' }}>
-                Morceaux
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6 md:px-8">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4"
+      <section className="relative py-32 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Music,
+                title: 'Sans solfège',
+                description: 'Commence à jouer immédiatement sans lire la musique',
+                gradient: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)'
+              },
+              {
+                icon: TrendingUp,
+                title: 'Progression claire',
+                description: 'Objectifs mesurables et statistiques détaillées',
+                gradient: 'linear-gradient(135deg, var(--accent-success) 0%, var(--accent-success-hover) 100%)'
+              },
+              {
+                icon: Award,
+                title: 'Gamification',
+                description: 'Badges et récompenses pour rester motivé',
+                gradient: 'linear-gradient(135deg, var(--accent-warning) 0%, var(--accent-warning-hover) 100%)'
+              }
+            ].map((feature, i) => (
+              <div
+                key={i}
+                className="group relative backdrop-blur-xl border rounded-3xl p-8 transition-all duration-300 hover:scale-105"
                 style={{
-                  color: 'var(--text-primary)',
-                  letterSpacing: '-0.01em'
-                }}>
-              Une méthode qui fait la différence
-            </h2>
-            <p className="text-lg md:text-xl max-w-2xl mx-auto"
-               style={{ color: 'var(--text-secondary)' }}>
-              Apprends à ton rythme avec des outils modernes
-            </p>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="card group p-8 text-center hover:border-violet-200 transition-all duration-300">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                   style={{
-                     background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
-                     boxShadow: '0 4px 12px rgba(124, 58, 237, 0.15)'
-                   }}>
-                <Music className="w-8 h-8 text-white" />
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  borderColor: 'rgba(255, 255, 255, 0.1)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)'
+                }}
+              >
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
+                  style={{
+                    background: feature.gradient,
+                    boxShadow: '0 8px 24px rgba(124, 58, 237, 0.2)'
+                  }}
+                >
+                  <feature.icon className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
+                  {feature.title}
+                </h3>
+                <p className="text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  {feature.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-3"
-                  style={{ color: 'var(--text-primary)' }}>
-                Sans solfège au départ
-              </h3>
-              <p className="text-base leading-relaxed"
-                 style={{ color: 'var(--text-secondary)' }}>
-                Joue tes premiers morceaux sans avoir besoin de lire la musique. Introduction progressive du solfège.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="card group p-8 text-center hover:border-emerald-200 transition-all duration-300">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                   style={{
-                     background: 'linear-gradient(135deg, var(--accent-success) 0%, var(--accent-success-hover) 100%)',
-                     boxShadow: '0 4px 12px rgba(16, 185, 129, 0.15)'
-                   }}>
-                <TrendingUp className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3"
-                  style={{ color: 'var(--text-primary)' }}>
-                Progression mesurable
-              </h3>
-              <p className="text-base leading-relaxed"
-                 style={{ color: 'var(--text-secondary)' }}>
-                Suis ta progression avec des objectifs clairs et des statistiques détaillées.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="card group p-8 text-center hover:border-amber-200 transition-all duration-300">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                   style={{
-                     background: 'linear-gradient(135deg, var(--accent-warning) 0%, var(--accent-warning-hover) 100%)',
-                     boxShadow: '0 4px 12px rgba(245, 158, 11, 0.15)'
-                   }}>
-                <Award className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3"
-                  style={{ color: 'var(--text-primary)' }}>
-                Badges et récompenses
-              </h3>
-              <p className="text-base leading-relaxed"
-                 style={{ color: 'var(--text-secondary)' }}>
-                Débloque des badges au fur et à mesure de ta pratique et reste motivé.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24">
-        <div className="max-w-4xl mx-auto px-6 md:px-8">
-          <div className="card-lg p-12 md:p-16 text-center"
-               style={{
-                 background: 'linear-gradient(135deg, var(--accent-primary-bg) 0%, var(--accent-info-bg) 100%)',
-                 border: '1px solid var(--border-light)'
-               }}>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6"
-                style={{
-                  color: 'var(--text-primary)',
-                  letterSpacing: '-0.01em'
-                }}>
-              Prêt à commencer ?
-            </h2>
-            <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto"
-               style={{ color: 'var(--text-secondary)' }}>
-              Rejoins des centaines d'élèves qui ont déjà commencé leur parcours musical
-            </p>
-            <Link
-              href="/inscription"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white text-lg font-semibold transition-all duration-200 hover:scale-105"
-              style={{
-                background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
-                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
-              }}
-            >
-              Créer mon compte gratuit
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
     </main>
   )
 }
