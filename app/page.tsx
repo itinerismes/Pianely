@@ -5,8 +5,8 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Hero Section */}
-      <section className="pt-24 pb-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="pt-24 pb-16">
+        <div className="max-w-2xl mx-auto px-6 md:px-8 text-center">
           <h1 className="text-6xl font-bold text-white/90 mb-6">
             Tes premiers morceaux,
             <br />
@@ -30,8 +30,8 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-6">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-16">
+        <div className="max-w-4xl mx-auto px-6 md:px-8">
           <div className="grid md:grid-cols-3 gap-8">
             {/* Feature 1 */}
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 p-6 text-center hover:border-violet-500/50 transition-all">
