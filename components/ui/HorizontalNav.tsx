@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Piano, Home, BookOpen, BarChart3, ShoppingBag, User, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ThemeToggle } from './ThemeToggle'
 
 const navigation = [
   { name: 'Accueil', href: '/', icon: Home },
@@ -16,14 +17,31 @@ export function HorizontalNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="sticky top-0 left-0 right-0 z-50 h-16 bg-[#0f1629]/95 backdrop-blur-md border-b border-white/10">
+    <nav
+      className="sticky top-0 left-0 right-0 z-50 h-16 backdrop-blur-md"
+      style={{
+        background: 'var(--card-bg)',
+        borderBottom: '1px solid var(--border-light)'
+      }}
+    >
       <div className="h-full max-w-[1920px] mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-sky-400 to-blue-500">
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-lg"
+            style={{
+              background: 'linear-gradient(135deg, var(--accent-info) 0%, var(--accent-primary) 100%)',
+              boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
+            }}
+          >
             <Piano className="h-6 w-6 text-white" />
           </div>
-          <span className="text-xl font-bold text-white hidden sm:block">Pianely</span>
+          <span
+            className="text-xl font-bold hidden sm:block"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Pianely
+          </span>
         </Link>
 
         {/* Navigation principale */}
@@ -36,10 +54,31 @@ export function HorizontalNav() {
                 href={item.href}
                 className={cn(
                   'flex items-center gap-2 px-4 py-2 rounded-xl transition-all',
-                  isActive
-                    ? 'bg-sky-400 text-white shadow-lg shadow-sky-500/20'
-                    : 'text-[#b4c6e7] hover:bg-white/5 hover:text-white'
                 )}
+                style={
+                  isActive
+                    ? {
+                        background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
+                        color: '#ffffff',
+                        boxShadow: '0 2px 8px rgba(124, 58, 237, 0.2)'
+                      }
+                    : {
+                        color: 'var(--text-tertiary)',
+                        background: 'transparent'
+                      }
+                }
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'var(--hover-bg)'
+                    e.currentTarget.style.color = 'var(--text-primary)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.color = 'var(--text-tertiary)'
+                  }
+                }}
               >
                 <item.icon className="h-5 w-5" />
                 <span className="hidden md:inline text-sm font-medium">{item.name}</span>
@@ -49,17 +88,44 @@ export function HorizontalNav() {
         </nav>
 
         {/* Actions utilisateur */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+
           <Link
             href="/connexion"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-[#b4c6e7] hover:bg-white/5 hover:text-white transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all"
+            style={{
+              color: 'var(--text-tertiary)',
+              background: 'transparent'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--hover-bg)'
+              e.currentTarget.style.color = 'var(--text-primary)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.color = 'var(--text-tertiary)'
+            }}
           >
             <User className="h-5 w-5" />
             <span className="hidden sm:inline text-sm">Connexion</span>
           </Link>
+
           <Link
             href="/settings"
-            className="flex items-center justify-center w-10 h-10 rounded-xl text-[#b4c6e7] hover:bg-white/5 hover:text-white transition-all"
+            className="flex items-center justify-center w-10 h-10 rounded-xl transition-all"
+            style={{
+              color: 'var(--text-tertiary)',
+              background: 'transparent'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--hover-bg)'
+              e.currentTarget.style.color = 'var(--text-primary)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.color = 'var(--text-tertiary)'
+            }}
           >
             <Settings className="h-5 w-5" />
           </Link>
