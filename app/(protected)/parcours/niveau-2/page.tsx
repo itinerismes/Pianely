@@ -73,7 +73,7 @@ export default function Niveau2Page() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 pb-16">
-      <div className="max-w-4xl mx-auto px-6 md:px-8">
+      <div className="max-w-2xl mx-auto px-6 md:px-8">
         {/* Header */}
         <div className="mb-8">
           <Link

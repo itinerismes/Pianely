@@ -95,7 +95,7 @@ export default function ParcoursPage() {
       {/* Radial gradient pattern overlay for depth */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsla(217,91%,60%,0.05),transparent_50%),radial-gradient(ellipse_at_bottom_left,_hsla(142,76%,36%,0.05),transparent_50%),radial-gradient(ellipse_at_top_left,_hsla(350,100%,88%,0.03),transparent_50%)]" />
 
-      <div className="max-w-4xl mx-auto pt-12 relative z-10">
+      <div className="max-w-2xl mx-auto pt-12 relative z-10">
         {/* Header */}
         <div className="mb-10 text-left">
           <h1 className="font-bold text-2xl md:text-4xl tracking-tight leading-none text-white mb-3" style={{ letterSpacing: '-0.03em' }}>
