@@ -184,16 +184,10 @@ export default function ParcoursPage() {
                     {level.unlocked ? (
                       <Link
                         href={level.href}
-                        className="inline-flex items-center gap-2 px-6 py-2.5 text-white font-semibold text-sm rounded-xl transition-all duration-200 hover:scale-105"
+                        className="inline-flex items-center gap-2 px-6 py-2.5 text-white font-semibold text-sm rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-xl"
                         style={{
                           background: level.color,
                           boxShadow: level.shadowColor
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.boxShadow = level.hoverShadow
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.boxShadow = level.shadowColor
                         }}
                       >
                         {level.completedLessons === 0 ? 'Commencer' : 'Continuer'}
