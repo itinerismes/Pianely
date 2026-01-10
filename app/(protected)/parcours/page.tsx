@@ -97,11 +97,11 @@ export default function ParcoursPage() {
 
       <div className="max-w-3xl mx-auto pt-12 relative z-10">
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="font-bold text-2xl md:text-4xl tracking-tight leading-tight text-white mb-2" style={{ letterSpacing: '-0.02em' }}>
+        <div className="mb-10 text-left">
+          <h1 className="font-bold text-2xl md:text-4xl tracking-tight leading-none text-white mb-3" style={{ letterSpacing: '-0.03em' }}>
             Ton parcours d&apos;apprentissage
           </h1>
-          <p className="font-normal text-base text-slate-400 mb-1">
+          <p className="font-normal text-lg text-slate-400 tracking-normal leading-relaxed opacity-90 mt-1.5">
             5 niveaux pour passer de débutant à virtuose
           </p>
           {/* Decorative separator */}
