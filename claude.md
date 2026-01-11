@@ -55,55 +55,62 @@ Tables principales:
 
 ---
 
-## 🎨 DESIGN SYSTEM - DARK FANTASY DASHBOARD
+## 🎨 DESIGN SYSTEM - MODERN LIGHT (FIGMA)
 
 ### Principes visuels
-- **Style**: Dark fantasy dashboard inspiré des sites fantasy basketball
+- **Style**: Design moderne light avec gradients colorés purple-blue
 - **Palette principale**:
-  - Fond: Gradient `from-slate-900 via-slate-800 to-slate-900`
-  - Cards: `bg-slate-800/50` avec backdrop-blur-sm
-  - Bordures: `border-slate-700` → hover: `border-slate-600`
-  - Texte: `text-white/90` (primaire), `text-gray-300` (secondaire), `text-gray-400` (tertiaire)
-  - Accents: Gradients colorés par widget (emerald, sky, purple, orange, amber)
-  - Ombres: `shadow-xl shadow-black/20` → hover: `shadow-2xl`
-- **Typographie**: Sans-serif moderne, hiérarchie claire avec tracking-tight
-- **Coins**: `rounded-xl` pour widgets, `rounded-2xl` pour header
-- **Icônes**: `w-10 h-10 rounded-xl` avec gradients colorés
-- **Effets**: backdrop-blur-sm pour effet glass sur fond sombre
+  - Fond: Gradient `from-indigo-50 via-white to-purple-50`
+  - Cards: `bg-white` avec `border-gray-200` et `shadow-lg`
+  - Texte: `text-gray-900` (primaire), `text-gray-600` (secondaire), `text-muted-foreground` (tertiaire)
+  - Accents: Gradients `from-purple-600 to-blue-600` pour CTAs et éléments importants
+  - Niveaux: Gradients colorés par niveau (green, blue, purple, orange, pink)
+  - Ombres: `shadow-lg` → hover: `shadow-xl`, `hover:-translate-y-1/2` transitions
+- **Typographie**: Plus Jakarta Sans (Google Font), hiérarchie claire
+- **Coins**: `rounded-2xl` pour cards, `rounded-xl` pour boutons
+- **Icônes**: Lucide React avec gradients colorés en background
+- **Effets**: Scale transforms, decorative blobs, micro-interactions
+
+### Thème dual (Light/Dark)
+- **Light mode** (défaut): Fond blanc cassé, texte dark, gradients colorés
+- **Dark mode** (optionnel): Activable via toggle dans settings
+- **Provider**: next-themes avec `ThemeProvider` wrapper
+- **Toggle**: Component `ThemeToggle` avec Switch shadcn/ui
 
 ### Variables CSS (globals.css)
 ```css
-/* Dark theme principal */
---bg-dark: #0a0e1a;
---bg-surface: #12192e;
---bg-elevated: #1a2642;
+/* Light theme (défaut) */
+--background: 0 0% 100%;
+--foreground: 222.2 84% 4.9%;
+--primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
-/* Accent colors */
---accent-primary: #667eea;
---accent-secondary: #764ba2;
---accent-tertiary: #f093fb;
+/* Gradients niveaux */
+--niveau-1: linear-gradient(135deg, #10b981 0%, #14b8a6 100%); /* Green */
+--niveau-2: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%); /* Blue */
+--niveau-3: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); /* Purple */
+--niveau-4: linear-gradient(135deg, #f97316 0%, #f59e0b 100%); /* Orange */
+--niveau-5: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); /* Pink */
 
-/* Text colors */
---text-primary: #ffffff;
---text-secondary: #b4c6e7;
---text-muted: #6b7fa8;
+/* Decorative blobs */
+.blob-purple { background: radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%); }
+.blob-blue { background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%); }
 ```
+
+### shadcn/ui Components
+**46 composants installés** depuis le design Figma:
+- Layout: Card, Separator, ScrollArea, AspectRatio
+- Forms: Input, Label, Button, Checkbox, Switch, Slider, RadioGroup, Select, Textarea
+- Navigation: Tabs, Menubar, NavigationMenu, ContextMenu, DropdownMenu
+- Feedback: Alert, AlertDialog, Dialog, Toast, Tooltip, HoverCard, Popover
+- Data: Table, Progress, Badge, Avatar, Collapsible, Accordion
+- Advanced: Calendar, Carousel, Command, DatePicker, Sonner, Vaul
 
 ### Règles d'accessibilité
-- ✅ Contraste WCAG AA minimum (texte clair sur fond sombre)
-- ✅ Focus visible sur tous les éléments interactifs
-- ✅ Support clavier complet pour navigation et drag & drop
-- ✅ Curseurs contextuels (move, grab, grabbing)
-- ✅ Animations fluides (200ms transition-all)
-
-### Composants de base
-```
-- Widget containers → bg-slate-800/50 backdrop-blur-sm avec bordures slate-700
-- Boutons → Transparents avec backgrounds /20 et borders /30-50
-- Icons → w-10 h-10 rounded-xl avec gradients spécifiques par widget
-- Progress bars → bg-slate-700 avec gradients colorés
-- Tooltips → bg-slate-900 avec border-slate-700
-```
+- ✅ Contraste WCAG AA minimum (texte dark sur fond light)
+- ✅ Focus visible avec `focus:ring-purple-500`
+- ✅ Composants Radix UI accessibles (ARIA native)
+- ✅ Keyboard navigation complète
+- ✅ Animations fluides (transition-all duration-300)
 
 ---
 
@@ -229,87 +236,86 @@ Structure:
 
 ---
 
-## 🎛️ SYSTÈME DE DASHBOARD DRAG & DROP
+## 🎛️ LAYOUT GLOBAL - HEADER + SIDEBAR
 
 ### Architecture
-Le dashboard utilise un système de grille 12 colonnes avec widgets repositionnables via drag & drop.
+Le layout utilise un pattern moderne avec Header sticky en haut et Sidebar fixe à gauche.
 
 #### Technologies utilisées
-- **react-grid-layout** (ResponsiveGridLayout) - Système de grille responsive avec drag & drop
-- **localStorage** - Persistence du layout personnalisé
-- **Tailwind CSS** - Styling avec thème dark fantasy
+- **shadcn/ui components** - Card, Button, Input, Avatar, Badge, ScrollArea
+- **Lucide React** - Icônes pour navigation et actions
+- **Tailwind CSS** - Styling responsive avec breakpoints
+- **next-themes** - Gestion du thème light/dark
 
-### Configuration de la grille
-```typescript
-GRID_CONFIG = {
-  columns: 12,           // Grille 12 colonnes
-  rowHeight: 100px,      // Hauteur par unité de ligne
-  width: 1400px,         // Largeur container
-  margin: [16, 16],      // Espacement entre widgets
-}
+### Structure Layout
+```
+app/(protected)/layout.tsx
+├── DashboardHeader (sticky top-0)
+│   ├── Logo Pianely + icône Piano
+│   ├── Search bar (desktop)
+│   ├── Notifications bell
+│   ├── Settings icon
+│   └── Avatar + dropdown menu
+└── Flex container
+    ├── DashboardSidebar (fixed left, w-72)
+    │   ├── Navigation principale
+    │   │   ├── Dashboard
+    │   │   ├── Parcours
+    │   │   ├── Ma Progression
+    │   │   ├── Mes Morceaux
+    │   │   └── Paramètres
+    │   └── Catégories (Niveaux)
+    │       ├── Niveau 1 (Green)
+    │       ├── Niveau 2 (Blue)
+    │       ├── Niveau 3 (Purple)
+    │       ├── Niveau 4 (Orange)
+    │       └── Niveau 5 (Pink)
+    └── Main content (flex-1, p-6)
 ```
 
-### Widgets disponibles (5)
-1. **AujourdhuiWidget** (4×2) - Section "Aujourd'hui" avec niveau actuel
-2. **ObjectifWidget** (4×2) - Objectif quotidien + progress bar + histogram 7 jours
-3. **BadgesWidget** (4×2) - Grille 3×2 de badges débloqués/verrouillés avec tooltips
-4. **GuideWidget** (6×3) - Guide de progression hebdomadaire avec statuts
-5. **MorceauxWidget** (6×3) - Liste des morceaux en cours avec progress bars
+### DashboardHeader
+**Composant**: `components/layout/DashboardHeader.tsx`
 
-### Layout par défaut (3×3)
+**Fonctionnalités**:
+- Logo Pianely avec icône Piano (gradient purple-blue)
+- Barre de recherche: "Rechercher des leçons..."
+- Icône notifications (badge compteur si nouvelles)
+- Icône settings (lien vers /settings)
+- Avatar utilisateur avec menu dropdown
+
+**Responsive**:
+- Desktop: Tous les éléments visibles
+- Mobile: Menu hamburger + search collapsé
+
+### DashboardSidebar
+**Composant**: `components/layout/DashboardSidebar.tsx`
+
+**Navigation items**:
 ```typescript
-DEFAULT_LAYOUT = [
-  // Rangée 1 (3 widgets de 4 colonnes chacun)
-  { i: 'aujourdhui', x: 0, y: 0, w: 4, h: 2 },
-  { i: 'objectif', x: 4, y: 0, w: 4, h: 2 },
-  { i: 'badges', x: 8, y: 0, w: 4, h: 2 },
-  // Rangée 2 (2 widgets de 6 colonnes chacun)
-  { i: 'guide', x: 0, y: 2, w: 6, h: 3 },
-  { i: 'morceaux', x: 6, y: 2, w: 6, h: 3 },
+const navItems = [
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
+  { name: 'Parcours', href: '/parcours', icon: BookOpen },
+  { name: 'Ma Progression', href: '/progression', icon: TrendingUp },
+  { name: 'Mes Morceaux', href: '/morceaux', icon: Music },
+  { name: 'Paramètres', href: '/settings', icon: Settings },
 ]
 ```
 
-### Fonctionnalités drag & drop
-- **Activation**: Widgets draggables par défaut (cursor: move)
-- **Déplacement**: Cliquer-glisser n'importe où sur le widget pour repositionner
-- **Redimensionnement**: Handles de resize visibles en bas à droite de chaque widget
-- **Collision detection**: Gestion automatique par react-grid-layout
-- **Placeholder**: Bordure bleue pointillée pendant le drag
-- **Persistence**: Layout sauvegardé automatiquement dans localStorage
-- **Reset**: Bouton "Réinitialiser" en haut à droite pour revenir au défaut
+**Catégories (Niveaux)**:
+- Niveau 1: Gradient green, 5 leçons
+- Niveau 2: Gradient blue, 7 leçons
+- Niveau 3: Gradient purple, 8 leçons
+- Niveau 4: Gradient orange, 10 leçons
+- Niveau 5: Gradient pink, 12 leçons
 
-### Header Dashboard
-```tsx
-DASHBOARD OVERVIEW
-├── Titre: "DASHBOARD OVERVIEW" (text-2xl font-bold text-white/90)
-├── Sous-titre: "Bienvenue, suis ta progression musicale" (text-sm text-gray-400)
-└── Bouton Reset: Avec icône RotateCcw (hover effects)
-```
+**Responsive**:
+- Desktop (>768px): Sidebar toujours visible (w-72)
+- Mobile (<768px): Sidebar en overlay avec backdrop blur
 
-### Responsive
-- **Desktop (>1200px)**: Grille 12 colonnes, drag & resize activés
-- **Tablet (768-1200px)**: Grille 12 colonnes adaptée
-- **Mobile (<768px)**: Grille réduite, comportement adapté
-
-### Structure des fichiers
-```
-app/
-└── page.tsx                   # Page principale avec ResponsiveGridLayout
-
-components/widgets/
-├── AujourdhuiWidget.tsx       # Widget "Aujourd'hui"
-├── ObjectifWidget.tsx         # Widget objectif quotidien
-├── BadgesWidget.tsx           # Widget badges
-├── GuideWidget.tsx            # Widget guide progression
-└── MorceauxWidget.tsx         # Widget morceaux en cours
-```
-
-### UX/UI du drag & drop
-- Cursor **move** par défaut, **grab** au hover, **grabbing** pendant drag
-- Widget en cours de drag : **opacity 80%**, z-index élevé
-- Placeholder : bordure **dashed bleue** (rgba(14, 165, 233))
-- Animations fluides : **transition 200ms ease**
-- Resize handles : coins bas-droite avec **border-right/bottom**
+### Responsive Behavior
+- **Desktop (>1024px)**: Header + Sidebar fixes, main content scrollable
+- **Tablet (768-1024px)**: Sidebar réduite avec icônes only ou collapsible
+- **Mobile (<768px)**: Header avec menu hamburger, sidebar en overlay
 
 ---
 
@@ -390,52 +396,348 @@ components/widgets/
 
 ## 📊 SUIVI DES AVANCÉES
 
-### Sprint actuel: MVP - Phase 1 + Dashboard dark fantasy
+### Sprint actuel: Refonte graphique complète (Design Figma)
 **Date de début**: 2026-01-07
-**Dernière mise à jour**: 2026-01-09
+**Dernière mise à jour**: 2026-01-11
 
-#### ✅ Fait (Phase 1 - Setup complet)
+#### ✅ Fait (Phase 1 - Setup initial - 2026-01-07)
 - [x] Documentation projet (ce fichier)
-- [x] Initialisation Next.js avec TypeScript
+- [x] Initialisation Next.js 16.1.1 avec TypeScript
 - [x] Configuration GitHub (repository créé)
 - [x] Configuration Vercel (déployement automatique)
 - [x] Intégration Supabase (schéma appliqué)
-- [x] Design system glassmorphism complet
-- [x] Page d'accueil avec hero, features, testimonials
+- [x] Page d'accueil initiale
 - [x] Variables d'environnement configurées
 - [x] Build production testé et validé
 
-#### ✅ Fait (Refonte dashboard dark fantasy - 2026-01-09)
-- [x] **Thème dark fantasy**: Inspiré des dashboards fantasy basketball
-- [x] **Background**: Gradient slate-900 via slate-800 to slate-900
-- [x] **Header "DASHBOARD OVERVIEW"**: Gradient slate avec titre et bouton reset
-- [x] **Layout 3×3**: Rangée 1 (3 widgets 4×2), Rangée 2 (2 widgets 6×3)
-- [x] **Suppression AssistantWidget**: Réduction à 5 widgets essentiels
-- [x] **AujourdhuiWidget**: Dark theme avec gradient orange/amber, niveau actuel
-- [x] **ObjectifWidget**: Dark theme avec gradient emerald/teal, histogram 7 jours
-- [x] **BadgesWidget**: Dark theme avec gradient purple/violet, tooltips, amber glow
-- [x] **GuideWidget**: Dark theme avec gradient emerald/teal, statuts colorés
-- [x] **MorceauxWidget**: Dark theme avec gradient sky/blue, progress bars
-- [x] **react-grid-layout**: Système de grille responsive avec drag & drop
-- [x] **localStorage persistence**: Sauvegarde automatique des positions
-- [x] **Cursors contextuels**: move, grab, grabbing avec CSS
-- [x] **Build validé**: Compilation sans erreurs TypeScript
+#### ✅ Fait (Refonte design Figma - 2026-01-11)
+
+**Phase 1-2: Installation shadcn/ui et styles globaux**
+- [x] **46 composants shadcn/ui** copiés depuis FIGMA (Card, Button, Input, Label, Switch, Tabs, etc.)
+- [x] **Dépendances Radix UI** installées (29 packages)
+- [x] **Autres dépendances**: class-variance-authority, clsx, tailwind-merge, sonner, vaul, cmdk, recharts
+- [x] **globals.css** remplacé par le design Figma (variables CSS, gradients niveaux)
+- [x] **Thème light moderne**: Gradient indigo-50 via white to purple-50
+
+**Phase 3: Layout global (Header + Sidebar)**
+- [x] **DashboardHeader** créé (logo Pianely, search, notifications, settings, avatar)
+- [x] **DashboardSidebar** créé (navigation principale + catégories niveaux)
+- [x] **Layout protégé** refactorisé (`app/(protected)/layout.tsx`)
+- [x] **Navigation horizontale** supprimée (ancien système)
+- [x] **Responsive**: Header sticky, sidebar fixe desktop / overlay mobile
+
+**Phase 4-5: Dashboard et Pages Parcours**
+- [x] **DashboardStats** créé (4 stat cards avec gradients)
+- [x] **WeeklyGoals** créé (objectifs hebdomadaires avec progress bars)
+- [x] **NiveauCard** créé (card de niveau avec hover effects, progress bars)
+- [x] **Dashboard page** refactorisé (stats + niveaux en grid + weekly goals)
+- [x] **Page /parcours** refactorisée (grid de niveaux avec filtres)
+- [x] **react-grid-layout** supprimé (5 packages désinstallés)
+- [x] **Anciens widgets** déplacés en backup (/tmp)
+
+**Phase 6: Pages Niveau et Leçons**
+- [x] **LeconCard** créé (card de leçon avec états locked/unlocked/completed)
+- [x] **Page niveau-1** refactorisée (header + grid de leçons)
+- [x] **Template niveau** créé (réutilisable pour niveaux 2-5)
+
+**Phase 7: Pages Auth et Settings**
+- [x] **Page connexion** refactorisée (Card shadcn/ui, gradient background)
+- [x] **Page inscription** refactorisée (Card shadcn/ui, gradient background)
+- [x] **Page settings** refactorisée (Cards avec gradients, profil, préférences)
+- [x] **LoginForm** amélioré (visibilité inputs, white bg, dark text, gradient button)
+- [x] **SignupForm** amélioré (visibilité inputs, white bg, dark text, gradient button)
+
+**Phase 8: Dark Mode et Nettoyage**
+- [x] **ThemeProvider** créé (wrapper next-themes)
+- [x] **ThemeToggle** créé (switch fonctionnel dans settings)
+- [x] **Dark mode** activé et fonctionnel
+- [x] **Root layout** mis à jour (ThemeProvider + suppressHydrationWarning)
+- [x] **Landing page** améliorée (visibilité textes, icônes Music2/TrendingUp/Award)
+- [x] **Build final** validé (compilation sans erreurs)
+- [x] **Commits et push** effectués
+
+#### ✅ Composants créés/modifiés
+**Nouveaux composants**:
+- `components/ui/*` - 46 composants shadcn/ui
+- `components/layout/DashboardHeader.tsx`
+- `components/layout/DashboardSidebar.tsx`
+- `components/dashboard/DashboardStats.tsx`
+- `components/dashboard/WeeklyGoals.tsx`
+- `components/parcours/NiveauCard.tsx`
+- `components/parcours/LeconCard.tsx`
+- `components/providers/ThemeProvider.tsx`
+- `components/settings/ThemeToggle.tsx`
+
+**Composants modifiés**:
+- `app/layout.tsx` - ThemeProvider integration
+- `app/page.tsx` - Landing page avec visibilité améliorée
+- `app/(protected)/layout.tsx` - Nouveau layout Header + Sidebar
+- `app/(protected)/dashboard/page.tsx` - Dashboard refactorisé
+- `app/(protected)/parcours/page.tsx` - Page parcours refactorisée
+- `app/(protected)/parcours/niveau-1/page.tsx` - Page niveau refactorisée
+- `app/(protected)/settings/page.tsx` - Page settings refactorisée
+- `app/(auth)/connexion/page.tsx` - Page connexion refactorisée
+- `app/(auth)/inscription/page.tsx` - Page inscription refactorisée
+- `components/auth/LoginForm.tsx` - Visibilité améliorée
+- `components/auth/SignupForm.tsx` - Visibilité améliorée
+
+#### 🎨 Avant/Après
+**Avant (Glassmorphism dark)**:
+- Design glassmorphism avec fond sombre
+- Navigation horizontale custom
+- Widgets draggables avec react-grid-layout
+- Composants UI 100% custom
+- Pas de dark mode toggle fonctionnel
+
+**Après (Design Figma moderne)**:
+- Design light moderne avec gradients purple-blue
+- Layout Header + Sidebar fixe
+- Grid responsive fixe (pas de drag & drop)
+- 46 composants shadcn/ui + composants custom
+- Dark mode fonctionnel avec toggle
 
 #### 🚧 En cours
-- [ ] **Fonctionnalités d'apprentissage**: Développement des parcours et leçons interactives
+- [ ] **Contenu pédagogique**: Développement du contenu des leçons
+- [ ] **Intégration Supabase**: Connexion réelle aux données utilisateur
 
 #### 📋 À faire (Prochaines priorités)
-- [ ] **Niveau 1 - Découverte**: Création des 5 premières leçons
-  - [ ] Leçon 1: Anatomie du clavier (notes, octaves)
-  - [ ] Leçon 2: Position des mains
-  - [ ] Leçon 3: Premier motif main droite
-  - [ ] Leçon 4: Premier motif main gauche
-  - [ ] Leçon 5: Ton premier morceau complet
-- [ ] **Page /parcours**: Affichage des 5 niveaux et progression
-- [ ] **Composant Leçon**: Template réutilisable pour toutes les leçons
-- [ ] **Système de validation**: Tracking progression utilisateur
-- [ ] **Auth flow complet**: Connexion/Inscription avec Supabase Auth
-- [ ] **Tests utilisateurs**: Dashboard et première leçon
+Voir section "🚀 PROCHAINES ÉTAPES" ci-dessous
+
+---
+
+## 🚀 PROCHAINES ÉTAPES
+
+### Phase 1: Contenu pédagogique - Niveau 1 (Priorité 1) 🎯
+**Objectif**: Créer les 5 premières leçons complètes avec contenu interactif
+
+#### Leçon 1: Anatomie du clavier
+- [ ] Créer schéma interactif du clavier (88 touches)
+- [ ] Animation des octaves (Do1 à Do8)
+- [ ] Quiz: Identifier les notes blanches (Do, Ré, Mi, Fa, Sol, La, Si)
+- [ ] Quiz: Identifier les notes noires (dièses/bémols)
+- [ ] Vidéo explicative (1-2 min)
+- [ ] Fiche mémo PDF téléchargeable
+
+#### Leçon 2: Position des mains
+- [ ] Vidéo position correcte des mains
+- [ ] Schéma numérotation des doigts (1-5)
+- [ ] Animation position assise optimale
+- [ ] Exercice guidé: Placer les doigts sur Do-Mi-Sol
+- [ ] Quiz validation posture
+
+#### Leçon 3: Premier motif main droite
+- [ ] Vidéo démonstration motif simple (Do-Ré-Mi-Fa-Sol)
+- [ ] Schéma clavier interactif avec touches à jouer
+- [ ] Mode practice: Utilisateur indique "Réussi" ou "À retravailler"
+- [ ] Timer de pratique (recommandation 5 min)
+- [ ] Audio de référence (piano réel)
+
+#### Leçon 4: Premier motif main gauche
+- [ ] Vidéo démonstration accord simple main gauche (Do-Sol)
+- [ ] Schéma clavier main gauche
+- [ ] Mode practice avec validation
+- [ ] Exercice de coordination (alterner main droite / main gauche)
+
+#### Leçon 5: Ton premier morceau complet
+- [ ] Choix morceau ultra simple (ex: "Au clair de la lune" simplifié)
+- [ ] Partition simplifiée (notation couleur/numéros)
+- [ ] Vidéo démo complète
+- [ ] Mode practice par section (4 sections de 8 temps)
+- [ ] Validation finale + badge "Premier morceau" 🎉
+- [ ] Message de félicitations personnalisé
+
+**Livrables**:
+- 5 pages de leçons fonctionnelles avec contenu réel
+- Système de validation et progression
+- 1 badge débloqué ("Premier morceau")
+- Tracking Supabase (lessons completed, time spent)
+
+---
+
+### Phase 2: Intégration données Supabase (Priorité 2) 💾
+**Objectif**: Connecter l'UI aux vraies données utilisateur
+
+#### User Progress Tracking
+- [ ] Table `user_progress`: Relier leçons complétées par user_id
+- [ ] Fonction Supabase: `markLessonComplete(userId, lessonId)`
+- [ ] Fonction Supabase: `getLessonProgress(userId, lessonId)`
+- [ ] Dashboard: Afficher vraie progression depuis DB
+- [ ] NiveauCard: Calculer progress bar depuis DB
+
+#### Practice Logs
+- [ ] Table `practice_logs`: Logger chaque session de pratique
+- [ ] Fonction: `logPracticeSession(userId, lessonId, duration, success)`
+- [ ] Dashboard: Stats temps de pratique depuis DB
+- [ ] Weekly goals: Calculer depuis practice_logs
+
+#### Achievements/Badges
+- [ ] Table `achievements`: Définir les badges disponibles
+- [ ] Table `user_achievements`: Badges débloqués par user
+- [ ] Fonction: `unlockBadge(userId, badgeId)`
+- [ ] BadgesWidget: Afficher badges réels depuis DB
+
+#### Auth Flow
+- [ ] Middleware: Protéger routes /dashboard, /parcours, etc.
+- [ ] Redirect non-authentifiés vers /connexion
+- [ ] Persist user session (Supabase Auth)
+- [ ] Logout fonctionnel avec clear session
+
+**Livrables**:
+- Progression réelle persistée en DB
+- Stats dashboard calculées depuis vraies données
+- Auth flow complet et sécurisé
+- Badges système fonctionnel
+
+---
+
+### Phase 3: Composants interactifs avancés (Priorité 3) 🎹
+**Objectif**: Enrichir l'expérience d'apprentissage avec interactions
+
+#### Clavier virtuel interactif
+- [ ] Composant `VirtualKeyboard.tsx` (88 touches)
+- [ ] Highlights des touches à jouer (couleurs)
+- [ ] Click sur touches → joue note (Web Audio API)
+- [ ] Mode "suivi": Highlight dynamique pendant vidéo
+- [ ] Support MIDI input (détection clavier externe)
+
+#### Video Player custom
+- [ ] Composant `LessonVideoPlayer.tsx`
+- [ ] Contrôles: Play/Pause, vitesse (0.5x, 0.75x, 1x, 1.25x)
+- [ ] Marqueurs temporels (sections du morceau)
+- [ ] Loop mode pour répéter section
+- [ ] Transcription sous-titres synchronisée
+
+#### Quiz interactifs
+- [ ] Composant `QuizBlock.tsx` (multiple choice, vrai/faux)
+- [ ] Feedback immédiat (correct/incorrect)
+- [ ] Explication détaillée si erreur
+- [ ] Score et retry option
+
+#### Practice Timer
+- [ ] Composant `PracticeTimer.tsx`
+- [ ] Countdown/Timer
+- [ ] Métronome intégré (BPM ajustable)
+- [ ] Log automatique session dans Supabase
+
+**Livrables**:
+- Clavier virtuel fonctionnel avec audio
+- Video player enrichi
+- Quiz système complet
+- Practice tools intégrés
+
+---
+
+### Phase 4: Pages manquantes (Priorité 4) 📄
+**Objectif**: Compléter toutes les pages de l'app
+
+#### Page Ma Progression
+- [ ] Route `/progression`
+- [ ] Graphique progression globale (chart.js ou recharts)
+- [ ] Timeline des leçons complétées
+- [ ] Statistiques détaillées:
+  - Temps total de pratique
+  - Nombre de leçons complétées
+  - Streak de jours consécutifs
+  - Objectifs atteints vs. manqués
+- [ ] Export PDF du rapport de progression
+
+#### Page Mes Morceaux
+- [ ] Route `/morceaux`
+- [ ] Liste morceaux en cours
+- [ ] Liste morceaux complétés
+- [ ] Filtres: Par niveau, par difficulté
+- [ ] Bouton "Pratiquer" direct vers leçon
+- [ ] Favoris (étoile)
+
+#### Page Niveaux 2-5
+- [ ] Pages `/parcours/niveau-2` à `/parcours/niveau-5`
+- [ ] Réutiliser template niveau-1
+- [ ] Adapter couleurs gradient par niveau
+- [ ] Placeholder leçons (contenu à venir)
+
+#### Page Boutique/Revendeurs (SEO)
+- [ ] Route `/pianos-debutants`
+- [ ] Comparatif 5-10 pianos/claviers débutants
+- [ ] Liens affiliés (Amazon, Thomann, etc.)
+- [ ] Guide d'achat détaillé
+- [ ] FAQ SEO (schema.org markup)
+- [ ] Call-to-action depuis leçons
+
+**Livrables**:
+- Page progression complète avec graphiques
+- Page morceaux fonctionnelle
+- 4 pages niveaux supplémentaires
+- Page boutique SEO-optimisée
+
+---
+
+### Phase 5: Optimisations et polish (Priorité 5) ✨
+**Objectif**: Améliorer performance et UX
+
+#### Performance
+- [ ] Images: Convertir en WebP, lazy loading
+- [ ] Fonts: Optimiser chargement (font-display: swap)
+- [ ] Code splitting: Dynamic imports pour components lourds
+- [ ] Bundle analysis: Identifier et réduire large dependencies
+- [ ] Lighthouse audit: Score 90+ (Performance, Accessibility, SEO)
+
+#### SEO
+- [ ] Sitemap.xml généré automatiquement
+- [ ] robots.txt configuré
+- [ ] Meta tags optimisées sur toutes les pages
+- [ ] Schema.org markup (Organization, Course, FAQPage)
+- [ ] Open Graph images pour partage social
+- [ ] Blog: 3-5 articles SEO ("Comment choisir son piano", etc.)
+
+#### UX Polish
+- [ ] Loading skeletons sur toutes les pages
+- [ ] Error boundaries pour composants critiques
+- [ ] Toast notifications (succès, erreurs)
+- [ ] Onboarding flow pour nouveaux users
+- [ ] Help tooltips sur éléments complexes
+- [ ] Animations page transitions (Framer Motion)
+
+#### Mobile
+- [ ] Test complet sur mobile (iOS Safari, Android Chrome)
+- [ ] PWA setup (manifest.json, service worker)
+- [ ] Touch gestures (swipe entre leçons)
+- [ ] Responsive video player
+- [ ] Clavier virtuel adapté mobile
+
+**Livrables**:
+- Performance optimisée (Lighthouse 90+)
+- SEO on-page complet
+- UX polie avec animations
+- App mobile-ready (PWA)
+
+---
+
+### Phase 6: Évolutions futures (Backlog) 🔮
+**À évaluer après MVP complet**
+
+#### Détection audio (micro)
+- [ ] Web Audio API: Détection notes jouées
+- [ ] Feedback temps réel (note correcte/incorrecte)
+- [ ] Mode "guided practice" style Flowkey
+- [ ] Score de performance (précision, timing)
+
+#### Communauté
+- [ ] Forum utilisateurs (intégration Discourse ou custom)
+- [ ] Partage de progrès sur réseaux sociaux
+- [ ] Leaderboard (optionnel, compétition amicale)
+- [ ] Commentaires sur leçons
+
+#### Monétisation avancée
+- [ ] Paywall: Niveau 2+ réservés aux abonnés
+- [ ] Stripe integration: Abonnement mensuel/annuel
+- [ ] Free trial 7 jours
+- [ ] Coupons/codes promo
+
+#### App mobile native
+- [ ] React Native app (iOS + Android)
+- [ ] Offline mode (contenu downloadable)
+- [ ] Push notifications (rappels pratique)
+- [ ] App Store + Google Play publication
 
 ---
 
@@ -467,14 +769,42 @@ components/widgets/
 - [x] CI/CD pipeline (via Vercel)
 
 ### Dépendances validées
+**Core**:
 - ✅ Next.js 16.1.1 avec TypeScript
 - ✅ React 19.2.3
-- ✅ Tailwind CSS 4 (styling dark fantasy dashboard)
+- ✅ Tailwind CSS 4 (styling moderne avec gradients)
 - ✅ Supabase client
-- ✅ Framer Motion (animations)
-- ✅ React Hook Form + Zod (formulaires)
+
+**UI Components (shadcn/ui)**:
+- ✅ 46 composants shadcn/ui (Card, Button, Input, Label, Switch, Tabs, etc.)
+- ✅ @radix-ui/* (29 packages: accordion, alert-dialog, avatar, checkbox, dialog, dropdown-menu, hover-card, label, menubar, navigation-menu, popover, progress, radio-group, scroll-area, select, separator, slider, slot, switch, tabs, toast, toggle, toggle-group, tooltip, aspect-ratio, collapsible, context-menu)
+- ✅ class-variance-authority (CVA pour variants)
+- ✅ clsx + tailwind-merge (gestion classes CSS)
+
+**Forms & Validation**:
+- ✅ React Hook Form (gestion formulaires)
+- ✅ Zod (validation schémas)
+- ✅ @hookform/resolvers (intégration Zod)
+
+**UI/UX**:
 - ✅ Lucide React (icônes)
-- ✅ react-grid-layout (drag & drop grid system)
+- ✅ Framer Motion (animations)
+- ✅ sonner (toast notifications)
+- ✅ vaul (drawer mobile)
+- ✅ cmdk (command palette)
+- ✅ next-themes (dark mode)
+
+**Data & Charts**:
+- ✅ recharts (graphiques progression)
+- ✅ date-fns (manipulation dates)
+- ✅ react-day-picker (date picker)
+
+**Advanced**:
+- ✅ embla-carousel-react (carousel)
+- ✅ input-otp (OTP inputs)
+
+**Removed**:
+- ❌ react-grid-layout (supprimé - remplacé par layout fixe)
 
 ---
 
@@ -506,5 +836,5 @@ components/widgets/
 
 ---
 
-**Dernière mise à jour**: 2026-01-09
-**Version**: 0.3.0 (Dashboard dark fantasy 3×3 avec drag & drop)
+**Dernière mise à jour**: 2026-01-11
+**Version**: 1.0.0 (Refonte graphique complète - Design Figma avec shadcn/ui)
