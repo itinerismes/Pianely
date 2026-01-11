@@ -10,10 +10,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2, LogIn } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 
 export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo')
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema)
@@ -23,7 +26,7 @@ export function LoginForm() {
     setLoading(true)
     setError(null)
 
-    const result = await login(data)
+    const result = await login(data, redirectTo || undefined)
 
     if (result?.error) {
       setError(result.error.message)

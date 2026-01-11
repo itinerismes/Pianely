@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { LoginInput, SignupInput } from './schemas'
 
-export async function login(data: LoginInput) {
+export async function login(data: LoginInput, redirectTo?: string) {
   const supabase = await createClient()
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -18,7 +18,7 @@ export async function login(data: LoginInput) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect(redirectTo || '/dashboard')
 }
 
 export async function signup(data: SignupInput) {
@@ -41,5 +41,5 @@ export async function logout() {
   const supabase = await createClient()
   await supabase.auth.signOut()
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect('/')
 }

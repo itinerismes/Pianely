@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { LoginForm } from '@/components/auth/LoginForm'
 import { Music } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,7 +22,9 @@ export default function ConnexionPage() {
           </p>
         </CardHeader>
         <CardContent>
-          <LoginForm />
+          <Suspense fallback={<div className="text-center">Chargement...</div>}>
+            <LoginForm />
+          </Suspense>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
