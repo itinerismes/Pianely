@@ -1,0 +1,428 @@
+@import "tailwindcss";
+
+/* ================================
+   MODERN MEDICAL DASHBOARD THEME
+   Light Mode (default) + Dark Mode
+   ================================ */
+
+:root {
+  /* ===== LIGHT MODE (Default) ===== */
+
+  /* Backgrounds - Subtle violet gradient */
+  --bg-primary: #ffffff;
+  --bg-secondary: #faf8ff;        /* Very light violet */
+  --bg-tertiary: #f5f3ff;         /* violet-50 */
+  --bg-gradient-start: #faf8ff;
+  --bg-gradient-mid: #f0f9ff;     /* blue-50 */
+  --bg-gradient-end: #ffffff;
+
+  /* Cards */
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;         /* slate-200 */
+  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --card-shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+
+  /* Text */
+  --text-primary: #0f172a;        /* slate-900 */
+  --text-secondary: #475569;      /* slate-600 */
+  --text-tertiary: #64748b;       /* slate-500 */
+  --text-muted: #94a3b8;          /* slate-400 */
+
+  /* Accents - Violet medical theme */
+  --accent-primary: #7c3aed;      /* violet-600 */
+  --accent-primary-hover: #6d28d9; /* violet-700 */
+  --accent-primary-light: #a78bfa; /* violet-400 */
+  --accent-primary-bg: #f5f3ff;   /* violet-50 */
+
+  /* Success - Emerald */
+  --accent-success: #10b981;      /* emerald-500 */
+  --accent-success-hover: #059669; /* emerald-600 */
+  --accent-success-light: #34d399; /* emerald-400 */
+  --accent-success-bg: #ecfdf5;   /* emerald-50 */
+
+  /* Warning - Amber */
+  --accent-warning: #f59e0b;      /* amber-500 */
+  --accent-warning-hover: #d97706; /* amber-600 */
+  --accent-warning-light: #fbbf24; /* amber-400 */
+  --accent-warning-bg: #fffbeb;   /* amber-50 */
+
+  /* Info - Blue */
+  --accent-info: #3b82f6;         /* blue-500 */
+  --accent-info-hover: #2563eb;   /* blue-600 */
+  --accent-info-light: #60a5fa;   /* blue-400 */
+  --accent-info-bg: #eff6ff;      /* blue-50 */
+
+  /* Danger - Rose */
+  --accent-danger: #f43f5e;       /* rose-500 */
+  --accent-danger-hover: #e11d48; /* rose-600 */
+  --accent-danger-light: #fb7185; /* rose-400 */
+  --accent-danger-bg: #fff1f2;    /* rose-50 */
+
+  /* Borders */
+  --border-light: #f1f5f9;        /* slate-100 */
+  --border-medium: #e2e8f0;       /* slate-200 */
+  --border-strong: #cbd5e1;       /* slate-300 */
+
+  /* Interactive */
+  --hover-bg: #f8fafc;            /* slate-50 */
+  --active-bg: #f1f5f9;           /* slate-100 */
+  --focus-ring: rgba(124, 58, 237, 0.5); /* violet-600/50 */
+
+  /* Scrollbar */
+  --scrollbar-track: #f1f5f9;     /* slate-100 */
+  --scrollbar-thumb: #cbd5e1;     /* slate-300 */
+  --scrollbar-thumb-hover: #94a3b8; /* slate-400 */
+}
+
+[data-theme="dark"] {
+  /* ===== DARK MODE ===== */
+
+  /* Backgrounds - Modern dark slate */
+  --bg-primary: #0f172a;          /* slate-900 */
+  --bg-secondary: #1e293b;        /* slate-800 */
+  --bg-tertiary: #334155;         /* slate-700 */
+  --bg-gradient-start: #0f172a;
+  --bg-gradient-mid: #1e293b;
+  --bg-gradient-end: #0f172a;
+
+  /* Cards */
+  --card-bg: #1e293b;             /* slate-800 */
+  --card-border: #334155;         /* slate-700 */
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --card-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+
+  /* Text */
+  --text-primary: #f8fafc;        /* slate-50 */
+  --text-secondary: #cbd5e1;      /* slate-300 */
+  --text-tertiary: #94a3b8;       /* slate-400 */
+  --text-muted: #64748b;          /* slate-500 */
+
+  /* Accents - Lighter for dark bg */
+  --accent-primary: #8b5cf6;      /* violet-500 */
+  --accent-primary-hover: #7c3aed; /* violet-600 */
+  --accent-primary-light: #a78bfa; /* violet-400 */
+  --accent-primary-bg: rgba(139, 92, 246, 0.1); /* violet-500/10 */
+
+  --accent-success: #34d399;      /* emerald-400 */
+  --accent-success-hover: #10b981; /* emerald-500 */
+  --accent-success-light: #6ee7b7; /* emerald-300 */
+  --accent-success-bg: rgba(16, 185, 129, 0.1); /* emerald-500/10 */
+
+  --accent-warning: #fbbf24;      /* amber-400 */
+  --accent-warning-hover: #f59e0b; /* amber-500 */
+  --accent-warning-light: #fcd34d; /* amber-300 */
+  --accent-warning-bg: rgba(245, 158, 11, 0.1); /* amber-500/10 */
+
+  --accent-info: #60a5fa;         /* blue-400 */
+  --accent-info-hover: #3b82f6;   /* blue-500 */
+  --accent-info-light: #93c5fd;   /* blue-300 */
+  --accent-info-bg: rgba(59, 130, 246, 0.1); /* blue-500/10 */
+
+  --accent-danger: #fb7185;       /* rose-400 */
+  --accent-danger-hover: #f43f5e; /* rose-500 */
+  --accent-danger-light: #fda4af; /* rose-300 */
+  --accent-danger-bg: rgba(244, 63, 94, 0.1); /* rose-500/10 */
+
+  /* Borders */
+  --border-light: #334155;        /* slate-700 */
+  --border-medium: #475569;       /* slate-600 */
+  --border-strong: #64748b;       /* slate-500 */
+
+  /* Interactive */
+  --hover-bg: #334155;            /* slate-700 */
+  --active-bg: #475569;           /* slate-600 */
+  --focus-ring: rgba(139, 92, 246, 0.5); /* violet-500/50 */
+
+  /* Scrollbar */
+  --scrollbar-track: #1e293b;     /* slate-800 */
+  --scrollbar-thumb: #475569;     /* slate-600 */
+  --scrollbar-thumb-hover: #64748b; /* slate-500 */
+}
+
+/* ================================
+   GLOBAL STYLES
+   ================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start) 0%,
+    var(--bg-gradient-mid) 50%,
+    var(--bg-gradient-end) 100%
+  );
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: var(--font-jakarta), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Subtle pattern overlay for light mode */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+[data-theme="dark"] body::before {
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+}
+
+/* ================================
+   SCROLLBAR
+   ================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ================================
+   SELECTION
+   ================================ */
+
+::selection {
+  background: var(--accent-primary-light);
+  color: white;
+}
+
+/* ================================
+   FOCUS & INTERACTIONS
+   ================================ */
+
+*:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ================================
+   UTILITIES
+   ================================ */
+
+/* Modern card style */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+.card-lg {
+  box-shadow: var(--card-shadow-lg);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+}
+
+.badge-primary {
+  background: var(--accent-primary-bg);
+  color: var(--accent-primary);
+}
+
+.badge-success {
+  background: var(--accent-success-bg);
+  color: var(--accent-success);
+}
+
+.badge-warning {
+  background: var(--accent-warning-bg);
+  color: var(--accent-warning);
+}
+
+.badge-info {
+  background: var(--accent-info-bg);
+  color: var(--accent-info);
+}
+
+/* ================================
+   ANIMATIONS
+   ================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ================================
+   REACT GRID LAYOUT
+   ================================ */
+
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top;
+  overflow: hidden !important;
+  cursor: move !important;
+}
+
+.react-grid-item:hover {
+  cursor: grab !important;
+}
+
+.react-grid-item:active {
+  cursor: grabbing !important;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform;
+}
+
+.react-grid-item.resizing {
+  transition: none;
+  z-index: 100;
+}
+
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 100;
+  opacity: 0.9;
+  cursor: grabbing !important;
+}
+
+.react-grid-item > .react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid var(--border-medium);
+  border-bottom: 2px solid var(--border-medium);
+}
+
+.react-grid-layout {
+  position: relative;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: var(--accent-primary-bg);
+  border: 2px dashed var(--accent-primary-light);
+  border-radius: 16px;
+  opacity: 0.5;
+  transition-duration: 100ms;
+  z-index: 2;
+}
+
+/* ================================
+   TAILWIND UTILITIES
+   ================================ */
+
+@layer utilities {
+  /* Force centering */
+  .max-w-2xl,
+  .max-w-3xl,
+  .max-w-4xl,
+  .max-w-5xl,
+  .max-w-xl {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}

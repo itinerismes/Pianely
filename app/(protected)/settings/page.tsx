@@ -1,39 +1,113 @@
 import { createClient } from '@/lib/supabase/server'
 import { logout } from '@/lib/auth/actions'
-import { LogOut } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { Mail, LogOut, Bell, Shield } from 'lucide-react'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
+  const userName = user?.user_metadata?.full_name ||
+                   user?.email?.split('@')[0] ||
+                   'Utilisateur'
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24">
-      <div className="max-w-2xl mx-auto px-6">
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 p-8 shadow-xl shadow-black/20">
-          <h1 className="text-2xl font-bold text-white/90 mb-6">
-            Paramètres
-          </h1>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          Paramètres
+        </h1>
+        <p className="text-muted-foreground">
+          Gère ton compte et tes préférences
+        </p>
+      </div>
 
-          <div className="space-y-6">
-            <div>
-              <label className="text-sm font-medium text-gray-400">Email</label>
-              <p className="text-white text-lg mt-1">{user?.email}</p>
+      {/* Profile card */}
+      <Card className="bg-gradient-to-br from-white to-indigo-50 border-indigo-200 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+              <Mail className="h-4 w-4" />
             </div>
-
-            <div className="pt-6 border-t border-slate-700">
-              <form action={logout}>
-                <button
-                  type="submit"
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Se déconnecter</span>
-                </button>
-              </form>
+            Profil
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Avatar className="w-16 h-16 ring-2 ring-purple-200">
+              <AvatarFallback className="bg-gradient-to-br from-purple-400 to-blue-500 text-white text-lg">
+                {userName.split(' ').map((n: string) => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="font-medium">{user?.email}</p>
+              <p className="text-sm text-muted-foreground">Membre depuis {new Date(user?.created_at || '').toLocaleDateString('fr-FR')}</p>
             </div>
           </div>
-        </div>
-      </div>
-    </main>
+        </CardContent>
+      </Card>
+
+      {/* Preferences card */}
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-600 text-white">
+              <Bell className="h-4 w-4" />
+            </div>
+            Préférences
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="theme">Thème sombre</Label>
+              <p className="text-sm text-muted-foreground">Utiliser le thème sombre</p>
+            </div>
+            <Switch id="theme" disabled />
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="notifications">Notifications</Label>
+              <p className="text-sm text-muted-foreground">Recevoir des notifications par email</p>
+            </div>
+            <Switch id="notifications" disabled />
+          </div>
+          <p className="text-xs text-muted-foreground italic">
+            Ces fonctionnalités seront bientôt disponibles
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Danger zone */}
+      <Card className="border-red-200 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-red-600">
+            <div className="p-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-600 text-white">
+              <Shield className="h-4 w-4" />
+            </div>
+            Zone dangereuse
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Déconnecte-toi de ton compte. Tu devras te reconnecter pour accéder à tes leçons.
+          </p>
+          <form action={logout}>
+            <Button
+              type="submit"
+              variant="destructive"
+              className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Se déconnecter
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

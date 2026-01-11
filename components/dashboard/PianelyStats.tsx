@@ -1,0 +1,118 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  BookOpen,
+  Clock,
+  Award,
+  TrendingUp
+} from "lucide-react";
+
+interface StatCardProps {
+  title: string;
+  value: string;
+  change?: string;
+  changeType?: 'positive' | 'negative' | 'neutral';
+  icon: React.ReactNode;
+  progress?: number;
+  progressLabel?: string;
+}
+
+function StatCard({ title, value, change, changeType, icon, progress, progressLabel }: StatCardProps) {
+  const getCardGradient = (title: string) => {
+    const gradients = {
+      'Niveaux complétés': 'bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-200',
+      'Heures de pratique': 'bg-gradient-to-br from-green-50 to-emerald-100 border-green-200',
+      'Leçons terminées': 'bg-gradient-to-br from-yellow-50 to-orange-100 border-yellow-200',
+      'Progression moyenne': 'bg-gradient-to-br from-purple-50 to-pink-100 border-purple-200'
+    };
+    return gradients[title as keyof typeof gradients] || 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200';
+  };
+
+  const getIconGradient = (title: string) => {
+    const gradients = {
+      'Niveaux complétés': 'bg-gradient-to-r from-blue-500 to-indigo-600',
+      'Heures de pratique': 'bg-gradient-to-r from-green-500 to-emerald-600',
+      'Leçons terminées': 'bg-gradient-to-r from-yellow-500 to-orange-600',
+      'Progression moyenne': 'bg-gradient-to-r from-purple-500 to-pink-600'
+    };
+    return gradients[title as keyof typeof gradients] || 'bg-gradient-to-r from-gray-500 to-gray-600';
+  };
+
+  return (
+    <Card className={`${getCardGradient(title)} border-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
+        <div className={`p-2 rounded-lg ${getIconGradient(title)} text-white shadow-md`}>
+          {icon}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold mb-1">{value}</div>
+        {change && (
+          <p className={`text-xs ${
+            changeType === 'positive' ? 'text-green-600' :
+            changeType === 'negative' ? 'text-red-600' :
+            'text-muted-foreground'
+          }`}>
+            {change}
+          </p>
+        )}
+        {progress !== undefined && (
+          <div className="mt-3 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">{progressLabel}</span>
+              <span className="font-medium">{progress}%</span>
+            </div>
+            <div className="w-full bg-white/50 rounded-full h-2 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function PianelyStats() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <StatCard
+        title="Niveaux complétés"
+        value="1/5"
+        change="+1 ce mois"
+        changeType="positive"
+        icon={<BookOpen className="h-4 w-4" />}
+      />
+
+      <StatCard
+        title="Heures de pratique"
+        value="12.5h"
+        change="+3.2h cette semaine"
+        changeType="positive"
+        icon={<Clock className="h-4 w-4" />}
+      />
+
+      <StatCard
+        title="Leçons terminées"
+        value="5/42"
+        change="+2 cette semaine"
+        changeType="positive"
+        icon={<Award className="h-4 w-4" />}
+      />
+
+      <StatCard
+        title="Progression moyenne"
+        value="12%"
+        change="+4% ce mois"
+        changeType="positive"
+        icon={<TrendingUp className="h-4 w-4" />}
+        progress={12}
+        progressLabel="Progression globale"
+      />
+    </div>
+  );
+}

@@ -1,150 +1,226 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { Responsive as ResponsiveGridLayout } from 'react-grid-layout'
-import 'react-grid-layout/css/styles.css'
-import { RotateCcw, LayoutGrid } from 'lucide-react'
+import { useState } from 'react';
+import { PianelyStats } from '@/components/dashboard/PianelyStats';
+import { WeeklyGoals } from '@/components/dashboard/WeeklyGoals';
+import { NiveauCard } from '@/components/parcours/NiveauCard';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Music, Trophy } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-// Widgets
-import { GuideWidget } from '@/components/widgets/GuideWidget'
-import { AujourdhuiWidget } from '@/components/widgets/AujourdhuiWidget'
-import { ObjectifWidget } from '@/components/widgets/ObjectifWidget'
-import { MorceauxWidget } from '@/components/widgets/MorceauxWidget'
-import { BadgesWidget } from '@/components/widgets/BadgesWidget'
+export default function DashboardPage() {
+  const router = useRouter();
+  const [selectedTab, setSelectedTab] = useState('all');
 
-const defaultLayout = [
-  { i: 'aujourdhui', x: 0, y: 0, w: 4, h: 2 },
-  { i: 'objectif', x: 4, y: 0, w: 4, h: 2 },
-  { i: 'badges', x: 8, y: 0, w: 4, h: 2 },
-  { i: 'guide', x: 0, y: 2, w: 6, h: 3 },
-  { i: 'morceaux', x: 6, y: 2, w: 6, h: 3 },
-]
+  const niveaux = [
+    {
+      niveau: 1,
+      name: 'Niveau 1 - Découverte',
+      description: 'Tes premiers pas au piano',
+      totalLessons: 5,
+      completedLessons: 0,
+      duration: '57 min',
+      unlocked: true,
+      gradient: 'from-green-500 to-emerald-600',
+      href: '/parcours/niveau-1'
+    },
+    {
+      niveau: 2,
+      name: 'Niveau 2 - Initiation',
+      description: 'Développe ta technique de base',
+      totalLessons: 7,
+      completedLessons: 0,
+      duration: '1h 45min',
+      unlocked: false,
+      gradient: 'from-blue-500 to-cyan-600',
+      href: '/parcours/niveau-2'
+    },
+    {
+      niveau: 3,
+      name: 'Niveau 3 - Progression',
+      description: 'Explore des morceaux plus complexes',
+      totalLessons: 8,
+      completedLessons: 0,
+      duration: '2h 10min',
+      unlocked: false,
+      gradient: 'from-purple-500 to-violet-600',
+      href: '/parcours/niveau-3'
+    },
+    {
+      niveau: 4,
+      name: 'Niveau 4 - Maîtrise',
+      description: 'Affine ton jeu et ton style',
+      totalLessons: 10,
+      completedLessons: 0,
+      duration: '2h 45min',
+      unlocked: false,
+      gradient: 'from-orange-500 to-amber-600',
+      href: '/parcours/niveau-4'
+    },
+    {
+      niveau: 5,
+      name: 'Niveau 5 - Expert',
+      description: 'Deviens un virtuoso',
+      totalLessons: 12,
+      completedLessons: 0,
+      duration: '3h 30min',
+      unlocked: false,
+      gradient: 'from-pink-500 to-rose-600',
+      href: '/parcours/niveau-5'
+    },
+  ];
 
-export default function HomePage() {
-  const [layout, setLayout] = useState(defaultLayout)
-  const [mounted, setMounted] = useState(false)
-
-  // Load layout from localStorage
-  useEffect(() => {
-    setMounted(true)
-    const savedLayout = localStorage.getItem('dashboardLayout')
-    if (savedLayout) {
-      try {
-        setLayout(JSON.parse(savedLayout))
-      } catch (e) {
-        console.error('Failed to parse saved layout', e)
-      }
-    }
-  }, [])
-
-  const handleLayoutChange = (newLayout: any) => {
-    setLayout(newLayout)
-    localStorage.setItem('dashboardLayout', JSON.stringify(newLayout))
-  }
-
-  const handleReset = () => {
-    setLayout(defaultLayout)
-    localStorage.removeItem('dashboardLayout')
-  }
-
-  if (!mounted) {
-    return (
-      <main className="min-h-screen pt-6">
-        <div className="max-w-[1400px] mx-auto px-6 py-6">
-          <div className="animate-pulse" style={{ color: 'var(--text-primary)' }}>
-            Chargement...
-          </div>
-        </div>
-      </main>
-    )
-  }
+  const inProgressNiveaux = niveaux.filter(n => n.unlocked && n.completedLessons > 0 && n.completedLessons < n.totalLessons);
+  const completedNiveaux = niveaux.filter(n => n.completedLessons === n.totalLessons);
 
   return (
-    <main className="min-h-screen pt-6">
-      <div className="max-w-[1400px] mx-auto px-6 py-6">
-        {/* Dashboard Overview Header */}
-        <div
-          className="card-lg rounded-2xl p-8 mb-8 transition-all duration-200"
-        >
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
-                    boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
-                  }}
-                >
-                  <LayoutGrid className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                    Dashboard
-                  </h1>
-                  <p className="text-sm md:text-base" style={{ color: 'var(--text-secondary)' }}>
-                    Bienvenue, suis ta progression musicale
+    <div className="space-y-6">
+      {/* Welcome Section with decorative blobs */}
+      <div className="space-y-2 relative">
+        <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-10 blur-xl decorative-blob" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-10 blur-xl decorative-blob" />
+
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent relative z-10">
+          Bienvenue sur ton tableau de bord ! 🎹
+        </h1>
+        <p className="text-muted-foreground relative z-10">
+          Continue ton apprentissage du piano. Tu progresses bien ! ✨
+        </p>
+      </div>
+
+      {/* Stats */}
+      <PianelyStats />
+
+      {/* Grid Layout */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Main Section */}
+        <div className="lg:col-span-2 space-y-4">
+          <h2 className="text-xl font-semibold">Mes Niveaux</h2>
+
+          <Tabs defaultValue="all" value={selectedTab} onValueChange={setSelectedTab}>
+            <TabsList className="grid w-full grid-cols-3 bg-muted/50">
+              <TabsTrigger value="all">Tous</TabsTrigger>
+              <TabsTrigger value="in-progress">
+                En cours
+                {inProgressNiveaux.length > 0 && (
+                  <Badge className="ml-2 bg-gradient-to-r from-blue-400 to-cyan-500 text-white border-0">
+                    {inProgressNiveaux.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="completed">
+                Complétés
+                {completedNiveaux.length > 0 && (
+                  <Badge className="ml-2 bg-gradient-to-r from-green-400 to-emerald-500 text-white border-0">
+                    {completedNiveaux.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="all" className="grid gap-4 sm:grid-cols-2 mt-4">
+              {niveaux.map((niveau) => (
+                <NiveauCard key={niveau.niveau} {...niveau} />
+              ))}
+            </TabsContent>
+
+            <TabsContent value="in-progress" className="grid gap-4 sm:grid-cols-2 mt-4">
+              {inProgressNiveaux.length > 0 ? (
+                inProgressNiveaux.map((niveau) => (
+                  <NiveauCard key={niveau.niveau} {...niveau} />
+                ))
+              ) : (
+                <div className="col-span-2 text-center py-12">
+                  <Music className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">
+                    Aucun niveau en cours. Commence un niveau pour le voir ici !
                   </p>
                 </div>
-              </div>
-            </div>
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105"
-              style={{
-                background: 'var(--hover-bg)',
-                border: '1px solid var(--border-medium)',
-                color: 'var(--text-secondary)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--text-primary)'
-                e.currentTarget.style.borderColor = 'var(--border-strong)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'var(--text-secondary)'
-                e.currentTarget.style.borderColor = 'var(--border-medium)'
-              }}
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span>Réinitialiser</span>
-            </button>
-          </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="completed" className="grid gap-4 sm:grid-cols-2 mt-4">
+              {completedNiveaux.length > 0 ? (
+                completedNiveaux.map((niveau) => (
+                  <NiveauCard key={niveau.niveau} {...niveau} />
+                ))
+              ) : (
+                <div className="col-span-2 text-center py-12">
+                  <Trophy className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">
+                    Aucun niveau complété encore. Continue ton apprentissage !
+                  </p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
 
-        {/* Grid Layout */}
-        <div className="mt-4 mb-6">
-          <ResponsiveGridLayout
-            className="layout"
-            layouts={{ lg: layout }}
-            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-            cols={{ lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 }}
-            rowHeight={100}
-            width={1400}
-            margin={[16, 16]}
-            onLayoutChange={(layout: any, layouts: any) => handleLayoutChange(layouts.lg || layout)}
-          >
-          <div key="aujourdhui">
-            <AujourdhuiWidget />
-          </div>
+        {/* Sidebar */}
+        <div className="space-y-6">
+          <WeeklyGoals />
 
-          <div key="objectif">
-            <ObjectifWidget />
-          </div>
+          {/* Continue Learning */}
+          <Card className="bg-gradient-to-br from-white to-orange-50 border-orange-200 shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-600 text-white">
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+                Continuer l'apprentissage 🎬
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="p-3 rounded-lg bg-white/80 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-sm">Niveau 1 - Leçon 1</span>
+                  <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-white border-0">
+                    Nouveau
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Position des mains et premières notes
+                </p>
+              </div>
+              <Button
+                className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0"
+                onClick={() => router.push('/parcours/niveau-1/lecon-1')}
+              >
+                Commencer
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
 
-          <div key="badges">
-            <BadgesWidget />
-          </div>
-
-          <div key="guide">
-            <GuideWidget />
-          </div>
-
-          <div key="morceaux">
-            <MorceauxWidget />
-          </div>
-        </ResponsiveGridLayout>
+          {/* Recent Activity */}
+          <Card className="bg-gradient-to-br from-white to-green-50 border-green-200 shadow-lg">
+            <CardHeader>
+              <CardTitle>Activité récente 📈</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="text-sm text-muted-foreground space-y-2">
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 mt-1.5" />
+                  <div>
+                    <p className="font-medium text-foreground">Compte créé</p>
+                    <p className="text-xs">Aujourd'hui</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500 mt-1.5" />
+                  <div>
+                    <p className="font-medium text-foreground">Niveau 1 débloqué</p>
+                    <p className="text-xs">Aujourd'hui</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
-    </main>
-  )
+    </div>
+  );
 }

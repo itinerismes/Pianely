@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { HorizontalNav } from "@/components/ui/HorizontalNav";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -34,7 +33,6 @@ export default function RootLayout({
         className={`${jakarta.variable} font-sans antialiased`}
       >
         <AuthProvider>
-          <HorizontalNav />
           {children}
         </AuthProvider>
       </body>

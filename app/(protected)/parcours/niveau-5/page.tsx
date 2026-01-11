@@ -16,42 +16,62 @@ export default function Niveau5Page() {
   const totalDuration = lessons.reduce((acc, l) => acc + l.duration, 0)
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 pb-16">
-      <div className="max-w-2xl mx-auto px-6 md:px-8">
+    <main className="min-h-screen pt-24 pb-16">
+      <div className="max-w-3xl mx-auto px-6 md:px-8">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/parcours"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4"
+            className="group inline-flex items-center gap-2 font-semibold text-sm mb-6 transition-all duration-200"
+            style={{ color: 'var(--text-secondary)' }}
           >
-            <ArrowLeft className="w-4 h-4" />
-            Retour au parcours
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span className="group-hover:text-[var(--text-primary)] transition-colors">Retour au parcours</span>
           </Link>
 
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 p-8 shadow-xl shadow-black/20">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl font-bold text-white">5</span>
+          <div
+            className="backdrop-blur-xl rounded-3xl p-8 border"
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+            }}
+          >
+            <div className="flex items-start gap-6 mb-8">
+              <div
+                className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
+                style={{
+                  background: 'linear-gradient(135deg, var(--accent-danger) 0%, var(--accent-danger-hover) 100%)',
+                  boxShadow: '0 4px 24px rgba(244, 63, 94, 0.4)'
+                }}
+              >
+                <span className="text-3xl font-bold text-white">5</span>
               </div>
               <div className="flex-1">
-                <h1 className="text-3xl font-bold text-white/90 mb-2">
+                <h1
+                  className="text-3xl md:text-4xl font-bold mb-3"
+                  style={{
+                    color: 'var(--text-primary)',
+                    letterSpacing: '-0.02em'
+                  }}
+                >
                   Niveau 5 - Virtuosité
                 </h1>
-                <p className="text-gray-400 text-lg mb-4">
+                <p className="text-lg mb-5" style={{ color: 'var(--text-secondary)' }}>
                   Atteins l&apos;excellence
                 </p>
 
                 {/* Stats */}
-                <div className="flex items-center gap-6 text-sm">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-pink-400" />
-                    <span className="text-gray-300">
+                <div className="flex items-center gap-8 text-sm flex-wrap">
+                  <div className="flex items-center gap-2.5">
+                    <CheckCircle2 className="w-5 h-5" style={{ color: 'var(--accent-danger)' }} />
+                    <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>
                       {completedCount} / {lessons.length} leçons
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-sky-400" />
-                    <span className="text-gray-300">~{totalDuration} minutes</span>
+                  <div className="flex items-center gap-2.5">
+                    <Clock className="w-5 h-5" style={{ color: 'var(--accent-danger)' }} />
+                    <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>~{totalDuration} min</span>
                   </div>
                 </div>
               </div>
@@ -59,17 +79,22 @@ export default function Niveau5Page() {
 
             {/* Progress bar */}
             <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-400">Progression du niveau</span>
-                <span className="text-white font-semibold">
+              <div className="flex justify-between text-sm mb-3">
+                <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>Progression du niveau</span>
+                <span className="font-bold" style={{ color: 'var(--text-primary)' }}>
                   {Math.round((completedCount / lessons.length) * 100)}%
                 </span>
               </div>
-              <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+              <div
+                className="h-3 rounded-full overflow-hidden backdrop-blur-sm"
+                style={{ background: 'rgba(255, 255, 255, 0.05)' }}
+              >
                 <div
-                  className="h-full bg-gradient-to-r from-pink-500 to-rose-500 rounded-full transition-all duration-500"
+                  className="h-full rounded-full transition-all duration-500"
                   style={{
-                    width: `${(completedCount / lessons.length) * 100}%`
+                    background: 'linear-gradient(90deg, var(--accent-danger) 0%, var(--accent-danger-light) 100%)',
+                    width: `${(completedCount / lessons.length) * 100}%`,
+                    boxShadow: '0 0 16px rgba(244, 63, 94, 0.5)'
                   }}
                 />
               </div>
@@ -78,57 +103,88 @@ export default function Niveau5Page() {
         </div>
 
         {/* Coming Soon Message */}
-        <div className="bg-gradient-to-r from-pink-500/10 to-rose-500/10 border border-pink-500/30 rounded-xl p-8 text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-white" />
+        <div
+          className="backdrop-blur-xl rounded-3xl p-10 border text-center mb-8"
+          style={{
+            background: 'rgba(244, 63, 94, 0.1)',
+            borderColor: 'rgba(244, 63, 94, 0.3)',
+            boxShadow: '0 8px 32px rgba(244, 63, 94, 0.2)'
+          }}
+        >
+          <div
+            className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5"
+            style={{
+              background: 'linear-gradient(135deg, var(--accent-danger) 0%, var(--accent-danger-hover) 100%)',
+              boxShadow: '0 4px 24px rgba(244, 63, 94, 0.4)'
+            }}
+          >
+            <Lock className="w-10 h-10 text-white" />
           </div>
-          <h3 className="text-xl font-bold text-white/90 mb-2">
+          <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
             Niveau 5 en développement
           </h3>
-          <p className="text-gray-400 mb-4">
+          <p className="text-base mb-6" style={{ color: 'var(--text-secondary)' }}>
             Les leçons du Niveau 5 - Virtuosité seront bientôt disponibles.
             <br />
             Continue à pratiquer les niveaux précédents en attendant !
           </p>
           <Link
-            href="/parcours"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white font-medium rounded-lg hover:opacity-90 transition-all"
+            href="/parcours/niveau-1"
+            className="inline-flex items-center gap-2 px-8 py-4 text-white font-bold rounded-xl transition-all duration-300 hover:scale-110"
+            style={{
+              background: 'linear-gradient(135deg, var(--accent-danger) 0%, var(--accent-danger-hover) 100%)',
+              boxShadow: '0 4px 24px rgba(244, 63, 94, 0.4)'
+            }}
           >
-            Retour au parcours
+            Retour au Niveau 1
             <ArrowLeft className="w-5 h-5 rotate-180" />
           </Link>
         </div>
 
         {/* Lessons List (placeholder) */}
-        <div className="flex flex-col gap-6 md:gap-8">
+        <div className="flex flex-col gap-5">
           {lessons.map((lesson) => (
             <div
               key={lesson.id}
-              className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700 p-5 shadow-xl shadow-black/20 opacity-50"
+              className="backdrop-blur-xl rounded-2xl p-6 border opacity-40"
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)'
+              }}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-5">
+                {/* Status Icon */}
                 <div className="flex-shrink-0">
-                  <Circle className="w-6 h-6 text-slate-700" />
+                  <Circle className="w-7 h-7" style={{ color: 'rgba(255, 255, 255, 0.1)' }} />
                 </div>
+
+                {/* Lesson Info */}
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="text-sm font-medium text-gray-400">
+                  <div className="flex items-center gap-4 mb-2">
+                    <span className="text-sm font-bold" style={{ color: 'var(--text-tertiary)' }}>
                       Leçon {lesson.id}
                     </span>
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                      <Clock className="w-3.5 h-3.5" />
+                    <div className="flex items-center gap-2 text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
+                      <Clock className="w-4 h-4" />
                       <span>{lesson.duration} min</span>
                     </div>
                   </div>
-                  <h3 className="text-lg font-semibold text-white/90 mb-1">
+                  <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
                     {lesson.title}
                   </h3>
-                  <p className="text-sm text-gray-400">{lesson.description}</p>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{lesson.description}</p>
                 </div>
+
+                {/* CTA Button */}
                 <div className="flex-shrink-0">
                   <button
                     disabled
-                    className="px-5 py-2.5 bg-slate-700/50 text-slate-600 font-medium rounded-lg cursor-not-allowed"
+                    className="px-6 py-3 font-bold rounded-xl cursor-not-allowed backdrop-blur-sm"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      color: 'var(--text-muted)'
+                    }}
                   >
                     Bientôt
                   </button>
