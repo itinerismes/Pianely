@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { ThemeToggle } from '@/components/settings/ThemeToggle'
 import { Mail, LogOut, Bell, Shield } from 'lucide-react'
 
 export default async function SettingsPage() {
@@ -62,13 +63,7 @@ export default async function SettingsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="theme">Thème sombre</Label>
-              <p className="text-sm text-muted-foreground">Utiliser le thème sombre</p>
-            </div>
-            <Switch id="theme" disabled />
-          </div>
+          <ThemeToggle />
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label htmlFor="notifications">Notifications</Label>
@@ -77,7 +72,7 @@ export default async function SettingsPage() {
             <Switch id="notifications" disabled />
           </div>
           <p className="text-xs text-muted-foreground italic">
-            Ces fonctionnalités seront bientôt disponibles
+            Les notifications seront bientôt disponibles
           </p>
         </CardContent>
       </Card>

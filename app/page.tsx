@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import { Sparkles, Music, Award, TrendingUp, ArrowRight } from 'lucide-react'
+import { Sparkles, Music2, Award, TrendingUp, ArrowRight } from 'lucide-react'
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen relative overflow-hidden">
+    <main className="min-h-screen relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       {/* Animated Background Shapes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Large gradient blob top-right */}
@@ -28,29 +28,21 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-6 py-20">
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          {/* Glass Badge - Smaller */}
+          {/* Glass Badge */}
           <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 backdrop-blur-xl border transition-all duration-300 hover:scale-105"
-            style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              borderColor: 'rgba(255, 255, 255, 0.15)',
-              boxShadow: '0 4px 24px rgba(124, 58, 237, 0.15)'
-            }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 backdrop-blur-xl border transition-all duration-300 hover:scale-105 bg-white/80 shadow-lg"
           >
-            <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--accent-primary)' }} />
-            <span className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--text-primary)' }}>
+            <Sparkles className="w-4 h-4 text-purple-600" />
+            <span className="text-xs font-bold tracking-wider uppercase text-gray-900">
               Apprends le piano autrement
             </span>
           </div>
 
-          {/* Main Title - Much Smaller, Better Balanced */}
-          <div className="relative mb-12">
+          {/* Main Title */}
+          <div className="relative mb-6">
             <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
               style={{
-                background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-info) 50%, var(--accent-primary) 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
                 backgroundSize: '200% 200%',
                 animation: 'gradient 8s ease infinite',
                 letterSpacing: '-0.025em'
@@ -60,15 +52,16 @@ export default function LandingPage() {
             </h1>
           </div>
 
-          {/* CTA Button - Added back but single, centered */}
+          {/* Subtitle */}
+          <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+            Apprends le piano facilement, sans lire la musique au départ. Méthode progressive pour grands débutants.
+          </p>
+
+          {/* CTA Button */}
           <div className="mb-16">
             <Link
               href="/parcours"
-              className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-white text-base font-semibold transition-all duration-300 hover:scale-105 overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)',
-                boxShadow: '0 8px 32px rgba(124, 58, 237, 0.25)'
-              }}
+              className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-white text-base font-semibold transition-all duration-300 hover:scale-105 overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-xl hover:shadow-2xl"
             >
               <span className="relative z-10">Découvrir les leçons</span>
               <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 relative z-10" />
@@ -82,50 +75,44 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* Features Cards - Smaller, More Compact */}
-          <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          {/* Features Cards */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
               {
-                icon: Music,
+                icon: Music2,
                 title: 'Sans solfège',
                 description: 'Joue dès le premier jour',
-                gradient: 'linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%)'
+                gradient: 'from-purple-500 to-purple-600',
+                bgColor: 'from-purple-50 to-purple-100'
               },
               {
                 icon: TrendingUp,
                 title: 'Progression',
                 description: 'Statistiques en temps réel',
-                gradient: 'linear-gradient(135deg, var(--accent-success) 0%, var(--accent-success-hover) 100%)'
+                gradient: 'from-green-500 to-emerald-600',
+                bgColor: 'from-green-50 to-emerald-100'
               },
               {
                 icon: Award,
                 title: 'Gamification',
                 description: 'Badges et récompenses',
-                gradient: 'linear-gradient(135deg, var(--accent-warning) 0%, var(--accent-warning-hover) 100%)'
+                gradient: 'from-yellow-500 to-orange-600',
+                bgColor: 'from-yellow-50 to-orange-100'
               }
             ].map((feature, i) => (
               <div
                 key={i}
-                className="group relative backdrop-blur-xl border rounded-2xl p-6 transition-all duration-300 hover:scale-105"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  borderColor: 'rgba(255, 255, 255, 0.1)',
-                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06)'
-                }}
+                className="group relative bg-white border border-gray-200 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
                 <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
-                  style={{
-                    background: feature.gradient,
-                    boxShadow: '0 4px 16px rgba(124, 58, 237, 0.25)'
-                  }}
+                  className={`w-16 h-16 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-gradient-to-br ${feature.gradient} shadow-lg`}
                 >
-                  <feature.icon className="w-7 h-7 text-white" />
+                  <feature.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+                <h3 className="text-lg font-bold mb-2 text-gray-900">
                   {feature.title}
                 </h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                <p className="text-sm leading-relaxed text-gray-600">
                   {feature.description}
                 </p>
               </div>
