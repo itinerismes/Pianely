@@ -5,7 +5,7 @@
  * Adapted to work with existing database schema.
  */
 
-import { createClient } from './client'
+import { createClient } from './server'
 
 // ============================================================================
 // TYPES
@@ -89,7 +89,7 @@ export interface Lesson {
  * Get all published levels
  */
 export async function getLevels(): Promise<Level[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('levels')
@@ -109,7 +109,7 @@ export async function getLevels(): Promise<Level[]> {
  * Get level by level_number
  */
 export async function getLevelByNumber(levelNumber: number): Promise<Level | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('levels')
@@ -133,7 +133,7 @@ export async function getLevelByNumber(levelNumber: number): Promise<Level | nul
  * Get lessons for a specific level
  */
 export async function getLessonsByLevel(levelId: string): Promise<Lesson[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('lessons')
@@ -154,7 +154,7 @@ export async function getLessonsByLevel(levelId: string): Promise<Lesson[]> {
  * Get lesson by ID
  */
 export async function getLessonById(lessonId: string): Promise<Lesson | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('lessons')
@@ -181,7 +181,7 @@ export async function getLessonById(lessonId: string): Promise<Lesson | null> {
  * Get user's progress for a specific lesson
  */
 export async function getLessonProgress(userId: string, lessonId: string): Promise<UserProgress | null> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('user_progress')
@@ -206,7 +206,7 @@ export async function getLessonProgress(userId: string, lessonId: string): Promi
  * Get all progress for a user (optionally filtered by level)
  */
 export async function getUserProgress(userId: string, levelId?: string): Promise<UserProgress[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   let query = supabase
     .from('user_progress')
@@ -244,7 +244,7 @@ export async function markLessonComplete(
   lessonId: string,
   timeSpentMinutes: number = 0
 ): Promise<void> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Check if progress exists
   const existing = await getLessonProgress(userId, lessonId)
@@ -297,7 +297,7 @@ export async function updateLessonStatus(
   status: ProgressStatus,
   timeSpentMinutes: number = 0
 ): Promise<void> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const existing = await getLessonProgress(userId, lessonId)
 
@@ -337,7 +337,7 @@ export async function updateLessonStatus(
  * Get level completion percentage
  */
 export async function getLevelCompletion(userId: string, levelId: string): Promise<number> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get total lessons for level
   const { data: lessons, error: lessonsError } = await supabase
@@ -379,7 +379,7 @@ export async function getLevelCompletion(userId: string, levelId: string): Promi
  * Get total completed lessons count
  */
 export async function getCompletedLessonsCount(userId: string): Promise<number> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { count, error } = await supabase
     .from('user_progress')
@@ -408,7 +408,7 @@ export async function logPracticeSession(
   durationMinutes: number,
   notes?: string
 ): Promise<string> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('practice_logs')
@@ -443,7 +443,7 @@ export async function getPracticeLogs(
   startDate?: string,
   endDate?: string
 ): Promise<PracticeLog[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   let query = supabase
     .from('practice_logs')
@@ -473,7 +473,7 @@ export async function getPracticeLogs(
  * Get total practice time for a user (in minutes)
  */
 export async function getTotalPracticeTime(userId: string): Promise<number> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('practice_logs')
@@ -496,7 +496,7 @@ export async function getTotalPracticeTime(userId: string): Promise<number> {
  * Get user's current streak (consecutive days of practice)
  */
 export async function getUserStreak(userId: string): Promise<number> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get all practice dates sorted descending
   const { data, error } = await supabase
@@ -545,7 +545,7 @@ export async function getPracticeStatsByDate(
   userId: string,
   days: number = 7
 ): Promise<{ date: string; duration: number; sessions: number }[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - days)
@@ -591,7 +591,7 @@ export async function getPracticeStatsByDate(
  * Get all available achievements
  */
 export async function getAchievements(): Promise<Achievement[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('achievements')
@@ -610,7 +610,7 @@ export async function getAchievements(): Promise<Achievement[]> {
  * Get user's unlocked achievements
  */
 export async function getUserAchievements(userId: string): Promise<UserAchievement[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('user_achievements')
@@ -633,7 +633,7 @@ export async function getUserAchievements(userId: string): Promise<UserAchieveme
  * Unlock an achievement for a user
  */
 export async function unlockAchievement(userId: string, achievementId: string): Promise<void> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('user_achievements')
@@ -655,7 +655,7 @@ export async function unlockAchievement(userId: string, achievementId: string): 
  * Check if user has specific achievement
  */
 export async function hasAchievement(userId: string, achievementCode: string): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // First get achievement ID from code
   const { data: achievement, error: achError } = await supabase
@@ -704,7 +704,8 @@ async function checkAndUnlockAchievements(userId: string, lessonId: string): Pro
   if (completedCount === 1) {
     const hasFirst = await hasAchievement(userId, 'first_lesson')
     if (!hasFirst) {
-      const { data: achievement } = await createClient()
+      const supabase = await createClient()
+      const { data: achievement } = await supabase
         .from('achievements')
         .select('id')
         .eq('code', 'first_lesson')
@@ -724,7 +725,8 @@ async function checkAndUnlockAchievements(userId: string, lessonId: string): Pro
       const achievementCode = `level_${level.level_number}_complete`
       const hasLevelAch = await hasAchievement(userId, achievementCode)
       if (!hasLevelAch) {
-        const { data: achievement } = await createClient()
+        const supabase = await createClient()
+        const { data: achievement } = await supabase
           .from('achievements')
           .select('id')
           .eq('code', achievementCode)
@@ -743,7 +745,8 @@ async function checkAndUnlockAchievements(userId: string, lessonId: string): Pro
   if (streak >= 7) {
     const has7Days = await hasAchievement(userId, 'streak_7_days')
     if (!has7Days) {
-      const { data: achievement } = await createClient()
+      const supabase = await createClient()
+      const { data: achievement } = await supabase
         .from('achievements')
         .select('id')
         .eq('code', 'streak_7_days')
@@ -758,7 +761,8 @@ async function checkAndUnlockAchievements(userId: string, lessonId: string): Pro
   if (streak >= 30) {
     const has30Days = await hasAchievement(userId, 'streak_30_days')
     if (!has30Days) {
-      const { data: achievement } = await createClient()
+      const supabase = await createClient()
+      const { data: achievement } = await supabase
         .from('achievements')
         .select('id')
         .eq('code', 'streak_30_days')
@@ -776,7 +780,8 @@ async function checkAndUnlockAchievements(userId: string, lessonId: string): Pro
   if (totalTime >= 600) {
     const has10Hours = await hasAchievement(userId, 'practice_10_hours')
     if (!has10Hours) {
-      const { data: achievement } = await createClient()
+      const supabase = await createClient()
+      const { data: achievement } = await supabase
         .from('achievements')
         .select('id')
         .eq('code', 'practice_10_hours')
