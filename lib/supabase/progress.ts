@@ -2,6 +2,7 @@
  * Supabase Progress Tracking Functions
  *
  * Functions to interact with user progress, practice logs, and achievements.
+ * Adapted to work with existing database schema.
  */
 
 import { createClient } from './client'
@@ -10,17 +11,15 @@ import { createClient } from './client'
 // TYPES
 // ============================================================================
 
+export type ProgressStatus = 'not_started' | 'in_progress' | 'completed' | 'needs_review'
+
 export interface UserProgress {
   id: string
   user_id: string
   lesson_id: string
-  niveau_id: number
-  completed: boolean
-  completed_at: string | null
-  started_at: string
-  time_spent_seconds: number
-  attempts: number
-  last_practiced_at: string | null
+  status: ProgressStatus
+  completion_date: string | null
+  time_spent_minutes: number
   notes: string | null
   created_at: string
   updated_at: string
@@ -29,28 +28,21 @@ export interface UserProgress {
 export interface PracticeLog {
   id: string
   user_id: string
-  lesson_id: string
-  niveau_id: number
-  session_date: string
-  duration_seconds: number
-  completed: boolean
-  success_rate: number | null
+  lesson_id: string | null
+  duration_minutes: number
+  date: string
   notes: string | null
   created_at: string
 }
 
 export interface Achievement {
   id: string
-  name: string
-  description: string
-  icon: string | null
-  category: 'progression' | 'practice' | 'milestone' | 'special'
-  points: number
-  requirement_type: 'lesson_complete' | 'streak_days' | 'practice_time' | 'niveau_complete' | 'custom'
-  requirement_value: number | null
-  badge_color: string | null
-  display_order: number
-  is_hidden: boolean
+  code: string
+  title: string
+  description: string | null
+  icon_url: string | null
+  category: string | null
+  criteria: any // jsonb
   created_at: string
 }
 
@@ -59,10 +51,126 @@ export interface UserAchievement {
   user_id: string
   achievement_id: string
   unlocked_at: string
-  progress: number
-  is_completed: boolean
-  created_at: string
   achievement?: Achievement // Joined data
+}
+
+export interface Level {
+  id: string
+  level_number: number
+  title: string
+  description: string | null
+  objectives: string[] | null
+  order_index: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface Lesson {
+  id: string
+  level_id: string
+  lesson_number: number
+  title: string
+  description: string | null
+  content: string | null
+  video_url: string | null
+  duration_minutes: number
+  order_index: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+}
+
+// ============================================================================
+// LEVEL & LESSON FUNCTIONS
+// ============================================================================
+
+/**
+ * Get all published levels
+ */
+export async function getLevels(): Promise<Level[]> {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from('levels')
+    .select('*')
+    .eq('is_published', true)
+    .order('level_number', { ascending: true })
+
+  if (error) {
+    console.error('Error getting levels:', error)
+    throw error
+  }
+
+  return data || []
+}
+
+/**
+ * Get level by level_number
+ */
+export async function getLevelByNumber(levelNumber: number): Promise<Level | null> {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from('levels')
+    .select('*')
+    .eq('level_number', levelNumber)
+    .eq('is_published', true)
+    .single()
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null
+    }
+    console.error('Error getting level:', error)
+    throw error
+  }
+
+  return data
+}
+
+/**
+ * Get lessons for a specific level
+ */
+export async function getLessonsByLevel(levelId: string): Promise<Lesson[]> {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from('lessons')
+    .select('*')
+    .eq('level_id', levelId)
+    .eq('is_published', true)
+    .order('lesson_number', { ascending: true })
+
+  if (error) {
+    console.error('Error getting lessons:', error)
+    throw error
+  }
+
+  return data || []
+}
+
+/**
+ * Get lesson by ID
+ */
+export async function getLessonById(lessonId: string): Promise<Lesson | null> {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from('lessons')
+    .select('*')
+    .eq('id', lessonId)
+    .single()
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null
+    }
+    console.error('Error getting lesson:', error)
+    throw error
+  }
+
+  return data
 }
 
 // ============================================================================
@@ -95,19 +203,27 @@ export async function getLessonProgress(userId: string, lessonId: string): Promi
 }
 
 /**
- * Get all progress for a user (optionally filtered by niveau)
+ * Get all progress for a user (optionally filtered by level)
  */
-export async function getUserProgress(userId: string, niveauId?: number): Promise<UserProgress[]> {
+export async function getUserProgress(userId: string, levelId?: string): Promise<UserProgress[]> {
   const supabase = createClient()
 
   let query = supabase
     .from('user_progress')
-    .select('*')
+    .select(`
+      *,
+      lesson:lessons(
+        id,
+        level_id,
+        lesson_number,
+        title
+      )
+    `)
     .eq('user_id', userId)
-    .order('lesson_id', { ascending: true })
 
-  if (niveauId !== undefined) {
-    query = query.eq('niveau_id', niveauId)
+  if (levelId) {
+    // Join with lessons to filter by level_id
+    query = query.eq('lesson.level_id', levelId)
   }
 
   const { data, error } = await query
@@ -121,55 +237,142 @@ export async function getUserProgress(userId: string, niveauId?: number): Promis
 }
 
 /**
- * Mark a lesson as complete
- * Uses the SQL function created in migration
+ * Mark a lesson as completed
  */
 export async function markLessonComplete(
   userId: string,
   lessonId: string,
-  niveauId: number,
-  timeSpentSeconds: number = 0
+  timeSpentMinutes: number = 0
 ): Promise<void> {
   const supabase = createClient()
 
-  const { error } = await supabase.rpc('mark_lesson_complete', {
-    p_user_id: userId,
-    p_lesson_id: lessonId,
-    p_niveau_id: niveauId,
-    p_time_spent_seconds: timeSpentSeconds
-  })
+  // Check if progress exists
+  const existing = await getLessonProgress(userId, lessonId)
 
-  if (error) {
-    console.error('Error marking lesson complete:', error)
-    throw error
+  if (existing) {
+    // Update existing
+    const { error } = await supabase
+      .from('user_progress')
+      .update({
+        status: 'completed' as ProgressStatus,
+        completion_date: new Date().toISOString(),
+        time_spent_minutes: existing.time_spent_minutes + timeSpentMinutes,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId)
+      .eq('lesson_id', lessonId)
+
+    if (error) {
+      console.error('Error updating lesson progress:', error)
+      throw error
+    }
+  } else {
+    // Insert new
+    const { error } = await supabase
+      .from('user_progress')
+      .insert({
+        user_id: userId,
+        lesson_id: lessonId,
+        status: 'completed' as ProgressStatus,
+        completion_date: new Date().toISOString(),
+        time_spent_minutes: timeSpentMinutes
+      })
+
+    if (error) {
+      console.error('Error inserting lesson progress:', error)
+      throw error
+    }
   }
 
-  // Check if this completion unlocks any achievements
-  await checkAndUnlockAchievements(userId, lessonId, niveauId)
+  // Check and unlock achievements
+  await checkAndUnlockAchievements(userId, lessonId)
 }
 
 /**
- * Get niveau completion percentage
+ * Update lesson progress status
  */
-export async function getNiveauCompletion(
+export async function updateLessonStatus(
   userId: string,
-  niveauId: number,
-  totalLessons: number
-): Promise<number> {
+  lessonId: string,
+  status: ProgressStatus,
+  timeSpentMinutes: number = 0
+): Promise<void> {
   const supabase = createClient()
 
-  const { data, error } = await supabase.rpc('get_niveau_completion', {
-    p_user_id: userId,
-    p_niveau_id: niveauId,
-    p_total_lessons: totalLessons
-  })
+  const existing = await getLessonProgress(userId, lessonId)
 
-  if (error) {
-    console.error('Error getting niveau completion:', error)
-    throw error
+  if (existing) {
+    const { error } = await supabase
+      .from('user_progress')
+      .update({
+        status,
+        time_spent_minutes: existing.time_spent_minutes + timeSpentMinutes,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId)
+      .eq('lesson_id', lessonId)
+
+    if (error) {
+      console.error('Error updating lesson status:', error)
+      throw error
+    }
+  } else {
+    const { error } = await supabase
+      .from('user_progress')
+      .insert({
+        user_id: userId,
+        lesson_id: lessonId,
+        status,
+        time_spent_minutes: timeSpentMinutes
+      })
+
+    if (error) {
+      console.error('Error inserting lesson progress:', error)
+      throw error
+    }
+  }
+}
+
+/**
+ * Get level completion percentage
+ */
+export async function getLevelCompletion(userId: string, levelId: string): Promise<number> {
+  const supabase = createClient()
+
+  // Get total lessons for level
+  const { data: lessons, error: lessonsError } = await supabase
+    .from('lessons')
+    .select('id')
+    .eq('level_id', levelId)
+    .eq('is_published', true)
+
+  if (lessonsError) {
+    console.error('Error getting lessons count:', lessonsError)
+    throw lessonsError
   }
 
-  return data || 0
+  const totalLessons = lessons?.length || 0
+
+  if (totalLessons === 0) {
+    return 0
+  }
+
+  // Get completed lessons for this level
+  const { data: progress, error: progressError } = await supabase
+    .from('user_progress')
+    .select('lesson_id')
+    .eq('user_id', userId)
+    .eq('status', 'completed')
+    .in('lesson_id', lessons.map(l => l.id))
+
+  if (progressError) {
+    console.error('Error getting progress:', progressError)
+    throw progressError
+  }
+
+  const completedLessons = progress?.length || 0
+
+  return Math.round((completedLessons / totalLessons) * 100)
 }
 
 /**
@@ -182,7 +385,7 @@ export async function getCompletedLessonsCount(userId: string): Promise<number> 
     .from('user_progress')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
-    .eq('completed', true)
+    .eq('status', 'completed')
 
   if (error) {
     console.error('Error getting completed lessons count:', error)
@@ -198,33 +401,38 @@ export async function getCompletedLessonsCount(userId: string): Promise<number> 
 
 /**
  * Log a practice session
- * Uses the SQL function created in migration
  */
 export async function logPracticeSession(
   userId: string,
-  lessonId: string,
-  niveauId: number,
-  durationSeconds: number,
-  completed: boolean = false,
-  successRate?: number
+  lessonId: string | null,
+  durationMinutes: number,
+  notes?: string
 ): Promise<string> {
   const supabase = createClient()
 
-  const { data, error } = await supabase.rpc('log_practice_session', {
-    p_user_id: userId,
-    p_lesson_id: lessonId,
-    p_niveau_id: niveauId,
-    p_duration_seconds: durationSeconds,
-    p_completed: completed,
-    p_success_rate: successRate || null
-  })
+  const { data, error } = await supabase
+    .from('practice_logs')
+    .insert({
+      user_id: userId,
+      lesson_id: lessonId,
+      duration_minutes: durationMinutes,
+      date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+      notes: notes || null
+    })
+    .select('id')
+    .single()
 
   if (error) {
     console.error('Error logging practice session:', error)
     throw error
   }
 
-  return data
+  // Update user_progress if lesson_id is provided
+  if (lessonId) {
+    await updateLessonStatus(userId, lessonId, 'in_progress', durationMinutes)
+  }
+
+  return data.id
 }
 
 /**
@@ -241,14 +449,14 @@ export async function getPracticeLogs(
     .from('practice_logs')
     .select('*')
     .eq('user_id', userId)
-    .order('session_date', { ascending: false })
+    .order('date', { ascending: false })
 
   if (startDate) {
-    query = query.gte('session_date', startDate)
+    query = query.gte('date', startDate)
   }
 
   if (endDate) {
-    query = query.lte('session_date', endDate)
+    query = query.lte('date', endDate)
   }
 
   const { data, error } = await query
@@ -262,14 +470,14 @@ export async function getPracticeLogs(
 }
 
 /**
- * Get total practice time for a user
+ * Get total practice time for a user (in minutes)
  */
 export async function getTotalPracticeTime(userId: string): Promise<number> {
   const supabase = createClient()
 
   const { data, error } = await supabase
     .from('practice_logs')
-    .select('duration_seconds')
+    .select('duration_minutes')
     .eq('user_id', userId)
 
   if (error) {
@@ -281,7 +489,7 @@ export async function getTotalPracticeTime(userId: string): Promise<number> {
     return 0
   }
 
-  return data.reduce((total, log) => total + log.duration_seconds, 0)
+  return data.reduce((total, log) => total + log.duration_minutes, 0)
 }
 
 /**
@@ -290,16 +498,44 @@ export async function getTotalPracticeTime(userId: string): Promise<number> {
 export async function getUserStreak(userId: string): Promise<number> {
   const supabase = createClient()
 
-  const { data, error } = await supabase.rpc('get_user_streak', {
-    p_user_id: userId
-  })
+  // Get all practice dates sorted descending
+  const { data, error } = await supabase
+    .from('practice_logs')
+    .select('date')
+    .eq('user_id', userId)
+    .order('date', { ascending: false })
 
   if (error) {
-    console.error('Error getting user streak:', error)
+    console.error('Error getting practice logs for streak:', error)
     throw error
   }
 
-  return data || 0
+  if (!data || data.length === 0) {
+    return 0
+  }
+
+  // Get unique dates
+  const uniqueDates = Array.from(new Set(data.map(log => log.date))).sort((a, b) => b.localeCompare(a))
+
+  let streak = 0
+  let currentDate = new Date()
+  currentDate.setHours(0, 0, 0, 0)
+
+  for (const dateStr of uniqueDates) {
+    const logDate = new Date(dateStr)
+    logDate.setHours(0, 0, 0, 0)
+
+    const diffDays = Math.floor((currentDate.getTime() - logDate.getTime()) / (1000 * 60 * 60 * 24))
+
+    if (diffDays === streak) {
+      streak++
+      currentDate = logDate
+    } else {
+      break
+    }
+  }
+
+  return streak
 }
 
 /**
@@ -316,10 +552,10 @@ export async function getPracticeStatsByDate(
 
   const { data, error } = await supabase
     .from('practice_logs')
-    .select('session_date, duration_seconds')
+    .select('date, duration_minutes')
     .eq('user_id', userId)
-    .gte('session_date', startDate.toISOString().split('T')[0])
-    .order('session_date', { ascending: true })
+    .gte('date', startDate.toISOString().split('T')[0])
+    .order('date', { ascending: true })
 
   if (error) {
     console.error('Error getting practice stats:', error)
@@ -330,14 +566,14 @@ export async function getPracticeStatsByDate(
 
   // Group by date
   const stats = data.reduce((acc, log) => {
-    const existing = acc.find(s => s.date === log.session_date)
+    const existing = acc.find(s => s.date === log.date)
     if (existing) {
-      existing.duration += log.duration_seconds
+      existing.duration += log.duration_minutes
       existing.sessions += 1
     } else {
       acc.push({
-        date: log.session_date,
-        duration: log.duration_seconds,
+        date: log.date,
+        duration: log.duration_minutes,
         sessions: 1
       })
     }
@@ -360,7 +596,7 @@ export async function getAchievements(): Promise<Achievement[]> {
   const { data, error } = await supabase
     .from('achievements')
     .select('*')
-    .order('display_order', { ascending: true })
+    .order('created_at', { ascending: true })
 
   if (error) {
     console.error('Error getting achievements:', error)
@@ -399,28 +635,50 @@ export async function getUserAchievements(userId: string): Promise<UserAchieveme
 export async function unlockAchievement(userId: string, achievementId: string): Promise<void> {
   const supabase = createClient()
 
-  const { error } = await supabase.rpc('unlock_achievement', {
-    p_user_id: userId,
-    p_achievement_id: achievementId
-  })
+  const { error } = await supabase
+    .from('user_achievements')
+    .insert({
+      user_id: userId,
+      achievement_id: achievementId
+    })
 
   if (error) {
-    console.error('Error unlocking achievement:', error)
-    throw error
+    // Ignore duplicate key errors (achievement already unlocked)
+    if (error.code !== '23505') {
+      console.error('Error unlocking achievement:', error)
+      throw error
+    }
   }
 }
 
 /**
  * Check if user has specific achievement
  */
-export async function hasAchievement(userId: string, achievementId: string): Promise<boolean> {
+export async function hasAchievement(userId: string, achievementCode: string): Promise<boolean> {
   const supabase = createClient()
+
+  // First get achievement ID from code
+  const { data: achievement, error: achError } = await supabase
+    .from('achievements')
+    .select('id')
+    .eq('code', achievementCode)
+    .single()
+
+  if (achError) {
+    if (achError.code === 'PGRST116') {
+      return false
+    }
+    console.error('Error getting achievement:', achError)
+    throw achError
+  }
+
+  if (!achievement) return false
 
   const { data, error } = await supabase
     .from('user_achievements')
     .select('id')
     .eq('user_id', userId)
-    .eq('achievement_id', achievementId)
+    .eq('achievement_id', achievement.id)
     .single()
 
   if (error) {
@@ -438,68 +696,96 @@ export async function hasAchievement(userId: string, achievementId: string): Pro
  * Check and unlock achievements based on user progress
  * Called automatically after completing lessons
  */
-async function checkAndUnlockAchievements(
-  userId: string,
-  lessonId: string,
-  niveauId: number
-): Promise<void> {
-  const supabase = createClient()
-
+async function checkAndUnlockAchievements(userId: string, lessonId: string): Promise<void> {
   // Get completed lessons count
   const completedCount = await getCompletedLessonsCount(userId)
 
   // Check "first_lesson" achievement
   if (completedCount === 1) {
-    if (!(await hasAchievement(userId, 'first_lesson'))) {
-      await unlockAchievement(userId, 'first_lesson')
+    const hasFirst = await hasAchievement(userId, 'first_lesson')
+    if (!hasFirst) {
+      const { data: achievement } = await createClient()
+        .from('achievements')
+        .select('id')
+        .eq('code', 'first_lesson')
+        .single()
+
+      if (achievement) {
+        await unlockAchievement(userId, achievement.id)
+      }
     }
   }
 
-  // Check "first_piece" achievement (assuming lesson 5 is the first piece)
-  if (lessonId.includes('lecon-5')) {
-    if (!(await hasAchievement(userId, 'first_piece'))) {
-      await unlockAchievement(userId, 'first_piece')
-    }
-  }
+  // Check level completions
+  const levels = await getLevels()
+  for (const level of levels) {
+    const completion = await getLevelCompletion(userId, level.id)
+    if (completion === 100) {
+      const achievementCode = `level_${level.level_number}_complete`
+      const hasLevelAch = await hasAchievement(userId, achievementCode)
+      if (!hasLevelAch) {
+        const { data: achievement } = await createClient()
+          .from('achievements')
+          .select('id')
+          .eq('code', achievementCode)
+          .single()
 
-  // Check niveau completion achievements
-  const totalLessonsPerNiveau = {
-    1: 5,
-    2: 7,
-    3: 8,
-    4: 10,
-    5: 12
-  }
-
-  const completion = await getNiveauCompletion(
-    userId,
-    niveauId,
-    totalLessonsPerNiveau[niveauId as keyof typeof totalLessonsPerNiveau] || 5
-  )
-
-  if (completion === 100) {
-    const achievementId = `niveau_${niveauId}_complete`
-    if (!(await hasAchievement(userId, achievementId))) {
-      await unlockAchievement(userId, achievementId)
+        if (achievement) {
+          await unlockAchievement(userId, achievement.id)
+        }
+      }
     }
   }
 
   // Check streak achievements
   const streak = await getUserStreak(userId)
 
-  if (streak >= 7 && !(await hasAchievement(userId, 'streak_7_days'))) {
-    await unlockAchievement(userId, 'streak_7_days')
+  if (streak >= 7) {
+    const has7Days = await hasAchievement(userId, 'streak_7_days')
+    if (!has7Days) {
+      const { data: achievement } = await createClient()
+        .from('achievements')
+        .select('id')
+        .eq('code', 'streak_7_days')
+        .single()
+
+      if (achievement) {
+        await unlockAchievement(userId, achievement.id)
+      }
+    }
   }
 
-  if (streak >= 30 && !(await hasAchievement(userId, 'streak_30_days'))) {
-    await unlockAchievement(userId, 'streak_30_days')
+  if (streak >= 30) {
+    const has30Days = await hasAchievement(userId, 'streak_30_days')
+    if (!has30Days) {
+      const { data: achievement } = await createClient()
+        .from('achievements')
+        .select('id')
+        .eq('code', 'streak_30_days')
+        .single()
+
+      if (achievement) {
+        await unlockAchievement(userId, achievement.id)
+      }
+    }
   }
 
-  // Check practice time achievement (10 hours = 36000 seconds)
+  // Check practice time achievement (10 hours = 600 minutes)
   const totalTime = await getTotalPracticeTime(userId)
 
-  if (totalTime >= 36000 && !(await hasAchievement(userId, 'practice_10_hours'))) {
-    await unlockAchievement(userId, 'practice_10_hours')
+  if (totalTime >= 600) {
+    const has10Hours = await hasAchievement(userId, 'practice_10_hours')
+    if (!has10Hours) {
+      const { data: achievement } = await createClient()
+        .from('achievements')
+        .select('id')
+        .eq('code', 'practice_10_hours')
+        .single()
+
+      if (achievement) {
+        await unlockAchievement(userId, achievement.id)
+      }
+    }
   }
 }
 
@@ -512,9 +798,10 @@ async function checkAndUnlockAchievements(
  */
 export interface DashboardStats {
   totalLessonsCompleted: number
-  totalPracticeTimeSeconds: number
+  totalPracticeTimeMinutes: number
+  totalPracticeTimeHours: number
   currentStreak: number
-  niveauxCompletion: Record<number, number>
+  levelsCompletion: Record<number, number>
   recentActivity: {
     date: string
     duration: number
@@ -525,19 +812,17 @@ export interface DashboardStats {
 }
 
 export async function getDashboardStats(userId: string): Promise<DashboardStats> {
+  const levels = await getLevels()
+
   // Run all queries in parallel for better performance
   const [
     totalLessonsCompleted,
-    totalPracticeTimeSeconds,
+    totalPracticeTimeMinutes,
     currentStreak,
     recentActivity,
     userAchievements,
     allAchievements,
-    niveau1Completion,
-    niveau2Completion,
-    niveau3Completion,
-    niveau4Completion,
-    niveau5Completion
+    ...levelCompletions
   ] = await Promise.all([
     getCompletedLessonsCount(userId),
     getTotalPracticeTime(userId),
@@ -545,24 +830,20 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
     getPracticeStatsByDate(userId, 7),
     getUserAchievements(userId),
     getAchievements(),
-    getNiveauCompletion(userId, 1, 5),
-    getNiveauCompletion(userId, 2, 7),
-    getNiveauCompletion(userId, 3, 8),
-    getNiveauCompletion(userId, 4, 10),
-    getNiveauCompletion(userId, 5, 12)
+    ...levels.map(level => getLevelCompletion(userId, level.id))
   ])
+
+  const levelsCompletionMap: Record<number, number> = {}
+  levels.forEach((level, index) => {
+    levelsCompletionMap[level.level_number] = levelCompletions[index]
+  })
 
   return {
     totalLessonsCompleted,
-    totalPracticeTimeSeconds,
+    totalPracticeTimeMinutes,
+    totalPracticeTimeHours: Math.round((totalPracticeTimeMinutes / 60) * 10) / 10,
     currentStreak,
-    niveauxCompletion: {
-      1: niveau1Completion,
-      2: niveau2Completion,
-      3: niveau3Completion,
-      4: niveau4Completion,
-      5: niveau5Completion
-    },
+    levelsCompletion: levelsCompletionMap,
     recentActivity,
     unlockedAchievements: userAchievements.length,
     totalAchievements: allAchievements.length
