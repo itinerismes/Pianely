@@ -13,30 +13,45 @@ import json
 
 def check_audiveris():
     """Vérifie si Audiveris est installé"""
-    audiveris_jar = os.path.join(os.path.dirname(__file__), 'audiveris', 'audiveris.jar')
-    if not os.path.exists(audiveris_jar):
-        return False, "Audiveris non installé. Exécutez ./setup-ocr.sh"
-    return True, audiveris_jar
+    # Audiveris 5.9+ utilise un binaire natif
+    audiveris_bin = os.path.join(os.path.dirname(__file__), 'audiveris', 'Audiveris')
+    if os.path.exists(audiveris_bin):
+        return True, audiveris_bin
 
-def pdf_to_musicxml(pdf_path, output_path, audiveris_jar):
+    # Fallback sur JAR pour versions anciennes
+    audiveris_path = os.path.join(os.path.dirname(__file__), 'audiveris', 'audiveris.jar')
+    if not os.path.exists(audiveris_path):
+        return False, "Audiveris non installé. Exécutez ./setup-ocr.sh"
+    return True, audiveris_path
+
+def pdf_to_musicxml(pdf_path, output_path, audiveris_path):
     """
     Convertit un PDF en MusicXML avec Audiveris
     """
     try:
         print(f"🎼 Conversion PDF → MusicXML avec Audiveris...")
 
-        # Commande Audiveris
-        # -batch : mode batch (non-interactif)
-        # -export : exporter en MusicXML
-        # -output : fichier de sortie
-        cmd = [
-            'java',
-            '-jar', audiveris_jar,
-            '-batch',
-            '-export',
-            '-output', output_path,
-            pdf_path
-        ]
+        # Audiveris 5.9 : binaire natif
+        # Audiveris <5.9 : JAR avec java
+        if audiveris_path.endswith('Audiveris'):
+            # Binaire natif - syntaxe CLI: Audiveris -batch -export -output <output> <input>
+            cmd = [
+                audiveris_path,
+                '-batch',
+                '-export',
+                '-output', output_path,
+                pdf_path
+            ]
+        else:
+            # JAR - syntaxe ancienne
+            cmd = [
+                'java',
+                '-jar', audiveris_path,
+                '-batch',
+                '-export',
+                '-output', output_path,
+                pdf_path
+            ]
 
         result = subprocess.run(
             cmd,
@@ -113,7 +128,7 @@ def convert_pdf_to_midi(pdf_path, output_midi_path):
             'error': result
         }
 
-    audiveris_jar = result
+    audiveris_path = result
 
     # Créer fichier temporaire pour MusicXML
     with tempfile.NamedTemporaryFile(suffix='.xml', delete=False) as tmp:
@@ -121,7 +136,7 @@ def convert_pdf_to_midi(pdf_path, output_midi_path):
 
     try:
         # Étape 1 : PDF → MusicXML (OCR avec Audiveris)
-        musicxml_path = pdf_to_musicxml(pdf_path, musicxml_path, audiveris_jar)
+        musicxml_path = pdf_to_musicxml(pdf_path, musicxml_path, audiveris_path)
 
         # Étape 2 : MusicXML → MIDI (conversion avec music21)
         result = musicxml_to_midi(musicxml_path, output_midi_path)
