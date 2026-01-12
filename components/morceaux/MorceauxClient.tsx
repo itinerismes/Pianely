@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -12,8 +13,18 @@ import {
   Clock,
   Star,
   Filter,
-  Search
+  Search,
+  PlusCircle
 } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { IMSLPSearch } from './IMSLPSearch'
+import { PianoSnapSearch } from './PianoSnapSearch'
+import { AudioUpload } from './AudioUpload'
 
 interface Piece {
   id: string
@@ -29,11 +40,13 @@ interface Piece {
 
 interface MorceauxClientProps {
   pieces: Piece[]
+  userId: string
 }
 
-export function MorceauxClient({ pieces }: MorceauxClientProps) {
+export function MorceauxClient({ pieces, userId }: MorceauxClientProps) {
   const [selectedTab, setSelectedTab] = useState('all')
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null)
+  const [showAddDialog, setShowAddDialog] = useState(false)
 
   // Filter pieces based on tab and level
   const filteredPieces = pieces.filter((piece) => {
@@ -66,18 +79,79 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
     return colors[level] || 'from-gray-500 to-gray-600'
   }
 
+  const handlePieceAdded = () => {
+    setShowAddDialog(false)
+    // Recharger la page pour voir le nouveau morceau
+    window.location.reload()
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="space-y-2 relative">
-        <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full opacity-10 blur-xl" />
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent relative z-10">
-          Bibliothèque de Morceaux 🎵
-        </h1>
-        <p className="text-muted-foreground relative z-10">
-          Découvre et pratique des morceaux adaptés à ton niveau
-        </p>
+      {/* Header avec bouton Ajouter */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+        <div className="space-y-2 relative">
+          <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full opacity-10 blur-xl" />
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent relative z-10">
+            Bibliothèque de Morceaux 🎵
+          </h1>
+          <p className="text-muted-foreground relative z-10">
+            Découvre et pratique des morceaux adaptés à ton niveau
+          </p>
+        </div>
+
+        <Button
+          size="lg"
+          onClick={() => setShowAddDialog(true)}
+          className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all self-start sm:self-auto"
+        >
+          <PlusCircle className="w-5 h-5 mr-2" />
+          Ajouter un morceau
+        </Button>
       </div>
+
+      {/* Dialog d'ajout de morceau */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Ajouter un morceau</DialogTitle>
+          </DialogHeader>
+
+          <Tabs defaultValue="imslp" className="mt-4">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="imslp">IMSLP</TabsTrigger>
+              <TabsTrigger value="pianosnap">PianoSnap</TabsTrigger>
+              <TabsTrigger value="upload">
+                Audio/YouTube
+              </TabsTrigger>
+              <TabsTrigger value="files" disabled>
+                MusicXML/MIDI
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="imslp" className="mt-4">
+              <IMSLPSearch userId={userId} onPieceAdded={handlePieceAdded} />
+            </TabsContent>
+
+            <TabsContent value="pianosnap" className="mt-4">
+              <PianoSnapSearch />
+            </TabsContent>
+
+            <TabsContent value="upload" className="mt-4">
+              <AudioUpload onSuccess={handlePieceAdded} />
+            </TabsContent>
+
+            <TabsContent value="files" className="mt-4">
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <p className="text-muted-foreground">
+                    Fonctionnalité à venir... (Phase 3)
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
 
       {/* Filters */}
       <Card className="shadow-lg border-2">
@@ -247,13 +321,15 @@ function PieceCard({
           </div>
         )}
 
-        <Button
-          className={`w-full bg-gradient-to-r ${getLevelColor(piece.level)} hover:opacity-90 text-white border-0`}
-        >
-          <PlayCircle className="w-4 h-4 mr-2" />
-          {piece.status === 'not_started' ? 'Commencer' :
-           piece.status === 'in_progress' ? 'Continuer' : 'Revoir'}
-        </Button>
+        <Link href={`/morceaux/${piece.id}`} className="w-full">
+          <Button
+            className={`w-full bg-gradient-to-r ${getLevelColor(piece.level)} hover:opacity-90 text-white border-0`}
+          >
+            <PlayCircle className="w-4 h-4 mr-2" />
+            {piece.status === 'not_started' ? 'Commencer' :
+             piece.status === 'in_progress' ? 'Continuer' : 'Revoir'}
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   )

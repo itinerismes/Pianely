@@ -1,174 +1,201 @@
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
-import { cn } from '@/lib/utils'
+import { useEffect, useState } from 'react'
+import * as Tone from 'tone'
 
 interface PianoProps {
-  startOctave?: number
-  octaves?: number
-  highlightedNotes?: string[]
+  highlightedKeys?: string[] // For PiecePlayer usage: ["C4", "E4", "G4"]
+  highlightedNotes?: string[] // For PianoDemo usage: ["C", "E", "G"]
+  onKeyPress?: (note: string) => void
   onNotePlay?: (note: string) => void
+  octaves?: number
+  startOctave?: number
   showLabels?: boolean
-  className?: string
 }
 
-const WHITE_KEYS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-const BLACK_KEYS = ['C#', 'D#', null, 'F#', 'G#', 'A#', null] // null = no black key
-
-const NOTE_FREQUENCIES: Record<string, number> = {
-  'C2': 65.41, 'C#2': 69.30, 'D2': 73.42, 'D#2': 77.78, 'E2': 82.41, 'F2': 87.31, 'F#2': 92.50, 'G2': 98.00, 'G#2': 103.83, 'A2': 110.00, 'A#2': 116.54, 'B2': 123.47,
-  'C3': 130.81, 'C#3': 138.59, 'D3': 146.83, 'D#3': 155.56, 'E3': 164.81, 'F3': 174.61, 'F#3': 185.00, 'G3': 196.00, 'G#3': 207.65, 'A3': 220.00, 'A#3': 233.08, 'B3': 246.94,
-  'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23, 'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
-  'C5': 523.25, 'C#5': 554.37, 'D5': 587.33, 'D#5': 622.25, 'E5': 659.25, 'F5': 698.46, 'F#5': 739.99, 'G5': 783.99, 'G#5': 830.61, 'A5': 880.00, 'A#5': 932.33, 'B5': 987.77,
-  'C6': 1046.50
-}
-
-const NOTE_NAMES: Record<string, string> = {
-  'C': 'Do', 'C#': 'Do#', 'D': 'Ré', 'D#': 'Ré#', 'E': 'Mi',
-  'F': 'Fa', 'F#': 'Fa#', 'G': 'Sol', 'G#': 'Sol#', 'A': 'La', 'A#': 'La#', 'B': 'Si'
+interface PianoKey {
+  note: string
+  isBlack: boolean
+  frequency: number
 }
 
 export function Piano({
-  startOctave = 3,
-  octaves = 2,
+  highlightedKeys = [],
   highlightedNotes = [],
+  onKeyPress,
   onNotePlay,
-  showLabels = true,
-  className
+  octaves = 2,
+  startOctave = 4,
+  showLabels = true
 }: PianoProps) {
-  const [activeNotes, setActiveNotes] = useState<Set<string>>(new Set())
-  const audioContextRef = useRef<AudioContext | null>(null)
+  const [sampler, setSampler] = useState<Tone.Sampler | null>(null)
+  const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set())
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  const generateKeys = (): PianoKey[] => {
+    const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+    const keys: PianoKey[] = []
+
+    for (let octave = startOctave; octave < startOctave + octaves; octave++) {
+      for (const note of notes) {
+        const noteName = `${note}${octave}`
+        keys.push({
+          note: noteName,
+          isBlack: note.includes('#'),
+          frequency: Tone.Frequency(noteName).toFrequency()
+        })
+      }
+    }
+
+    return keys
+  }
+
+  const keys = generateKeys()
 
   useEffect(() => {
-    // Initialize Web Audio API
-    if (typeof window !== 'undefined') {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+    const initSampler = async () => {
+      const newSampler = new Tone.Sampler({
+        urls: {
+          C4: "C4.mp3",
+          "D#4": "Ds4.mp3",
+          "F#4": "Fs4.mp3",
+          A4: "A4.mp3",
+        },
+        release: 1,
+        baseUrl: "https://tonejs.github.io/audio/salamander/",
+        onload: () => {
+          setIsLoaded(true)
+          console.log('🎹 Piano samples loaded')
+        }
+      }).toDestination()
+
+      setSampler(newSampler)
     }
+
+    initSampler()
+
     return () => {
-      audioContextRef.current?.close()
+      if (sampler) {
+        sampler.dispose()
+      }
     }
   }, [])
 
-  const playNote = useCallback((note: string) => {
-    const frequency = NOTE_FREQUENCIES[note]
-    if (!frequency || !audioContextRef.current) return
+  const playNote = async (note: string) => {
+    if (!sampler || !isLoaded) {
+      console.warn('Sampler not ready')
+      return
+    }
 
-    const ctx = audioContextRef.current
-    const oscillator = ctx.createOscillator()
-    const gainNode = ctx.createGain()
+    try {
+      await Tone.start()
+      sampler.triggerAttackRelease(note, '8n')
 
-    oscillator.type = 'sine'
-    oscillator.frequency.setValueAtTime(frequency, ctx.currentTime)
+      setActiveKeys(prev => new Set(prev).add(note))
 
-    gainNode.gain.setValueAtTime(0.3, ctx.currentTime)
-    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5)
+      setTimeout(() => {
+        setActiveKeys(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(note)
+          return newSet
+        })
+      }, 200)
 
-    oscillator.connect(gainNode)
-    gainNode.connect(ctx.destination)
+      onKeyPress?.(note)
+      onNotePlay?.(note)
+    } catch (error) {
+      console.error('Error playing note:', error)
+    }
+  }
 
-    oscillator.start(ctx.currentTime)
-    oscillator.stop(ctx.currentTime + 0.5)
+  const isKeyHighlighted = (note: string) => {
+    // Check highlightedKeys (full note like "C4")
+    if (highlightedKeys.includes(note)) return true
+    
+    // Check highlightedNotes (note without octave like "C")
+    const noteWithoutOctave = note.replace(/[0-9]/g, '')
+    if (highlightedNotes.includes(noteWithoutOctave)) return true
+    
+    return false
+  }
 
-    setActiveNotes(prev => new Set(prev).add(note))
-    setTimeout(() => {
-      setActiveNotes(prev => {
-        const next = new Set(prev)
-        next.delete(note)
-        return next
-      })
-    }, 150)
+  const isKeyActive = (note: string) => {
+    return activeKeys.has(note)
+  }
 
-    onNotePlay?.(note)
-  }, [onNotePlay])
+  const getKeyStyle = (key: PianoKey): React.CSSProperties => {
+    const isHighlighted = isKeyHighlighted(key.note)
+    const isActive = isKeyActive(key.note)
 
-  const getNoteName = (key: string, octave: number) => `${key}${octave}`
-
-  const isHighlighted = useCallback((note: string) => {
-    return highlightedNotes.some(highlighted => note.startsWith(highlighted))
-  }, [highlightedNotes])
-
-  const renderOctave = (octave: number) => {
-    return (
-      <div key={octave} className="relative inline-flex">
-        {/* White keys */}
-        {WHITE_KEYS.map((key, index) => {
-          const note = getNoteName(key, octave)
-          const isActive = activeNotes.has(note)
-          const highlighted = isHighlighted(note)
-
-          return (
-            <button
-              key={note}
-              onClick={() => playNote(note)}
-              className={cn(
-                'relative w-12 h-40 bg-white border-2 border-gray-300 rounded-b-lg transition-all duration-75',
-                'hover:bg-gray-50 active:bg-gray-200',
-                'focus:outline-none focus:ring-2 focus:ring-purple-400',
-                isActive && 'bg-gray-200 transform scale-95',
-                highlighted && 'ring-2 ring-purple-500 ring-offset-2'
-              )}
-              style={{
-                boxShadow: isActive
-                  ? 'inset 0 4px 8px rgba(0,0,0,0.2)'
-                  : '0 4px 8px rgba(0,0,0,0.1)'
-              }}
-            >
-              {showLabels && (
-                <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs font-medium text-gray-600">
-                  {NOTE_NAMES[key]}
-                </span>
-              )}
-            </button>
-          )
-        })}
-
-        {/* Black keys */}
-        <div className="absolute top-0 left-0 w-full h-24 pointer-events-none">
-          {BLACK_KEYS.map((key, index) => {
-            if (!key) return <div key={`empty-${index}`} className="w-12 inline-block" />
-
-            const note = getNoteName(key, octave)
-            const isActive = activeNotes.has(note)
-            const highlighted = isHighlighted(note)
-
-            return (
-              <button
-                key={note}
-                onClick={() => playNote(note)}
-                className={cn(
-                  'relative w-8 h-24 bg-gray-900 border-2 border-gray-700 rounded-b-lg transition-all duration-75 pointer-events-auto',
-                  'hover:bg-gray-800 active:bg-gray-700',
-                  'focus:outline-none focus:ring-2 focus:ring-purple-400',
-                  isActive && 'bg-gray-700 transform scale-95',
-                  highlighted && 'ring-2 ring-yellow-400 ring-offset-2'
-                )}
-                style={{
-                  marginLeft: index === 0 ? '32px' : '-16px',
-                  boxShadow: isActive
-                    ? 'inset 0 4px 8px rgba(0,0,0,0.4)'
-                    : '0 4px 8px rgba(0,0,0,0.3)'
-                }}
-              >
-                {showLabels && (
-                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-medium text-white">
-                    {NOTE_NAMES[key]}
-                  </span>
-                )}
-              </button>
-            )
-          })}
-        </div>
-      </div>
-    )
+    if (key.isBlack) {
+      return {
+        width: '30px',
+        height: '120px',
+        backgroundColor: isActive ? '#4ade80' : (isHighlighted ? '#8b5cf6' : '#1f2937'),
+        zIndex: 10,
+        marginLeft: '-15px',
+        marginRight: '-15px',
+        border: '1px solid #000',
+        borderRadius: '0 0 3px 3px',
+        cursor: 'pointer',
+        transition: 'all 0.1s ease',
+        boxShadow: isActive ? '0 4px 8px rgba(0,0,0,0.4)' : '0 2px 4px rgba(0,0,0,0.3)',
+        transform: isActive ? 'translateY(2px)' : 'translateY(0)',
+      }
+    } else {
+      return {
+        width: '45px',
+        height: '180px',
+        backgroundColor: isActive ? '#86efac' : (isHighlighted ? '#a78bfa' : '#ffffff'),
+        border: '1px solid #d1d5db',
+        borderRadius: '0 0 3px 3px',
+        cursor: 'pointer',
+        transition: 'all 0.1s ease',
+        boxShadow: isActive ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)',
+        transform: isActive ? 'translateY(2px)' : 'translateY(0)',
+      }
+    }
   }
 
   return (
-    <div className={cn('inline-block bg-gradient-to-b from-gray-200 to-gray-300 p-6 rounded-2xl shadow-2xl', className)}>
-      <div className="flex">
-        {Array.from({ length: octaves }, (_, i) => renderOctave(startOctave + i))}
+    <div className="w-full overflow-x-auto pb-4">
+      <div className="inline-flex items-end relative min-w-max px-4">
+        {keys.map((key, index) => (
+          <div
+            key={`${key.note}-${index}`}
+            style={getKeyStyle(key)}
+            onClick={() => playNote(key.note)}
+            className="relative hover:opacity-80 select-none"
+          >
+            {!key.isBlack && showLabels && (
+              <div
+                className="absolute bottom-2 left-0 right-0 text-center text-xs font-medium"
+                style={{
+                  color: isKeyActive(key.note) || isKeyHighlighted(key.note) ? '#1f2937' : '#6b7280'
+                }}
+              >
+                {key.note}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
-      <div className="mt-4 text-center text-sm text-gray-600">
-        🎹 Clique sur les touches pour jouer
+
+      {!isLoaded && (
+        <div className="text-center mt-4 text-sm text-muted-foreground">
+          🎵 Chargement des samples de piano...
+        </div>
+      )}
+
+      <div className="flex items-center justify-center gap-4 mt-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-purple-400 rounded" />
+          <span>Note à jouer</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-green-400 rounded" />
+          <span>Note jouée</span>
+        </div>
       </div>
     </div>
   )

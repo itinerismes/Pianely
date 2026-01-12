@@ -1,0 +1,14 @@
+# Basic Pitch - Audio to MIDI transcription
+basic-pitch
+
+# MIDI processing
+pretty-midi
+
+# Audio processing
+librosa
+soundfile
+
+# Core dependencies
+numpy
+scipy
+resampy
