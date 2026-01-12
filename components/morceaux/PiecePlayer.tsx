@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Play, Pause, SkipBack, Volume2 } from 'lucide-react'
-import { SheetMusicViewer } from '@/components/sheet-music/SheetMusicViewer'
+import { FallingNotesVisualizer } from '@/components/sheet-music/FallingNotesVisualizer'
 import { Piano } from '@/components/interactive/Piano'
 import * as Tone from 'tone'
 import { Slider } from '@/components/ui/slider'
@@ -15,6 +15,7 @@ interface Note {
   name: string
   time: number
   duration: number
+  velocity: number
 }
 
 interface PiecePlayerProps {
@@ -33,11 +34,14 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
   const [currentNoteIndex, setCurrentNoteIndex] = useState(0)
   const [highlightedKeys, setHighlightedKeys] = useState<string[]>([])
   const [progress, setProgress] = useState(0)
+  const [currentTime, setCurrentTime] = useState(0) // Temps actuel en secondes
   const [tempo, setTempo] = useState(120)
   const [sampler, setSampler] = useState<Tone.Sampler | null>(null)
   const [loading, setLoading] = useState(false)
   const playbackRef = useRef<number | null>(null)
+  const timeUpdateRef = useRef<number | null>(null)
   const startTimeRef = useRef<number>(0)
+  const totalDuration = useRef<number>(0)
 
   // Charger et parser le MIDI
   useEffect(() => {
@@ -58,7 +62,8 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
               midi: note.midi,
               name: note.name,
               time: note.time,
-              duration: note.duration
+              duration: note.duration,
+              velocity: note.velocity
             })
           }
         }
@@ -66,8 +71,14 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
         // Trier par temps
         allNotes.sort((a, b) => a.time - b.time)
 
+        // Calculer la durée totale
+        if (allNotes.length > 0) {
+          const lastNote = allNotes[allNotes.length - 1]
+          totalDuration.current = lastNote.time + lastNote.duration
+        }
+
         setNotes(allNotes)
-        console.log(`🎹 Loaded ${allNotes.length} notes from MIDI`)
+        console.log(`🎹 Loaded ${allNotes.length} notes from MIDI (${Math.round(totalDuration.current)}s)`)
         setLoading(false)
       } catch (error) {
         console.error('Error loading MIDI:', error)
@@ -134,11 +145,33 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
 
     await Tone.start()
     setIsPlaying(true)
-    startTimeRef.current = Date.now()
+    startTimeRef.current = Date.now() - (currentTime * 1000) // Reprendre où on était
 
-    const playNextNote = () => {
-      if (!isPlaying || currentNoteIndex >= notes.length) {
+    // Mettre à jour le temps toutes les 16ms (60fps)
+    const updateTime = () => {
+      const elapsed = (Date.now() - startTimeRef.current) / 1000
+      setCurrentTime(elapsed)
+
+      // Mise à jour de la progression
+      if (totalDuration.current > 0) {
+        setProgress((elapsed / totalDuration.current) * 100)
+      }
+
+      // Continue si on joue
+      if (elapsed < totalDuration.current) {
+        timeUpdateRef.current = requestAnimationFrame(updateTime)
+      } else {
+        // Fin du morceau
         setIsPlaying(false)
+        setCurrentTime(0)
+        setCurrentNoteIndex(0)
+        setProgress(0)
+      }
+    }
+
+    // Jouer les notes
+    const playNextNote = () => {
+      if (currentNoteIndex >= notes.length) {
         return
       }
 
@@ -148,12 +181,14 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
       if (elapsed >= note.time) {
         playNote(note)
         setCurrentNoteIndex(prev => prev + 1)
-        setProgress((currentNoteIndex / notes.length) * 100)
       }
 
-      playbackRef.current = requestAnimationFrame(playNextNote)
+      if (currentNoteIndex < notes.length) {
+        playbackRef.current = requestAnimationFrame(playNextNote)
+      }
     }
 
+    updateTime()
     playNextNote()
   }
 
@@ -162,12 +197,16 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     if (playbackRef.current) {
       cancelAnimationFrame(playbackRef.current)
     }
+    if (timeUpdateRef.current) {
+      cancelAnimationFrame(timeUpdateRef.current)
+    }
   }
 
   const resetPlayback = () => {
     pausePlayback()
     setCurrentNoteIndex(0)
     setProgress(0)
+    setCurrentTime(0)
     setHighlightedKeys([])
     startTimeRef.current = 0
   }
@@ -199,16 +238,17 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
         </CardHeader>
       </Card>
 
-      {/* Partition */}
-      {piece.musicxml_url && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Partition</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SheetMusicViewer musicXmlUrl={piece.musicxml_url} />
-          </CardContent>
-        </Card>
+      {/* Visualisation Notes Tombantes */}
+      {notes.length > 0 && (
+        <FallingNotesVisualizer
+          notes={notes}
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          onNoteHit={(note) => {
+            // Note frappée - pourrait être utilisé pour scoring/feedback
+            console.log('Note hit:', note.name)
+          }}
+        />
       )}
 
       {/* Contrôles de lecture */}
@@ -232,13 +272,15 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
                 {/* Progress bar */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Progression</span>
+                    <span>
+                      {Math.floor(currentTime / 60)}:{String(Math.floor(currentTime % 60)).padStart(2, '0')} / {Math.floor(totalDuration.current / 60)}:{String(Math.floor(totalDuration.current % 60)).padStart(2, '0')}
+                    </span>
                     <span>{Math.round(progress)}%</span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-600 transition-all"
-                      style={{ width: `${progress}%` }}
+                      style={{ width: `${Math.min(progress, 100)}%` }}
                     />
                   </div>
                 </div>
@@ -327,11 +369,9 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
                 <span className="ml-2 font-medium">{notes.length}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Durée estimée:</span>
+                <span className="text-muted-foreground">Durée totale:</span>
                 <span className="ml-2 font-medium">
-                  {notes.length > 0
-                    ? Math.round(notes[notes.length - 1].time + notes[notes.length - 1].duration)
-                    : 0}s
+                  {Math.floor(totalDuration.current / 60)}:{String(Math.floor(totalDuration.current % 60)).padStart(2, '0')}
                 </span>
               </div>
             </div>
