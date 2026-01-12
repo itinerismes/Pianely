@@ -1,29 +1,48 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, Clock, Music } from "lucide-react";
 
-export function WeeklyGoals() {
+interface WeeklyGoalsProps {
+  stats: {
+    recentActivity: { date: string; duration: number; sessions: number }[]
+    currentStreak: number
+  }
+}
+
+export function WeeklyGoals({ stats }: WeeklyGoalsProps) {
+  // Calculate weekly practice sessions
+  const weeklySessions = stats.recentActivity.reduce((sum, a) => sum + a.sessions, 0)
+
+  // Calculate weekly practice time in hours
+  const weeklyMinutes = stats.recentActivity.reduce((sum, a) => sum + a.duration, 0)
+  const weeklyHours = Math.round((weeklyMinutes / 60) * 10) / 10
+
+  // Define weekly goals
+  const lessonGoal = { current: weeklySessions, target: 3 }
+  const practiceGoal = { current: weeklyHours, target: 5 }
+  const streakGoal = { current: stats.currentStreak, target: 7 }
+
   const goals = [
     {
       title: "Terminer 3 leçons",
-      progress: 67,
-      current: 2,
-      target: 3,
+      progress: Math.min(Math.round((lessonGoal.current / lessonGoal.target) * 100), 100),
+      current: lessonGoal.current,
+      target: lessonGoal.target,
       icon: <Target className="h-4 w-4" />,
       color: 'from-blue-400 to-cyan-500'
     },
     {
       title: "Pratiquer 5 heures",
-      progress: 70,
-      current: 3.5,
-      target: 5,
+      progress: Math.min(Math.round((practiceGoal.current / practiceGoal.target) * 100), 100),
+      current: practiceGoal.current,
+      target: practiceGoal.target,
       icon: <Clock className="h-4 w-4" />,
       color: 'from-green-400 to-emerald-500'
     },
     {
-      title: "Maîtriser 2 morceaux",
-      progress: 50,
-      current: 1,
-      target: 2,
+      title: "Streak de 7 jours",
+      progress: Math.min(Math.round((streakGoal.current / streakGoal.target) * 100), 100),
+      current: streakGoal.current,
+      target: streakGoal.target,
       icon: <Music className="h-4 w-4" />,
       color: 'from-purple-400 to-pink-500'
     }

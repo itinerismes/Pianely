@@ -77,42 +77,68 @@ function StatCard({ title, value, change, changeType, icon, progress, progressLa
   );
 }
 
-export function PianelyStats() {
+interface PianelyStatsProps {
+  stats: {
+    totalLessonsCompleted: number
+    totalPracticeTimeMinutes: number
+    totalPracticeTimeHours: number
+    currentStreak: number
+    levelsCompletion: Record<number, number>
+    recentActivity: { date: string; duration: number; sessions: number }[]
+  }
+}
+
+export function PianelyStats({ stats }: PianelyStatsProps) {
+  // Calculate total lessons across all levels (5+7+8+10+12 = 42)
+  const totalLessons = 42
+
+  // Calculate completed levels (levels with 100% completion)
+  const completedLevels = Object.values(stats.levelsCompletion).filter(c => c === 100).length
+
+  // Calculate average progression across all levels
+  const avgProgression = Math.round(
+    Object.values(stats.levelsCompletion).reduce((sum, val) => sum + val, 0) / 5
+  )
+
+  // Calculate weekly practice time
+  const weeklyPracticeMinutes = stats.recentActivity.reduce((sum, a) => sum + a.duration, 0)
+  const weeklyPracticeHours = Math.round((weeklyPracticeMinutes / 60) * 10) / 10
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <StatCard
         title="Niveaux complétés"
-        value="1/5"
-        change="+1 ce mois"
-        changeType="positive"
+        value={`${completedLevels}/5`}
+        change={completedLevels > 0 ? `${completedLevels} complété${completedLevels > 1 ? 's' : ''}` : 'Commencer le niveau 1'}
+        changeType={completedLevels > 0 ? 'positive' : 'neutral'}
         icon={<BookOpen className="h-4 w-4" />}
       />
 
       <StatCard
         title="Heures de pratique"
-        value="12.5h"
-        change="+3.2h cette semaine"
-        changeType="positive"
+        value={`${stats.totalPracticeTimeHours}h`}
+        change={weeklyPracticeHours > 0 ? `+${weeklyPracticeHours}h cette semaine` : 'Aucune pratique cette semaine'}
+        changeType={weeklyPracticeHours > 0 ? 'positive' : 'neutral'}
         icon={<Clock className="h-4 w-4" />}
       />
 
       <StatCard
         title="Leçons terminées"
-        value="5/42"
-        change="+2 cette semaine"
-        changeType="positive"
+        value={`${stats.totalLessonsCompleted}/${totalLessons}`}
+        change={stats.currentStreak > 0 ? `🔥 ${stats.currentStreak} jour${stats.currentStreak > 1 ? 's' : ''} de suite` : 'Commence ta première leçon'}
+        changeType={stats.currentStreak > 0 ? 'positive' : 'neutral'}
         icon={<Award className="h-4 w-4" />}
       />
 
       <StatCard
         title="Progression moyenne"
-        value="12%"
-        change="+4% ce mois"
-        changeType="positive"
+        value={`${avgProgression}%`}
+        change={avgProgression > 0 ? 'Continue comme ça !' : 'Commence ton parcours'}
+        changeType={avgProgression > 0 ? 'positive' : 'neutral'}
         icon={<TrendingUp className="h-4 w-4" />}
-        progress={12}
+        progress={avgProgression}
         progressLabel="Progression globale"
       />
     </div>
-  );
+  )
 }
