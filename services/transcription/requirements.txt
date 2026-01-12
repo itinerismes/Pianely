@@ -1,14 +1,15 @@
 # Basic Pitch - Audio to MIDI transcription
-basic-pitch
+# Version 0.4+ compatible Python 3.12+
+basic-pitch>=0.4.0
 
 # MIDI processing
-pretty-midi
+pretty-midi>=0.2.10
 
 # Audio processing
-librosa
-soundfile
+librosa>=0.10.0
+soundfile>=0.12.0
 
 # Core dependencies
-numpy
-scipy
-resampy
+numpy>=1.24.0
+scipy>=1.10.0
+resampy>=0.4.0

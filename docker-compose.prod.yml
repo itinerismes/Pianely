@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  pianely:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pianely_app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+    restart: unless-stopped
+    mem_limit: 3g
+    mem_reservation: 1g
+    cpus: 2
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Optionnel : Nginx reverse proxy (si pas de Nginx système)
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: pianely_nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - pianely
+  #   restart: unless-stopped
+
+networks:
+  default:
+    name: pianely_network

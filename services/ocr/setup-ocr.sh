@@ -8,14 +8,14 @@ echo ""
 if ! command -v java &> /dev/null; then
     echo "❌ Java n'est pas installé !"
     echo ""
-    echo "Audiveris nécessite Java 17+. Installez-le :"
+    echo "Audiveris 5.9+ nécessite Java 21. Installez-le :"
     echo ""
     echo "Ubuntu/Debian:"
     echo "  sudo apt update"
-    echo "  sudo apt install openjdk-17-jre"
+    echo "  sudo apt install openjdk-21-jre"
     echo ""
     echo "macOS (Homebrew):"
-    echo "  brew install openjdk@17"
+    echo "  brew install openjdk@21"
     echo ""
     exit 1
 fi
@@ -23,9 +23,13 @@ fi
 JAVA_VERSION=$(java -version 2>&1 | grep -oP 'version "?(1\.)?\K\d+' | head -1)
 echo "✓ Java version: $JAVA_VERSION"
 
-if [ "$JAVA_VERSION" -lt 11 ]; then
-    echo "⚠️  Audiveris nécessite Java 11+ (Java 17 recommandé)"
+if [ "$JAVA_VERSION" -lt 17 ]; then
+    echo "❌ Audiveris 5.9 nécessite Java 17+ (Java 21 recommandé)"
     echo "   Version actuelle: $JAVA_VERSION"
+    echo ""
+    echo "Installez Java 21 :"
+    echo "  sudo apt install openjdk-21-jre"
+    exit 1
 fi
 
 # Vérifier Python
@@ -35,7 +39,17 @@ if ! command -v python3 &> /dev/null; then
 fi
 
 PYTHON_VERSION=$(python3 --version 2>&1 | awk '{print $2}')
+PYTHON_MAJOR=$(echo $PYTHON_VERSION | cut -d. -f1)
+PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d. -f2)
+
 echo "✓ Python version: $PYTHON_VERSION"
+
+# Python 3.10+ est OK pour music21
+if [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -lt 10 ]; then
+    echo "⚠️  music21 fonctionne mieux avec Python 3.10+"
+    echo "   Version actuelle: $PYTHON_VERSION"
+    echo "   Le script continuera quand même..."
+fi
 
 # Créer environnement virtuel
 echo ""
@@ -59,8 +73,9 @@ pip install -r requirements.txt
 echo ""
 echo "📥 Téléchargement d'Audiveris..."
 
-AUDIVERIS_VERSION="5.3.1"
-AUDIVERIS_URL="https://github.com/Audiveris/audiveris/releases/download/$AUDIVERIS_VERSION/Audiveris-$AUDIVERIS_VERSION.zip"
+AUDIVERIS_VERSION="5.9"
+# Lien direct vers le JAR (plus simple que le ZIP)
+AUDIVERIS_URL="https://github.com/Audiveris/audiveris/releases/download/v${AUDIVERIS_VERSION}/Audiveris.jar"
 AUDIVERIS_DIR="audiveris"
 
 mkdir -p "$AUDIVERIS_DIR"
@@ -68,40 +83,29 @@ mkdir -p "$AUDIVERIS_DIR"
 if [ -f "$AUDIVERIS_DIR/audiveris.jar" ]; then
     echo "✓ Audiveris déjà téléchargé"
 else
-    echo "   Téléchargement depuis GitHub..."
+    echo "   Téléchargement Audiveris ${AUDIVERIS_VERSION} depuis GitHub..."
+    echo "   URL: $AUDIVERIS_URL"
 
-    # Télécharger
-    curl -L "$AUDIVERIS_URL" -o audiveris.zip
+    # Télécharger directement le JAR
+    curl -L "$AUDIVERIS_URL" -o "$AUDIVERIS_DIR/audiveris.jar"
 
     if [ $? -ne 0 ]; then
         echo "❌ Échec du téléchargement d'Audiveris"
         echo ""
-        echo "Téléchargez manuellement depuis :"
-        echo "$AUDIVERIS_URL"
+        echo "Solutions :"
+        echo "1. Téléchargez manuellement depuis :"
+        echo "   https://github.com/Audiveris/audiveris/releases/tag/v${AUDIVERIS_VERSION}"
         echo ""
-        echo "Puis extrayez dans services/ocr/audiveris/"
+        echo "2. Placez le fichier Audiveris.jar dans :"
+        echo "   services/ocr/audiveris/audiveris.jar"
+        echo ""
+        echo "3. Ou utilisez wget si curl ne marche pas :"
+        echo "   wget $AUDIVERIS_URL -O $AUDIVERIS_DIR/audiveris.jar"
+        echo ""
         exit 1
     fi
 
-    # Extraire
-    echo "   Extraction..."
-    unzip -q audiveris.zip -d "$AUDIVERIS_DIR"
-
-    # Trouver le JAR
-    JAR_PATH=$(find "$AUDIVERIS_DIR" -name "Audiveris*.jar" | head -1)
-
-    if [ -z "$JAR_PATH" ]; then
-        echo "❌ JAR Audiveris introuvable après extraction"
-        exit 1
-    fi
-
-    # Renommer pour simplicité
-    mv "$JAR_PATH" "$AUDIVERIS_DIR/audiveris.jar"
-
-    # Nettoyer
-    rm audiveris.zip
-
-    echo "✓ Audiveris installé : $AUDIVERIS_DIR/audiveris.jar"
+    echo "✓ Audiveris ${AUDIVERIS_VERSION} installé : $AUDIVERIS_DIR/audiveris.jar"
 fi
 
 # Tester l'installation

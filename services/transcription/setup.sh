@@ -15,24 +15,18 @@ PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d. -f2)
 
 echo "Python version: $PYTHON_VERSION"
 
-# Check if Python version is compatible
-if [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -ge 12 ]; then
+# Python 3.10+ est compatible avec Basic Pitch 0.4+
+if [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -lt 10 ]; then
     echo ""
-    echo "⚠️  WARNING: Python 3.12+ detected!"
-    echo "Basic Pitch (0.3.x) requires numpy 1.23.x which is incompatible with Python 3.12"
+    echo "⚠️  WARNING: Python 3.10+ recommandé pour Basic Pitch"
+    echo "Version actuelle: $PYTHON_VERSION"
     echo ""
-    echo "Please use Python 3.11 instead:"
-    echo "  1. Install Python 3.11: https://www.python.org/downloads/"
-    echo "  2. Use pyenv to manage versions: pyenv install 3.11"
-    echo "  3. Or create venv with: python3.11 -m venv venv"
+    echo "Le script continuera mais peut échouer avec Python < 3.10"
     echo ""
-    echo "Alternatively, the app will use placeholder transcription (C major scale) in dev mode."
-    echo ""
-    read -p "Continue anyway (will likely fail)? [y/N] " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        exit 1
-    fi
+fi
+
+if [ "$PYTHON_MAJOR" -eq 3 ] && [ "$PYTHON_MINOR" -ge 10 ]; then
+    echo "✓ Python $PYTHON_VERSION est compatible avec Basic Pitch 0.4+"
 fi
 
 # Clean up old venv if exists
