@@ -102,6 +102,16 @@ const content: ContentBlock[] = [
     }
   },
   {
+    id: '5b',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'Piano Interactif : Trouve les Do',
+      instructions: 'Clique sur toutes les touches Do (Do) sur le piano ci-dessous. Utilise ce que tu viens d\'apprendre : cherche les groupes de 2 touches noires !',
+      targetNotes: ['C']
+    }
+  },
+  {
     id: '6',
     type: 'text',
     data: {
@@ -122,6 +132,22 @@ const content: ContentBlock[] = [
         </ul>
       `,
       variant: 'normal'
+    }
+  },
+  {
+    id: '6b',
+    type: 'interactive',
+    data: {
+      component: 'quiz',
+      question: 'Comment repère-t-on le Do sur le clavier ?',
+      options: [
+        'C\'est la touche blanche juste à gauche d\'un groupe de 2 touches noires',
+        'C\'est la touche blanche juste à gauche d\'un groupe de 3 touches noires',
+        'C\'est la touche blanche entre les 2 touches noires',
+        'C\'est la première touche blanche du clavier'
+      ],
+      correctAnswer: 0,
+      explanation: 'Exactement ! Le Do se trouve toujours juste à gauche d\'un groupe de 2 touches noires. C\'est ton point de repère principal sur le clavier.'
     }
   },
   {

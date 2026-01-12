@@ -15,6 +15,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { PianoDemo } from '@/components/interactive/PianoDemo'
+import { Quiz } from '@/components/interactive/Quiz'
 import type { ContentBlock } from '@/types/lesson'
 
 interface LessonTemplateProps {
@@ -306,6 +308,31 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
         </CardContent>
       </Card>
     )
+  }
+
+  if (block.type === 'interactive') {
+    const interactiveBlock = block as any
+
+    if (interactiveBlock.data.component === 'piano') {
+      return (
+        <PianoDemo
+          title={interactiveBlock.data.title}
+          instructions={interactiveBlock.data.instructions}
+          targetNotes={interactiveBlock.data.targetNotes || []}
+        />
+      )
+    }
+
+    if (interactiveBlock.data.component === 'quiz') {
+      return (
+        <Quiz
+          question={interactiveBlock.data.question || ''}
+          options={interactiveBlock.data.options || []}
+          correctAnswer={interactiveBlock.data.correctAnswer || 0}
+          explanation={interactiveBlock.data.explanation}
+        />
+      )
+    }
   }
 
   // Default fallback

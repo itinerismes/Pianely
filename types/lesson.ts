@@ -53,9 +53,23 @@ export interface PracticeBlock extends ContentBlock {
   type: 'practice'
   data: {
     title: string
-    description: string
+    description?: string
     steps: string[]
     image?: string
+  }
+}
+
+export interface InteractiveBlock extends ContentBlock {
+  type: 'interactive'
+  data: {
+    component: 'piano' | 'quiz'
+    title?: string
+    instructions?: string
+    targetNotes?: string[]
+    question?: string
+    options?: string[]
+    correctAnswer?: number
+    explanation?: string
   }
 }
 
