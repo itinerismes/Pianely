@@ -1,420 +1,367 @@
-import LessonTemplate from '@/components/lessons/LessonTemplate'
+import { LessonTemplate } from '@/components/lessons/LessonTemplate'
 import type { ContentBlock } from '@/types/lesson'
 
-export default function Niveau3Lecon5() {
+const content: ContentBlock[] = [
+  {
+    id: '1',
+    type: 'text',
+    data: {
+      content: `
+        <h2>La pédale : l'âme du piano</h2>
+        <p>
+          La <strong>pédale de sustain</strong> (ou pédale forte) est la pédale
+          de droite du piano. C'est l'un des éléments les plus puissants et
+          caractéristiques du piano moderne.
+        </p>
+        <p>
+          Quand tu appuies sur cette pédale, tous les étouffoirs se soulèvent
+          simultanément, permettant à <strong>toutes les cordes de vibrer librement</strong>.
+          Le résultat : un son riche, résonant, qui "respire".
+        </p>
+        <p>
+          Sans la pédale de sustain, le piano sonnerait sec et limité. Avec elle,
+          il devient l'instrument expressif et majestueux qu'on connaît. Elle
+          permet de créer des nappes sonores, de lier des notes impossibles à
+          connecter avec les doigts seuls, et d'enrichir la texture musicale.
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '2',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Comment utiliser la pédale de base</h2>
+        <p>
+          <strong>Position du pied :</strong>
+        </p>
+        <ul>
+          <li>Place la <strong>plante du pied</strong> (pas les orteils) sur la pédale</li>
+          <li>Le talon reste au sol en permanence</li>
+          <li>Seul l'avant du pied bouge, comme une charnière</li>
+          <li>Le mouvement vient de la cheville, pas de toute la jambe</li>
+        </ul>
+        <p>
+          <strong>Deux positions :</strong>
+        </p>
+        <ul>
+          <li><strong>Pédale levée</strong> : Son normal, notes s'arrêtent quand tu relâches</li>
+          <li><strong>Pédale enfoncée</strong> : Son prolongé, toutes les cordes vibrent</li>
+        </ul>
+        <p>
+          Important : Ne pousse pas fort ! La pédale n'a besoin que d'une légère
+          pression pour être complètement enfoncée.
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '3',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Découvrir l\'effet de la pédale',
+      description: 'Comprends ce que fait la pédale',
+      steps: [
+        'Joue un accord de Do majeur (Do-Mi-Sol) SANS pédale',
+        'Relâche les touches : le son s\'arrête immédiatement',
+        'Maintenant, ENFONCE la pédale (avant de jouer)',
+        'Joue l\'accord de Do majeur',
+        'Relâche les touches MAIS garde la pédale enfoncée',
+        'Le son continue ! Les cordes vibrent librement',
+        'Relâche la pédale : le son s\'arrête',
+        'Répète 5 fois pour bien sentir la différence'
+      ]
+    }
+  },
+  {
+    id: '4',
+    type: 'text',
+    data: {
+      content: `
+        <h2>La technique du pédalage syncopé</h2>
+        <p>
+          La technique la plus importante et la plus utilisée est le
+          <strong>pédalage syncopé</strong> (ou "après-coup"). C'est contre-intuitif
+          mais essentiel !
+        </p>
+        <p>
+          <strong>Ordre des opérations :</strong>
+        </p>
+        <ol>
+          <li>Joue la note ou l'accord (pédale levée)</li>
+          <li>IMMÉDIATEMENT après avoir joué, enfonce la pédale</li>
+          <li>Joue la note suivante</li>
+          <li>PENDANT que la nouvelle note sonne, relâche PUIS réenfonce la pédale</li>
+          <li>Répète ce mouvement "relâcher-enfoncer" à chaque changement d'harmonie</li>
+        </ol>
+        <p>
+          Pourquoi cette technique ? Elle permet de garder le son pur :
+          tu changes la pédale au moment où la nouvelle harmonie arrive,
+          évitant ainsi les mélanges cacophoniques.
+        </p>
+      `,
+      variant: 'tip'
+    }
+  },
+  {
+    id: '5',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Visualisation du pédalage syncopé</h2>
+        <p>
+          Imagine ce timing précis :
+        </p>
+        <p>
+          <strong>Main :</strong> Joue Do ↓ ............... Joue Mi ↓<br>
+          <strong>Pédale :</strong> ......... Enfonce ↓ ... ↑Relâche→Réenfonce ↓
+        </p>
+        <p>
+          La pédale descend <strong>après</strong> que tu aies joué la première note,
+          et change (monte puis redescend) <strong>pendant</strong> que la deuxième
+          note sonne déjà.
+        </p>
+        <p>
+          C'est "syncopé" parce que le changement de pédale n'est pas en même
+          temps que la frappe de la touche, mais décalé (comme une syncope musicale).
+        </p>
+        <p>
+          Au début, c'est déroutant car on a l'instinct d'appuyer sur la pédale
+          EN MÊME TEMPS que les touches. Mais avec la pratique, ça devient naturel !
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '6',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Pédalage syncopé sur deux notes',
+      description: 'Maîtrise le timing du pédalage',
+      steps: [
+        'Joue Do (pédale levée)',
+        'IMMÉDIATEMENT APRÈS, enfonce la pédale',
+        'Le Do continue de sonner grâce à la pédale',
+        'Joue Mi (la pédale est toujours enfoncée)',
+        'PENDANT que Mi sonne, fais : relâche pédale → réenfonce immédiatement',
+        'Ce mouvement "relâche-réenfonce" doit être fluide et rapide',
+        'Répète : Do→Mi→Sol→Do avec changement de pédale à chaque note',
+        'L\'objectif : transition fluide sans silence ni mélange sale'
+      ]
+    }
+  },
+  {
+    id: '7',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Quand utiliser la pédale</h2>
+        <p>
+          La pédale n'est pas toujours appropriée. Voici quand l'utiliser :
+        </p>
+        <p>
+          <strong>✅ Utilise la pédale pour :</strong>
+        </p>
+        <ul>
+          <li>Lier des notes impossibles à connecter avec les doigts seuls</li>
+          <li>Enrichir le son dans les passages lents et expressifs</li>
+          <li>Créer des résonances et des couleurs harmoniques</li>
+          <li>Soutenir les basses pendant que la main droite joue une mélodie</li>
+        </ul>
+        <p>
+          <strong>❌ N'utilise PAS la pédale pour :</strong>
+        </p>
+        <ul>
+          <li>Les passages rapides et articulés (scales, passages techniques)</li>
+          <li>Les staccatos (la pédale annule l'effet staccato)</li>
+          <li>Les passages polyphoniques complexes avec plusieurs voix indépendantes</li>
+          <li>"Cacher" les erreurs ou les transitions maladroites</li>
+        </ul>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '8',
+    type: 'text',
+    data: {
+      content: `
+        <h2>La demi-pédale : contrôle avancé</h2>
+        <p>
+          La <strong>demi-pédale</strong> (ou pédale partielle) est une technique
+          avancée où tu n'enfonces pas complètement la pédale.
+        </p>
+        <p>
+          <strong>Avantages de la demi-pédale :</strong>
+        </p>
+        <ul>
+          <li>Moins de résonance = son plus clair</li>
+          <li>Contrôle subtil de la quantité de sustain</li>
+          <li>Permet de pédaler dans des passages plus denses</li>
+          <li>Crée des nuances de couleur sonore</li>
+        </ul>
+        <p>
+          <strong>Technique :</strong> Au lieu d'enfoncer la pédale jusqu'au bout,
+          ne l'enfonce qu'à moitié ou aux trois-quarts. Les étouffoirs touchent
+          légèrement les cordes, laissant vibrer certaines harmoniques mais pas toutes.
+        </p>
+        <p>
+          C'est très subtil et demande une grande sensibilité. À pratiquer une
+          fois que le pédalage syncopé est maîtrisé !
+        </p>
+      `,
+      variant: 'tip'
+    }
+  },
+  {
+    id: '9',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Explorer la demi-pédale',
+      description: 'Découvre les nuances de la pédale partielle',
+      steps: [
+        'Joue un accord de Do majeur (Do-Mi-Sol)',
+        'Enfonce la pédale COMPLÈTEMENT : écoute la résonance maximale',
+        'Relâche et rejoue l\'accord',
+        'Cette fois, enfonce la pédale seulement à MOITIÉ',
+        'Compare : le son est plus contrôlé, moins "noyé"',
+        'Expérimente différents degrés : 1/4, 1/2, 3/4, complet',
+        'Chaque degré a sa couleur unique',
+        'Note : sur certains pianos numériques, cet effet est limité'
+      ]
+    }
+  },
+  {
+    id: '10',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Exercice musical : "Au clair de la lune" avec pédale</h2>
+        <p>
+          Appliquons la pédale à un morceau que tu connais. Voici comment
+          pédaler "Au clair de la lune" :
+        </p>
+        <p>
+          <strong>Phrase 1 :</strong> Do-Do-Do-Ré-Mi-Ré
+        </p>
+        <ul>
+          <li>Joue Do, enfonce pédale</li>
+          <li>Les 3 Do suivants : garde la pédale (c'est la même harmonie)</li>
+          <li>Sur Ré : change la pédale (nouvelle harmonie)</li>
+          <li>Mi : garde la pédale</li>
+          <li>Dernier Ré : change la pédale</li>
+        </ul>
+        <p>
+          Règle générale : <strong>Change la pédale quand l'harmonie change</strong>,
+          pas à chaque note. Cela crée un son plus riche sans devenir boueux.
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '11',
+    type: 'practice',
+    data: {
+      title: 'Exercice : "Au clair de la lune" pédalée',
+      description: 'Applique le pédalage syncopé à un morceau complet',
+      steps: [
+        'Joue "Au clair de la lune" SANS pédale d\'abord (révision)',
+        'Identifie les changements d\'harmonie (Do→Sol→Do, etc.)',
+        'Rejoue en ajoutant la pédale, changement à chaque nouvelle harmonie',
+        'Utilise le pédalage syncopé : change PENDANT la nouvelle note',
+        'Va TRÈS lentement au début',
+        'Concentre-toi sur le timing : pédale après la note, change pendant',
+        'Répète 10 fois jusqu\'à ce que ce soit fluide',
+        'Compare avec/sans pédale : quelle richesse supplémentaire !'
+      ]
+    }
+  },
+  {
+    id: '12',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Les erreurs courantes de pédalage</h2>
+        <p>
+          Voici les pièges à éviter :
+        </p>
+        <ul>
+          <li><strong>Pédaler tout le temps :</strong> Crée un son boueux et confus</li>
+          <li><strong>Changer à chaque note :</strong> Perd l'intérêt de la pédale, son haché</li>
+          <li><strong>Enfoncer en même temps que les touches :</strong> Crée des mélanges sales</li>
+          <li><strong>Oublier de relâcher :</strong> Les harmonies s'accumulent en cacophonie</li>
+          <li><strong>Utiliser trop de force :</strong> Crée un bruit de pédale</li>
+          <li><strong>Lever le talon du sol :</strong> Perte de contrôle et fatigue rapide</li>
+        </ul>
+        <p>
+          La pédale est un art subtil. Même les pianistes professionnels travaillent
+          constamment leur technique de pédalage. C'est un apprentissage permanent !
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '13',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Notation de la pédale sur les partitions</h2>
+        <p>
+          Sur les partitions, le pédalage est souvent indiqué par des symboles :
+        </p>
+        <ul>
+          <li><strong>Ped.</strong> ou <strong>𝄆</strong> : Enfoncer la pédale</li>
+          <li><strong>*</strong> ou <strong>𝄇</strong> : Relâcher la pédale</li>
+          <li><strong>Ligne avec crochet</strong> : Ligne continue = pédale enfoncée, fin de ligne = relâcher</li>
+        </ul>
+        <p>
+          Cependant, les indications de pédale sont souvent absentes ou approximatives.
+          Un bon pianiste apprend à décider lui-même où pédaler en fonction :
+        </p>
+        <ul>
+          <li>De l'harmonie (change à chaque changement d'accord)</li>
+          <li>De l'acoustique (une grande salle demande moins de pédale)</li>
+          <li>Du style (romantique = beaucoup, baroque = peu ou pas)</li>
+          <li>De son goût artistique personnel</li>
+        </ul>
+        <p>
+          Écoute beaucoup d'enregistrements et observe comment les maîtres utilisent
+          la pédale. C'est une signature personnelle de chaque interprète !
+        </p>
+      `,
+      variant: 'tip'
+    }
+  }
+]
+
+export default function Lecon5Page() {
   return (
     <LessonTemplate
       levelId={3}
       lessonNumber={5}
       title="La pédale de sustain"
-      description="Découvrez comment utiliser la pédale droite pour enrichir votre son et créer des ambiances musicales."
-      duration="15 min"
+      duration={15}
       objectives={[
-        "Comprendre le fonctionnement de la pédale de sustain",
-        "Maîtriser la technique de base du pédalage",
-        "Apprendre le pédalage syncopé (après l'attaque)",
-        "Éviter les erreurs courantes de pédale",
-        "Utiliser la pédale pour l'expression musicale",
-        "Combiner pédale et articulations"
+        'Comprendre la fonction de la pédale de sustain',
+        'Maîtriser le pédalage syncopé (après-coup)',
+        'Savoir quand utiliser et ne pas utiliser la pédale',
+        'Appliquer la pédale dans un morceau simple'
       ]}
-      previousLesson="/parcours/niveau-3/lecon-4"
-      nextLesson="/parcours/niveau-3/lecon-6"
-    >
-      <ContentBlock variant="highlight">
-        <h2>L'âme du piano</h2>
-        <p>
-          La pédale de sustain est souvent appelée "l'âme du piano". Utilisée correctement,
-          elle transforme le piano en un instrument capable de chanter, de créer des ambiances
-          enveloppantes, et de produire des sonorités qu'aucun autre instrument ne peut égaler.
-          Bienvenue dans une dimension nouvelle de votre jeu !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Comment fonctionne la pédale ?</h2>
-        <p>
-          Le piano possède généralement trois pédales, mais la plus importante est la
-          <strong> pédale droite</strong>, appelée <strong>pédale forte</strong> ou
-          <strong> pédale de sustain</strong>.
-        </p>
-        <p className="mt-4">
-          <strong>Mécanisme :</strong> Quand vous l'enfoncez, elle soulève tous les étouffoirs
-          qui normalement arrêtent la vibration des cordes. Résultat : toutes les notes jouées
-          continuent de résonner même après avoir relâché les touches.
-        </p>
-        <p className="mt-3">
-          <strong>Effet magique :</strong> Les cordes non jouées vibrent aussi par sympathie,
-          créant une richesse harmonique et une résonance naturelle impossible sans la pédale.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Position du pied sur la pédale</h2>
-        <p>Avant de commencer, établissons la bonne position :</p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>Pied droit :</strong> Sur la pédale droite (la plus utilisée)</li>
-          <li><strong>Appui :</strong> Avant du pied sur la pédale, talon au sol</li>
-          <li><strong>Angle :</strong> Pied légèrement incliné vers la droite, naturel</li>
-          <li><strong>Position :</strong> Jambe détendue, pas de tension dans la cuisse</li>
-          <li><strong>Mouvement :</strong> Pivot depuis le talon, comme une charnière</li>
-        </ul>
-        <p className="mt-4 text-sm opacity-80">
-          Le talon reste toujours au sol. Seul l'avant du pied monte et descend, comme si
-          vous tapiez du pied sur un rythme lent.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 1 : Découvrir l'effet de la pédale</h2>
-        <p>Expérimentons pour comprendre ce que fait la pédale :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>SANS pédale : Jouez un Do, maintenez 2 secondes, relâchez. Le son s'arrête net.</li>
-          <li>AVEC pédale : Enfoncez la pédale AVANT de jouer. Jouez un Do, relâchez la touche.
-              Le son continue ! Maintenez la pédale 5 secondes, écoutez la résonance.</li>
-          <li>Pédale enfoncée : Jouez Do-Mi-Sol ensemble, relâchez les touches. Les trois notes
-              continuent de sonner ensemble.</li>
-          <li>Pédale enfoncée : Jouez une gamme complète Do→Do. Relâchez les touches. Toutes les
-              notes résonnent ensemble (un peu confus, non ?)</li>
-        </ol>
-        <p className="mt-4">
-          Vous venez de découvrir le pouvoir et le danger de la pédale : elle enrichit le son,
-          mais peut aussi créer de la boue sonore si mal utilisée !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>Deux règles d'or du pédalage</h2>
-        <div className="mt-3 space-y-3">
-          <p className="font-bold">Règle 1 : La pédale n'est pas un interrupteur</p>
-          <p>
-            Ne pensez pas "pédale enfoncée" ou "pédale levée". Pensez plutôt à trois états :
-          </p>
-          <ul className="list-disc list-inside ml-4 space-y-1">
-            <li><strong>Levée :</strong> Son sec, aucune résonance</li>
-            <li><strong>Enfoncée :</strong> Résonance maximale</li>
-            <li><strong>Demi-pédale :</strong> Résonance contrôlée (technique avancée)</li>
-          </ul>
-          <p className="font-bold mt-4">Règle 2 : Changez la pédale, ne l'utilisez pas continuellement</p>
-          <p>
-            Le secret d'un beau pédalage : savoir QUAND relâcher et réenfoncer la pédale pour
-            éviter le mélange de sons incompatibles.
-          </p>
-        </div>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Le pédalage syncopé : la technique de base</h2>
-        <p>
-          La technique la plus importante à maîtriser est le <strong>pédalage syncopé</strong>
-          (aussi appelé pédalage après l'attaque). C'est la base d'un pédalage propre.
-        </p>
-        <p className="mt-3">
-          <strong>Principe :</strong> Vous enfoncez la pédale APRÈS avoir joué la note, et vous
-          la changez (lever-enfoncer rapidement) AU MOMENT où vous jouez la note suivante.
-        </p>
-        <p className="mt-3">
-          <strong>Séquence :</strong>
-        </p>
-        <ol className="list-decimal list-inside space-y-1 mt-2 ml-4">
-          <li>Jouez la note (pédale levée)</li>
-          <li>Enfoncez la pédale immédiatement après</li>
-          <li>La note continue de sonner grâce à la pédale</li>
-          <li>Jouez la note suivante EN MÊME TEMPS que vous changez la pédale (lever-enfoncer)</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 2 : Pédalage syncopé sur notes seules</h2>
-        <p>Pratiquons cette coordination main-pied fondamentale :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Main droite sur Do (sans pédale)</li>
-          <li>Jouez Do, puis enfoncez la pédale juste après</li>
-          <li>Comptez : "Note - Pédale - 2 - 3"</li>
-          <li>Sur le temps suivant : jouez Ré ET changez la pédale simultanément</li>
-          <li>Répétez : Do (pédale) - Ré (changement) - Mi (changement) - Fa (changement) - Sol (changement)</li>
-          <li>Pratiquez très lentement 10 fois jusqu'à coordination parfaite</li>
-        </ol>
-        <p className="mt-4 text-sm opacity-80">
-          Le changement de pédale doit être rapide : lever-enfoncer comme un seul mouvement,
-          au moment précis où la touche s'enfonce.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 3 : Pédalage sur accords</h2>
-        <p>Le pédalage syncopé est particulièrement important pour les progressions d'accords :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Jouez un accord de Do majeur (Do-Mi-Sol) main droite</li>
-          <li>Enfoncez la pédale juste après l'attaque</li>
-          <li>L'accord continue de sonner</li>
-          <li>Jouez l'accord suivant (Fa majeur : Fa-La-Do) ET changez la pédale simultanément</li>
-          <li>Continuez avec Sol majeur (Sol-Si-Ré), puis retour à Do majeur</li>
-          <li>Progression : Do (pédale) - Fa (changement) - Sol (changement) - Do (changement)</li>
-        </ol>
-        <p className="mt-4">
-          Si c'est bien fait, vous n'entendrez pas de mélange entre les accords, mais chaque
-          accord aura une belle résonance riche.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="warning">
-        <h2>Erreurs courantes à éviter absolument</h2>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>La "soupe" sonore :</strong> Garder la pédale enfoncée trop longtemps, mélangeant
-              des notes incompatibles</li>
-          <li><strong>Pédale trop tôt :</strong> Enfoncer avant la note (sauf effet voulu), ce qui
-              attrape des résonances parasites</li>
-          <li><strong>Changement trop lent :</strong> Lever et réenfoncer lentement créent un "trou"
-              dans le son</li>
-          <li><strong>Pédale systématique :</strong> Utiliser la pédale sur tout crée une bouillie
-              sonore</li>
-          <li><strong>Pied tendu :</strong> Créer de la tension dans la jambe (restez détendu !)</li>
-          <li><strong>Oublier d'écouter :</strong> Ne pas écouter si le mélange sonore est propre</li>
-        </ul>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 4 : Gamme avec pédale</h2>
-        <p>Challenge de coordination : pédalage syncopé sur une gamme :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Jouez votre gamme de Do majeur main droite</li>
-          <li>Changez la pédale à CHAQUE note (pédalage syncopé)</li>
-          <li>Do (pédale) - Ré (changement) - Mi (changement)... jusqu'au Do aigu</li>
-          <li>Commencez très lentement (métronome à 60 BPM, une note par temps)</li>
-          <li>Écoutez : chaque note doit être pure, sans mélange avec la précédente</li>
-          <li>Répétez 5 fois en augmentant progressivement la vitesse</li>
-        </ol>
-        <p className="mt-4">
-          C'est difficile ! Cette coordination main-pied demande de la pratique, mais c'est LA
-          technique fondamentale à maîtriser.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Quand utiliser la pédale ?</h2>
-        <p>
-          La pédale n'est pas toujours nécessaire. Voici un guide pratique :
-        </p>
-        <div className="mt-3 space-y-3">
-          <p><strong>UTILISEZ la pédale pour :</strong></p>
-          <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>Lier des notes ou accords que vous ne pouvez pas tenir avec les doigts</li>
-            <li>Enrichir le son et créer de la profondeur sonore</li>
-            <li>Créer des ambiances (romantiques, mystérieuses, dramatiques)</li>
-            <li>Soutenir des passages chantants en legato</li>
-            <li>Les basses qui doivent résonner sous une mélodie</li>
-          </ul>
-          <p className="mt-3"><strong>N'utilisez PAS la pédale pour :</strong></p>
-          <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>Les passages staccato (détachés)</li>
-            <li>Les passages rapides avec beaucoup de notes différentes</li>
-            <li>Compenser un legato de doigts insuffisant</li>
-            <li>Les exercices techniques (gammes sans pédale d'abord)</li>
-          </ul>
-        </div>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 5 : Mélodie avec accompagnement</h2>
-        <p>Application pratique : mélodie à la main droite, basse à la main gauche :</p>
-        <div className="mt-3 space-y-2">
-          <p><strong>Main gauche :</strong> Do grave (noire)</p>
-          <p><strong>Main droite :</strong> Mi-Mi-Fa-Sol (quatre croches)</p>
-        </div>
-        <ol className="list-decimal list-inside space-y-2 mt-4">
-          <li>Jouez le Do grave, enfoncez la pédale</li>
-          <li>Le Do continue de résonner pendant que vous jouez Mi-Mi-Fa-Sol</li>
-          <li>Changez la pédale sur le prochain Do grave</li>
-          <li>Répétez : la pédale permet au Do de soutenir toute la mélodie</li>
-        </ol>
-        <p className="mt-4">
-          C'est l'utilisation la plus courante de la pédale : maintenir une basse pendant que
-          la mélodie se déploie au-dessus.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="normal">
-        <h2>Exercice 6 : Pédale et articulation</h2>
-        <p>Combinons pédale et articulations apprises dans la leçon précédente :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li><strong>Phrase legato avec pédale :</strong> Do-Ré-Mi-Fa (main droite liée +
-              pédale changée à chaque note) = son très lié et riche</li>
-          <li><strong>Phrase staccato sans pédale :</strong> Sol-Sol-Sol-Sol (détaché, sec,
-              aucune pédale) = son pétillant</li>
-          <li>Alternez ces deux phrases pour sentir le contraste</li>
-          <li>Répétez 5 fois</li>
-        </ol>
-        <p className="mt-4">
-          La combinaison pédale + articulation décuple vos possibilités expressives !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 7 : Arpège avec pédale</h2>
-        <p>
-          Les arpèges (accords joués note par note) sont transformés par la pédale :
-        </p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>SANS pédale : jouez Do-Mi-Sol-Mi-Do (main droite) - les notes sont isolées</li>
-          <li>AVEC pédale : enfoncez la pédale, jouez Do-Mi-Sol-Mi-Do, maintenez la pédale -
-              les notes s'accumulent en un accord riche</li>
-          <li>Essayez différents arpèges avec la pédale maintenue</li>
-          <li>Expérimentez le changement de pédale à différents moments</li>
-        </ol>
-        <p className="mt-4 text-sm opacity-80">
-          C'est la technique utilisée dans les accompagnements de valses, les nocturnes de Chopin,
-          et innombrables autres pièces du répertoire.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>La notation de la pédale sur les partitions</h2>
-        <p>Sur une partition, le pédalage est indiqué de deux façons :</p>
-        <div className="mt-3 space-y-3">
-          <p><strong>Méthode 1 - Symboles textuels :</strong></p>
-          <ul className="list-disc list-inside ml-4">
-            <li><strong>Ped.</strong> = Enfoncer la pédale</li>
-            <li><strong>*</strong> = Relever la pédale</li>
-          </ul>
-          <p className="mt-2"><strong>Méthode 2 - Ligne de pédale :</strong></p>
-          <p className="ml-4">Une ligne sous la portée indique la durée du pédalage :</p>
-          <ul className="list-disc list-inside ml-4">
-            <li>Début de ligne = enfoncer</li>
-            <li>Crochet vers le haut = relever</li>
-          </ul>
-        </div>
-        <p className="mt-4 text-sm opacity-80">
-          Important : les indications de pédale sont souvent des suggestions. Avec l'expérience,
-          vous développerez votre propre jugement de pédalage.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 8 : Progression d'accords expressive</h2>
-        <p>Créons une ambiance avec pédale et nuances :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Main gauche : basses Do - La - Fa - Sol (une par mesure)</li>
-          <li>Main droite : accords Do majeur - La mineur - Fa majeur - Sol majeur</li>
-          <li>Enfoncez la pédale sur chaque basse et maintenez pendant toute la mesure</li>
-          <li>Changez la pédale à chaque nouvelle basse</li>
-          <li>Jouez piano (doucement) avec un tempo lent</li>
-          <li>Écoutez la richesse harmonique créée par la pédale</li>
-        </ol>
-        <p className="mt-4">
-          Vous venez de créer une ambiance digne d'une musique de film, simplement en utilisant
-          correctement la pédale !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>La demi-pédale : technique avancée</h2>
-        <p>
-          Mentionnons brièvement une technique plus avancée : la <strong>demi-pédale</strong>
-          ou <strong>pédale partielle</strong>.
-        </p>
-        <p className="mt-3">
-          Au lieu d'enfoncer complètement ou de relever complètement la pédale, vous la maintenez
-          à mi-course. Cela permet un contrôle très fin de la résonance.
-        </p>
-        <p className="mt-3">
-          <strong>Ne vous préoccupez pas encore de cette technique.</strong> Maîtrisez d'abord
-          le pédalage complet (enfoncer/relever). La demi-pédale viendra naturellement avec
-          l'expérience et l'écoute affinée.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="highlight">
-        <h2>Programme de pratique sur 2 semaines</h2>
-        <div className="mt-3 space-y-3">
-          <p><strong>Semaine 1 : Coordination de base</strong></p>
-          <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>Jours 1-3 : Pédalage syncopé sur notes seules (exercice 2)</li>
-            <li>Jours 4-5 : Pédalage sur accords (exercice 3)</li>
-            <li>Jours 6-7 : Gamme avec pédale (exercice 4)</li>
-          </ul>
-          <p className="mt-3"><strong>Semaine 2 : Application musicale</strong></p>
-          <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>Jours 1-3 : Mélodie avec basse pédalée (exercice 5)</li>
-            <li>Jours 4-5 : Arpèges et accompagnements (exercice 7)</li>
-            <li>Jours 6-7 : Pièce simple avec pédale (reprenez une mélodie connue)</li>
-          </ul>
-          <p className="mt-3 text-sm opacity-80">
-            Conseil : Pratiquez TOUJOURS sans pédale d'abord, puis ajoutez-la une fois que
-            la pièce est maîtrisée aux doigts.
-          </p>
-        </div>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Développer votre oreille de pédale</h2>
-        <p>
-          Le pédalage est autant une question d'oreille que de technique. Voici comment
-          développer votre jugement :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>Enregistrez-vous :</strong> Écoutez vos enregistrements pour détecter
-              les mélanges sonores indésirables</li>
-          <li><strong>Écoutez les maîtres :</strong> Notez comment les grands pianistes
-              utilisent la pédale avec parcimonie</li>
-          <li><strong>Expérimentez :</strong> Essayez la même pièce avec différents pédalages</li>
-          <li><strong>Question clé :</strong> "Est-ce que le son est clair ou boueux ?"</li>
-          <li><strong>Principe général :</strong> En cas de doute, utilisez moins de pédale</li>
-        </ul>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>La pédale dans différents styles</h2>
-        <p>Chaque style musical a ses conventions de pédalage :</p>
-        <div className="mt-3 space-y-2">
-          <p><strong>Musique baroque (Bach) :</strong> Peu ou pas de pédale (clarté des voix)</p>
-          <p><strong>Classique (Mozart, Haydn) :</strong> Pédale discrète, changements fréquents</p>
-          <p><strong>Romantique (Chopin, Liszt) :</strong> Pédale généreuse, ambiances riches</p>
-          <p><strong>Impressionniste (Debussy) :</strong> Pédale pour créer des "brouillards" sonores</p>
-          <p><strong>Jazz :</strong> Pédale sélective, souvent sur les basses</p>
-        </div>
-        <p className="mt-4">
-          Votre pédalage doit s'adapter au style de la musique que vous jouez.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Les autres pédales (bonus)</h2>
-        <p>Brève introduction aux deux autres pédales :</p>
-        <div className="mt-3 space-y-3">
-          <p><strong>Pédale gauche (una corda) :</strong></p>
-          <p className="ml-4">
-            Décale légèrement le mécanisme pour frapper moins de cordes, créant un son plus doux
-            et intime. Utilisée pour les passages très pianissimo.
-          </p>
-          <p className="mt-2"><strong>Pédale centrale (sostenuto) :</strong></p>
-          <p className="ml-4">
-            Maintient seulement les notes enfoncées au moment où on l'active. Peu utilisée,
-            sauf dans certaines pièces modernes spécifiques.
-          </p>
-        </div>
-        <p className="mt-4 text-sm opacity-80">
-          Pour l'instant, concentrez-vous uniquement sur la pédale droite (sustain). Les autres
-          viendront bien plus tard dans votre apprentissage.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Vers une utilisation artistique</h2>
-        <p>
-          La pédale de sustain est un des outils les plus puissants du pianiste. Bien utilisée,
-          elle transforme le piano en un orchestre. Mal utilisée, elle crée une bouillie
-          inintelligible.
-        </p>
-        <p className="mt-3">
-          Rappelez-vous : la pédale ne remplace pas une bonne technique de doigts. Apprenez
-          toujours vos pièces sans pédale d'abord, puis ajoutez-la comme la touche finale,
-          comme un peintre ajoute des glacis subtils sur un tableau déjà abouti.
-        </p>
-        <p className="mt-3">
-          Avec la maîtrise de la pédale, vous êtes maintenant prêt à aborder de véritables
-          morceaux du répertoire classique !
-        </p>
-      </ContentBlock>
-    </LessonTemplate>
+      content={content}
+      previousLesson={{
+        title: 'Techniques d\'articulation',
+        href: '/parcours/niveau-3/lecon-4'
+      }}
+      nextLesson={{
+        title: 'Morceaux célèbres faciles',
+        href: '/parcours/niveau-3/lecon-6'
+      }}
+    />
   )
 }

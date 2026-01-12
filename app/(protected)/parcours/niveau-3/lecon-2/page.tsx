@@ -1,288 +1,358 @@
-import LessonTemplate from '@/components/lessons/LessonTemplate'
+import { LessonTemplate } from '@/components/lessons/LessonTemplate'
 import type { ContentBlock } from '@/types/lesson'
 
-export default function Niveau3Lecon2() {
+const content: ContentBlock[] = [
+  {
+    id: '1',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Entrer dans le monde de la partition !</h2>
+        <p>
+          Jusqu'à présent, tu as appris le piano "à l'oreille" ou avec des indications
+          simples. Maintenant, tu vas apprendre à <strong>lire des partitions</strong> !
+        </p>
+        <p>
+          Une partition, c'est le langage universel de la musique. Grâce à elle,
+          tu pourras jouer n'importe quel morceau écrit par n'importe quel compositeur,
+          n'importe où dans le monde !
+        </p>
+        <p>
+          C'est comme apprendre à lire : au début, c'est lent et laborieux, mais
+          avec la pratique, ça devient naturel et automatique.
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '2',
+    type: 'text',
+    data: {
+      content: `
+        <h2>La portée et les clés</h2>
+        <p>
+          La musique est écrite sur une <strong>portée</strong> : 5 lignes horizontales
+          sur lesquelles on place des notes.
+        </p>
+        <p>
+          Au piano, on utilise deux portées superposées :
+        </p>
+        <ul>
+          <li><strong>La portée du haut : clé de Sol (𝄞)</strong> → Main droite (notes aiguës)</li>
+          <li><strong>La portée du bas : clé de Fa (𝄢)</strong> → Main gauche (notes graves)</li>
+        </ul>
+        <p>
+          Ces deux portées sont reliées par une accolade, formant ce qu'on appelle
+          un <strong>système</strong> de piano.
+        </p>
+        <p>
+          La clé de Sol indique que la note Sol se trouve sur la 2ème ligne en partant
+          du bas. La clé de Fa indique que la note Fa se trouve sur la 4ème ligne.
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '3',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Lire la clé de Sol (main droite)</h2>
+        <p>
+          Commençons par la clé de Sol. Voici les notes sur les <strong>lignes</strong> :
+        </p>
+        <ul>
+          <li>1ère ligne (bas) : <strong>Mi</strong></li>
+          <li>2ème ligne : <strong>Sol</strong></li>
+          <li>3ème ligne : <strong>Si</strong></li>
+          <li>4ème ligne : <strong>Ré</strong></li>
+          <li>5ème ligne (haut) : <strong>Fa</strong></li>
+        </ul>
+        <p>
+          Moyen mnémotechnique : <strong>"Mi Sol Si Ré Fa"</strong> → "Mi Soleil Si ReDessine Facilement"
+        </p>
+        <p>
+          Et voici les notes dans les <strong>interlignes</strong> (entre les lignes) :
+        </p>
+        <ul>
+          <li>Entre ligne 1 et 2 : <strong>Fa</strong></li>
+          <li>Entre ligne 2 et 3 : <strong>La</strong></li>
+          <li>Entre ligne 3 et 4 : <strong>Do</strong></li>
+          <li>Entre ligne 4 et 5 : <strong>Mi</strong></li>
+        </ul>
+        <p>
+          Moyen mnémotechnique : <strong>"Fa La Do Mi"</strong> → "Fais La Danse Mieux"
+        </p>
+      `,
+      variant: 'tip'
+    }
+  },
+  {
+    id: '4',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Identifier les notes en clé de Sol',
+      description: 'Apprends à reconnaître les notes rapidement',
+      steps: [
+        'Prends une feuille et dessine une portée (5 lignes)',
+        'Dessine la clé de Sol au début (symboliquement, juste un "G")',
+        'Marque chaque ligne : Mi-Sol-Si-Ré-Fa',
+        'Marque chaque interligne : Fa-La-Do-Mi',
+        'Répète à voix haute 5 fois : les lignes, puis les interlignes',
+        'Ferme les yeux et récite dans l\'ordre',
+        'Quand c\'est bon, tu es prêt pour la suite !'
+      ]
+    }
+  },
+  {
+    id: '5',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Lire la clé de Fa (main gauche)</h2>
+        <p>
+          La clé de Fa est utilisée pour les notes graves. Les notes sur les <strong>lignes</strong> :
+        </p>
+        <ul>
+          <li>1ère ligne (bas) : <strong>Sol</strong></li>
+          <li>2ème ligne : <strong>Si</strong></li>
+          <li>3ème ligne : <strong>Ré</strong></li>
+          <li>4ème ligne : <strong>Fa</strong></li>
+          <li>5ème ligne (haut) : <strong>La</strong></li>
+        </ul>
+        <p>
+          Moyen mnémotechnique : <strong>"Sol Si Ré Fa La"</strong> → "Sol Si RéDécouvre Facilement LA"
+        </p>
+        <p>
+          Et les notes dans les <strong>interlignes</strong> :
+        </p>
+        <ul>
+          <li>Entre ligne 1 et 2 : <strong>La</strong></li>
+          <li>Entre ligne 2 et 3 : <strong>Do</strong></li>
+          <li>Entre ligne 3 et 4 : <strong>Mi</strong></li>
+          <li>Entre ligne 4 et 5 : <strong>Sol</strong></li>
+        </ul>
+        <p>
+          Moyen mnémotechnique : <strong>"La Do Mi Sol"</strong> → "LA DOminante MIcro SOLaire"
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '6',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Identifier les notes en clé de Fa',
+      description: 'Maîtrise la lecture en clé de Fa',
+      steps: [
+        'Dessine une nouvelle portée',
+        'Dessine la clé de Fa au début (symboliquement, un "F")',
+        'Marque chaque ligne : Sol-Si-Ré-Fa-La',
+        'Marque chaque interligne : La-Do-Mi-Sol',
+        'Répète à voix haute 5 fois',
+        'Compare avec la clé de Sol : quelles différences ?',
+        'Récite les deux clés alternativement'
+      ]
+    }
+  },
+  {
+    id: '7',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Les valeurs de notes : la durée</h2>
+        <p>
+          Maintenant que tu sais QUELLE note jouer, il faut savoir COMBIEN DE TEMPS
+          la jouer. C'est ce qu'on appelle les <strong>valeurs rythmiques</strong>.
+        </p>
+        <p>
+          Voici les 4 valeurs les plus courantes :
+        </p>
+        <ul>
+          <li><strong>Ronde (○)</strong> : 4 temps - la plus longue</li>
+          <li><strong>Blanche (𝅗𝅥)</strong> : 2 temps - la moitié d'une ronde</li>
+          <li><strong>Noire (♩)</strong> : 1 temps - la moitié d'une blanche</li>
+          <li><strong>Croche (♪)</strong> : 1/2 temps - la moitié d'une noire</li>
+        </ul>
+        <p>
+          Chaque valeur dure exactement la moitié de la valeur précédente.
+          C'est un système très logique !
+        </p>
+        <p>
+          La plupart des morceaux simples utilisent principalement des <strong>noires</strong>
+          et des <strong>blanches</strong>.
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '8',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Les mesures et les temps</h2>
+        <p>
+          La musique est organisée en <strong>mesures</strong> : des segments de temps
+          séparés par des barres verticales.
+        </p>
+        <p>
+          La <strong>signature rythmique</strong> (chiffres au début) indique :
+        </p>
+        <ul>
+          <li><strong>Chiffre du haut</strong> : Nombre de temps par mesure</li>
+          <li><strong>Chiffre du bas</strong> : Valeur de référence (4 = noire)</li>
+        </ul>
+        <p>
+          <strong>4/4</strong> (le plus courant) = 4 temps par mesure, la noire vaut 1 temps<br>
+          <strong>3/4</strong> (valse) = 3 temps par mesure, la noire vaut 1 temps
+        </p>
+        <p>
+          Pour compter : "1-2-3-4" ou "1-2-3" selon la signature rythmique.
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '9',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Lire un rythme simple',
+      description: 'Comprends les valeurs rythmiques',
+      steps: [
+        'Tape dans tes mains en comptant "1-2-3-4" (4 noires)',
+        'Tape seulement sur "1" et "3", compte "1-2-3-4" (2 blanches)',
+        'Tape seulement sur "1", compte "1-2-3-4" (1 ronde)',
+        'Tape "1-et-2-et-3-et-4-et" (8 croches)',
+        'Répète chaque exercice 3 fois',
+        'Mélange : 1 blanche (1-2) + 2 noires (3, 4)',
+        'Félicitations : tu comprends les rythmes de base !'
+      ]
+    }
+  },
+  {
+    id: '10',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Ta première lecture de partition</h2>
+        <p>
+          Il est temps de combiner tout ce que tu as appris : notes + rythmes !
+        </p>
+        <p>
+          Voici une mélodie ultra-simple à lire (clé de Sol, main droite) :
+        </p>
+        <p>
+          <strong>Mesure 1 :</strong> Do (noire) - Do (noire) - Sol (noire) - Sol (noire)<br>
+          <strong>Mesure 2 :</strong> La (noire) - La (noire) - Sol (blanche)<br>
+          <strong>Mesure 3 :</strong> Fa (noire) - Fa (noire) - Mi (noire) - Mi (noire)<br>
+          <strong>Mesure 4 :</strong> Ré (noire) - Ré (noire) - Do (blanche)
+        </p>
+        <p>
+          Tu reconnais cette mélodie ? C'est <strong>"Ah ! vous dirai-je, maman"</strong>
+          (ou "Twinkle Twinkle Little Star" en anglais) !
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '11',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Jouer depuis la partition',
+      description: 'Lis et joue ta première mélodie écrite',
+      steps: [
+        'Identifie chaque note AVANT de jouer (dis leur nom)',
+        'Compte le rythme à voix haute avant de jouer',
+        'Joue TRÈS LENTEMENT mesure par mesure',
+        'Mesure 1 : Do-Do-Sol-Sol en comptant 1-2-3-4',
+        'Mesure 2 : La-La-Sol(2 temps) en comptant 1-2-3-4',
+        'Continue pour les mesures 3 et 4',
+        'Quand chaque mesure est fluide, joue tout d\'un trait',
+        'Répète 5 fois : tu viens de lire ta première partition !'
+      ]
+    }
+  },
+  {
+    id: '12',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Conseils pour progresser en lecture</h2>
+        <p>
+          La lecture de partition est une compétence qui demande du temps. Voici
+          comment progresser efficacement :
+        </p>
+        <ul>
+          <li><strong>Pratique quotidienne</strong> : 5-10 minutes par jour valent mieux que 1h par semaine</li>
+          <li><strong>Commence simple</strong> : Ne cherche pas à lire des morceaux difficiles</li>
+          <li><strong>Lis à voix haute</strong> : Nomme les notes avant de les jouer</li>
+          <li><strong>Utilise les repères</strong> : Mémorise les notes "piliers" (Do central, Sol, etc.)</li>
+          <li><strong>Ne regarde pas le clavier</strong> : Force-toi à garder les yeux sur la partition</li>
+          <li><strong>Sois patient</strong> : C'est normal que ce soit lent au début</li>
+        </ul>
+        <p>
+          Avec le temps, tu liras aussi naturellement que tu lis ces mots !
+        </p>
+      `,
+      variant: 'tip'
+    }
+  },
+  {
+    id: '13',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Prochaines étapes en lecture</h2>
+        <p>
+          Tu as maintenant les bases de la lecture de partition ! Dans les prochaines
+          leçons et avec la pratique, tu vas :
+        </p>
+        <ul>
+          <li>Lire plus rapidement (déchiffrage)</li>
+          <li>Lire les deux mains simultanément</li>
+          <li>Reconnaître les altérations (dièses et bémols)</li>
+          <li>Comprendre les nuances et expressions</li>
+          <li>Lire des rythmes plus complexes</li>
+        </ul>
+        <p>
+          Pour l'instant, concentre-toi sur les bases : identifier les notes
+          correctement et respecter les rythmes simples. La vitesse viendra
+          naturellement avec la pratique régulière !
+        </p>
+      `,
+      variant: 'normal'
+    }
+  }
+]
+
+export default function Lecon2Page() {
   return (
     <LessonTemplate
       levelId={3}
       lessonNumber={2}
       title="Lecture de partition niveau 1"
-      description="Apprenez à lire les notes sur la portée musicale et déchiffrez vos premières partitions."
-      duration="18 min"
+      duration={18}
       objectives={[
-        "Comprendre la structure de la portée musicale",
-        "Identifier les clés de Sol et de Fa",
-        "Lire les notes sur les lignes et interlignes",
-        "Reconnaître les notes du Do central aux extrémités",
-        "Déchiffrer une simple mélodie à vue",
-        "Associer les notes écrites aux touches du piano"
+        'Comprendre la portée et les deux clés (Sol et Fa)',
+        'Identifier les notes sur les lignes et interlignes',
+        'Lire les valeurs rythmiques (ronde, blanche, noire, croche)',
+        'Jouer une mélodie simple depuis une partition'
       ]}
-      previousLesson="/parcours/niveau-3/lecon-1"
-      nextLesson="/parcours/niveau-3/lecon-3"
-    >
-      <ContentBlock variant="highlight">
-        <h2>Entrez dans le monde de la lecture musicale</h2>
-        <p>
-          Jusqu'à présent, vous avez appris le piano principalement par l'imitation et la pratique.
-          Maintenant, vous allez acquérir une compétence essentielle : lire la musique comme vous
-          lisez un texte. Cette capacité vous ouvrira l'accès à des milliers de morceaux !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>La portée musicale : votre nouvelle carte routière</h2>
-        <p>
-          La musique s'écrit sur une <strong>portée</strong>, composée de 5 lignes horizontales
-          parallèles. Les notes sont placées sur ces lignes ou dans les espaces entre les lignes.
-        </p>
-        <p className="mt-4">
-          <strong>Principe de base :</strong> Plus une note est haute sur la portée, plus elle est
-          aiguë au piano. Plus elle est basse, plus elle est grave.
-        </p>
-        <p className="mt-3 text-sm opacity-80">
-          Imaginez la portée comme un escalier musical : chaque ligne et chaque espace représente
-          une marche qui monte vers les sons aigus.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Les deux clés : Sol et Fa</h2>
-        <p>
-          Au piano, nous utilisons deux portées superposées, chacune avec sa clé :
-        </p>
-        <div className="mt-4 space-y-4">
-          <div>
-            <p className="font-bold">Clé de Sol (main droite) :</p>
-            <p>Symbole qui ressemble à un "G" stylisé. Elle entoure la ligne du Sol.</p>
-            <p className="text-sm opacity-80">Cette clé indique les notes aiguës, jouées par la main droite.</p>
-          </div>
-          <div>
-            <p className="font-bold">Clé de Fa (main gauche) :</p>
-            <p>Symbole avec deux points autour de la ligne du Fa.</p>
-            <p className="text-sm opacity-80">Cette clé indique les notes graves, jouées par la main gauche.</p>
-          </div>
-        </div>
-        <p className="mt-4">
-          Les deux portées sont reliées par une accolade sur la gauche, formant le
-          <strong> grand système</strong> ou <strong>grande portée</strong> du piano.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>Le Do central : votre point de repère</h2>
-        <p>
-          Le <strong>Do central</strong> (aussi appelé Do3 ou Middle C en anglais) est la note
-          centrale du piano. C'est votre point de référence le plus important !
-        </p>
-        <p className="mt-3">
-          Sur la partition :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-2">
-          <li>Il se place sur une petite ligne ajoutée entre les deux portées</li>
-          <li>Il est pile au milieu du clavier du piano</li>
-          <li>C'est souvent le point de départ pour localiser les autres notes</li>
-        </ul>
-        <p className="mt-4">
-          <strong>Astuce :</strong> Trouvez le Do central sur votre clavier (près du milieu, à gauche
-          du groupe de deux touches noires), placez votre pouce droit dessus. C'est votre "maison" !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 1 : Lire en clé de Sol</h2>
-        <p>Apprenons les notes sur la portée en clé de Sol (main droite) :</p>
-        <div className="mt-3 space-y-3">
-          <div>
-            <p className="font-bold">Sur les lignes (de bas en haut) :</p>
-            <p>Mi - Sol - Si - Ré - Fa</p>
-            <p className="text-sm opacity-80">Moyen mnémotechnique : "Mi Sol Si Ré Fa fait la gamme"</p>
-          </div>
-          <div>
-            <p className="font-bold">Dans les interlignes (de bas en haut) :</p>
-            <p>Fa - La - Do - Mi</p>
-            <p className="text-sm opacity-80">Moyen mnémotechnique : "Fa La Do Mi, c'est facile"</p>
-          </div>
-        </div>
-        <ol className="list-decimal list-inside space-y-2 mt-4">
-          <li>Écrivez ces notes sur un papier avec une portée dessinée</li>
-          <li>Placez chaque note à son emplacement (ligne ou interligne)</li>
-          <li>Jouez chaque note au piano en les identifiant à voix haute</li>
-          <li>Répétez jusqu'à reconnaître instantanément chaque position</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 2 : Lire en clé de Fa</h2>
-        <p>Maintenant les notes en clé de Fa (main gauche) :</p>
-        <div className="mt-3 space-y-3">
-          <div>
-            <p className="font-bold">Sur les lignes (de bas en haut) :</p>
-            <p>Sol - Si - Ré - Fa - La</p>
-            <p className="text-sm opacity-80">Moyen mnémotechnique : "Sol Si Ré Fa La, quelle merveille"</p>
-          </div>
-          <div>
-            <p className="font-bold">Dans les interlignes (de bas en haut) :</p>
-            <p>La - Do - Mi - Sol</p>
-            <p className="text-sm opacity-80">Moyen mnémotechnique : "La Do Mi Sol, c'est le goal"</p>
-          </div>
-        </div>
-        <ol className="list-decimal list-inside space-y-2 mt-4">
-          <li>Dessinez une portée en clé de Fa sur votre papier</li>
-          <li>Placez toutes ces notes à leur position correcte</li>
-          <li>Jouez-les au piano avec la main gauche</li>
-          <li>Entraînez-vous à les reconnaître rapidement</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock variant="normal">
-        <h2>Exercice 3 : Du Do central vers l'aigu</h2>
-        <p>Pratiquons la lecture en partant du Do central et en montant :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Placez votre pouce droit sur le Do central</li>
-          <li>Imaginez (ou dessinez) cette séquence en clé de Sol :</li>
-          <li className="ml-6">Do (ligne ajoutée) - Ré (sous la portée) - Mi (1ère ligne) - Fa (1er interligne)</li>
-          <li className="ml-6">Sol (2ème ligne) - La (2ème interligne) - Si (3ème ligne) - Do (3ème interligne)</li>
-          <li>Jouez cette gamme en identifiant chaque note écrite</li>
-          <li>Répétez 5 fois en lisant comme si c'était une partition</li>
-        </ol>
-        <p className="mt-4">
-          Vous venez de lire votre première gamme de Do majeur sur partition !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 4 : Du Do central vers le grave</h2>
-        <p>Maintenant, descendons en clé de Fa :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Placez votre pouce gauche sur le Do central</li>
-          <li>Imaginez cette séquence en clé de Fa (en descendant) :</li>
-          <li className="ml-6">Do (ligne ajoutée) - Si (1ère interligne) - La (1ère ligne) - Sol (2ème interligne)</li>
-          <li className="ml-6">Fa (2ème ligne) - Mi (3ème interligne) - Ré (3ème ligne) - Do (4ème interligne)</li>
-          <li>Jouez cette séquence avec la main gauche</li>
-          <li>Répétez en vous concentrant sur la reconnaissance des notes</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>Techniques de mémorisation efficaces</h2>
-        <p>Pour apprendre à lire rapidement, utilisez ces stratégies :</p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>Points de repère :</strong> Mémorisez d'abord le Do central, puis le Fa et le Sol</li>
-          <li><strong>Par intervalle :</strong> Si vous connaissez un Do, la note sur la ligne suivante est un Mi</li>
-          <li><strong>Par mouvement :</strong> Ligne-interligne-ligne = 3 notes consécutives (Do-Ré-Mi)</li>
-          <li><strong>Lecture quotidienne :</strong> 5 minutes par jour valent mieux qu'une heure par semaine</li>
-          <li><strong>Flashcards :</strong> Créez des cartes avec des notes à identifier</li>
-        </ul>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 5 : Déchiffrage de mélodie simple</h2>
-        <p>Essayons de lire une très simple mélodie (imaginée ou que vous dessinez) :</p>
-        <p className="mt-3 font-bold">En clé de Sol :</p>
-        <p className="ml-4">Do - Do - Sol - Sol - La - La - Sol</p>
-        <p className="ml-4 text-sm opacity-80">(Début de "Ah vous dirais-je maman" / "Twinkle Twinkle")</p>
-        <ol className="list-decimal list-inside space-y-2 mt-4">
-          <li>Dessinez cette mélodie sur une portée en clé de Sol</li>
-          <li>Identifiez la position de chaque note</li>
-          <li>Jouez-la lentement en lisant la partition</li>
-          <li>Répétez jusqu'à pouvoir la jouer sans hésitation</li>
-          <li>Essayez d'autres mélodies simples que vous connaissez</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 6 : Lecture à deux mains</h2>
-        <p>Le vrai défi : lire les deux portées en même temps !</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Commencez avec les deux mains sur le Do central</li>
-          <li>Main droite : montez Do-Ré-Mi (en lisant la clé de Sol)</li>
-          <li>Main gauche : descendez Do-Si-La (en lisant la clé de Fa)</li>
-          <li>Jouez chaque main séparément en lisant</li>
-          <li>Essayez TRÈS lentement de jouer les deux ensemble</li>
-        </ol>
-        <p className="mt-4 text-sm opacity-80">
-          Ne vous découragez pas si c'est difficile ! Lire deux portées simultanément demande
-          beaucoup de pratique. Commencez par bien maîtriser chaque main séparément.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="warning">
-        <h2>Pièges courants de la lecture</h2>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li>Confondre les clés de Sol et de Fa (vérifiez toujours la clé !)</li>
-          <li>Oublier que chaque ligne ET chaque interligne est une note différente</li>
-          <li>Vouloir aller trop vite (la vitesse vient avec la pratique)</li>
-          <li>Ne pas utiliser de points de repère (Do central, Sol, Fa)</li>
-          <li>Lire note par note sans voir les mouvements (montée, descente, saut)</li>
-          <li>Négliger la pratique quotidienne de lecture</li>
-        </ul>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 7 : Les lignes supplémentaires</h2>
-        <p>
-          Pour les notes très aiguës ou très graves, on ajoute de petites lignes au-dessus ou
-          en-dessous de la portée : les <strong>lignes supplémentaires</strong>.
-        </p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Le Do central utilise une ligne supplémentaire entre les deux portées</li>
-          <li>Au-dessus de la clé de Sol : La-Do-Mi... (chaque ligne supplémentaire)</li>
-          <li>En-dessous de la clé de Fa : Mi-Do-La... (chaque ligne supplémentaire)</li>
-          <li>Entraînez-vous à lire quelques notes avec lignes supplémentaires</li>
-          <li>Ne vous inquiétez pas, cela viendra progressivement avec la pratique</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock variant="highlight">
-        <h2>Programme d'entraînement à la lecture</h2>
-        <p>Pour développer une lecture fluide, pratiquez ainsi pendant 2 semaines :</p>
-        <div className="mt-3 space-y-3">
-          <p><strong>Semaine 1 - Reconnaissance des notes :</strong></p>
-          <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>Jour 1-2 : Clé de Sol uniquement, toutes les notes du Do central au Do aigu</li>
-            <li>Jour 3-4 : Clé de Fa uniquement, toutes les notes du Do central au Do grave</li>
-            <li>Jour 5-7 : Alternance entre les deux clés, reconnaissance rapide</li>
-          </ul>
-          <p className="mt-3"><strong>Semaine 2 - Lecture de mélodies :</strong></p>
-          <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>Jour 1-3 : Mélodies simples en clé de Sol (cherchez en ligne ou dans un livre)</li>
-            <li>Jour 4-5 : Mélodies simples en clé de Fa</li>
-            <li>Jour 6-7 : Premières pièces avec les deux mains (très simples)</li>
-          </ul>
-        </div>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Ressources pour progresser</h2>
-        <p>
-          La lecture de partition est une compétence qui se développe par la pratique régulière.
-          Quelques conseils pour continuer :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li>Utilisez des applications de lecture de notes (Flashcards musicales)</li>
-          <li>Procurez-vous un livre de débutant avec partitions simples</li>
-          <li>Lisez 5 minutes par jour, même sans jouer au piano</li>
-          <li>Déchiffrez de nouvelles mélodies simples chaque semaine</li>
-          <li>Soyez patient : certains mettent des mois à lire couramment</li>
-        </ul>
-        <p className="mt-4">
-          Rappelez-vous : vous avez mis des années à lire couramment le français. La lecture
-          musicale demande aussi du temps, mais chaque jour de pratique vous rapproche du but !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>Prochaine étape</h2>
-        <p>
-          Maintenant que vous savez lire les notes de base, continuez à pratiquer la lecture en
-          parallèle des autres leçons. Dans la leçon suivante, nous enrichirons votre vocabulaire
-          d'accords avec les accords de 7ème et les inversions.
-        </p>
-        <p className="mt-3">
-          La combinaison de la lecture de notes et de la compréhension des accords vous donnera
-          une vision complète de la musique écrite !
-        </p>
-      </ContentBlock>
-    </LessonTemplate>
+      content={content}
+      previousLesson={{
+        title: 'Les gammes complètes',
+        href: '/parcours/niveau-3/lecon-1'
+      }}
+      nextLesson={{
+        title: 'Les accords enrichis',
+        href: '/parcours/niveau-3/lecon-3'
+      }}
+    />
   )
 }

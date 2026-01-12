@@ -1,366 +1,345 @@
-import LessonTemplate from '@/components/lessons/LessonTemplate'
+import { LessonTemplate } from '@/components/lessons/LessonTemplate'
 import type { ContentBlock } from '@/types/lesson'
 
-export default function Niveau3Lecon6() {
+const content: ContentBlock[] = [
+  {
+    id: '1',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Jouer les chefs-d'œuvre : morceaux célèbres faciles</h2>
+        <p>
+          C'est le moment le plus excitant de ton apprentissage : tu vas jouer
+          des <strong>morceaux célèbres</strong> que tout le monde connaît !
+        </p>
+        <p>
+          Ces pièces ont traversé les siècles et touché des millions de personnes.
+          Maintenant, c'est ton tour de les faire vivre sous tes doigts.
+        </p>
+        <p>
+          Dans cette leçon, tu vas apprendre des versions simplifiées de trois
+          chefs-d'œuvre :
+        </p>
+        <ul>
+          <li><strong>Ode à la joie</strong> de Beethoven (1824)</li>
+          <li><strong>Canon en Ré</strong> de Pachelbel (1680)</li>
+          <li><strong>Comptine d'un autre été</strong> de Yann Tiersen (2001)</li>
+        </ul>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '2',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Ode à la joie - Beethoven</h2>
+        <p>
+          L'<strong>Ode à la joie</strong> est le finale de la 9ème symphonie de Beethoven,
+          probablement la mélodie la plus célèbre de toute la musique classique.
+          C'est l'hymne de l'Union Européenne !
+        </p>
+        <p>
+          <strong>Contexte :</strong> Beethoven était complètement sourd quand il a
+          composé cette symphonie. Il ne pouvait pas entendre sa propre création,
+          mais il entendait la musique dans sa tête. Quelle puissance créatrice !
+        </p>
+        <p>
+          <strong>Mélodie (main droite) :</strong>
+        </p>
+        <p>
+          Mi-Mi-Fa-Sol / Sol-Fa-Mi-Ré / Do-Do-Ré-Mi / Mi-Ré-Ré<br>
+          Mi-Mi-Fa-Sol / Sol-Fa-Mi-Ré / Do-Do-Ré-Mi / Ré-Do-Do
+        </p>
+        <p>
+          Chaque note est une noire (1 temps). Joue avec noblesse et dignité !
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '3',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Ode à la joie - mélodie',
+      description: 'Apprends cette mélodie immortelle',
+      steps: [
+        'Phrase 1 : Mi-Mi-Fa-Sol, répète 3 fois lentement',
+        'Phrase 2 : Sol-Fa-Mi-Ré, répète 3 fois',
+        'Phrase 3 : Do-Do-Ré-Mi, répète 3 fois',
+        'Phrase 4 : Mi-Ré-Ré (attention : le Ré final est une blanche)',
+        'Joue les 4 phrases ensemble : c\'est la première partie complète !',
+        'Deuxième partie : identique sauf la fin (Ré-Do-Do au lieu de Mi-Ré-Ré)',
+        'Répète 10 fois : ce morceau doit être majestueux et régulier',
+        'Ajoute de la fierté et de la noblesse dans ton jeu'
+      ]
+    }
+  },
+  {
+    id: '4',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Ode à la joie - accompagnement</h2>
+        <p>
+          Maintenant, ajoutons un accompagnement simple à la main gauche pour
+          enrichir le morceau.
+        </p>
+        <p>
+          <strong>Main gauche (accords tenus) :</strong>
+        </p>
+        <ul>
+          <li><strong>Mesures 1-4 :</strong> Do majeur (Do-Mi-Sol) tenu</li>
+          <li><strong>Mesures 5-8 :</strong> Sol majeur (Sol-Si-Ré) tenu</li>
+          <li><strong>Mesures 9-12 :</strong> Fa majeur (Fa-La-Do) tenu</li>
+          <li><strong>Mesures 13-16 :</strong> Do majeur (Do-Mi-Sol) tenu</li>
+        </ul>
+        <p>
+          Chaque accord est tenu pendant 4 mesures (16 temps). C'est très simple,
+          mais ça crée une fondation harmonique solide pour la mélodie.
+        </p>
+        <p>
+          Utilise la pédale pour prolonger le son des accords pendant que ta
+          main droite joue la mélodie.
+        </p>
+      `,
+      variant: 'tip'
+    }
+  },
+  {
+    id: '5',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Ode à la joie complète',
+      description: 'Joue le morceau avec les deux mains',
+      steps: [
+        'Main gauche seule : Pratique les changements d\'accords',
+        'Main droite seule : Révise la mélodie',
+        'Combine TRÈS LENTEMENT : Do majeur (MG) + première phrase (MD)',
+        'Continue : change pour Sol majeur (MG) au bon moment',
+        'C\'est normal si c\'est difficile : travaille mesure par mesure',
+        'Quand chaque section est fluide, joue tout d\'un trait',
+        'Ajoute la pédale pour enrichir le son',
+        'Félicitations : tu joues Beethoven !'
+      ]
+    }
+  },
+  {
+    id: '6',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Canon en Ré - Pachelbel (simplifié)</h2>
+        <p>
+          Le <strong>Canon en Ré</strong> de Pachelbel est une pièce baroque
+          hypnotique et magnifique. La version originale est complexe, mais
+          nous allons jouer la progression d'accords caractéristique.
+        </p>
+        <p>
+          <strong>La célèbre progression (en Do majeur pour simplifier) :</strong>
+        </p>
+        <p>
+          Do - Sol - La mineur - Mi mineur - Fa - Do - Fa - Sol
+        </p>
+        <p>
+          Cette progression se répète en boucle tout au long du morceau. C'est
+          l'une des progressions les plus utilisées dans toute la musique occidentale !
+          Des centaines de chansons pop modernes l'utilisent.
+        </p>
+        <p>
+          <strong>Rythme :</strong> Chaque accord dure 2 temps (une blanche).
+          Joue-les de manière régulière et méditative.
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '7',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Canon de Pachelbel - accords',
+      description: 'Joue la progression légendaire',
+      steps: [
+        'Apprends chaque accord séparément (main gauche)',
+        'Do(2 temps) - Sol(2 temps) - La min(2 temps) - Mi min(2 temps)',
+        'Répète cette première moitié 5 fois',
+        'Deuxième moitié : Fa(2 temps) - Do(2 temps) - Fa(2 temps) - Sol(2 temps)',
+        'Répète 5 fois',
+        'Joue la progression complète en boucle',
+        'Ajoute la pédale, change à chaque accord',
+        'Laisse-toi hypnotiser par cette progression magique !',
+        'Essaie d\'ajouter une mélodie simple à la main droite'
+      ]
+    }
+  },
+  {
+    id: '8',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Comptine d'un autre été - Yann Tiersen</h2>
+        <p>
+          Ce morceau minimaliste et poétique vient de la bande originale du film
+          <strong>"Le Fabuleux Destin d'Amélie Poulain"</strong> (2001). C'est devenu
+          un classique moderne du piano.
+        </p>
+        <p>
+          La beauté de ce morceau réside dans sa simplicité : un motif répétitif
+          à la main droite sur un ostinato de basse à la main gauche.
+        </p>
+        <p>
+          <strong>Motif de base (simplifié, en La mineur) :</strong>
+        </p>
+        <p>
+          <strong>Main droite :</strong> La-Do-Mi-Do-La-Do-Mi-Do (croches répétées)<br>
+          <strong>Main gauche :</strong> La (octave grave, noire) sur les temps 1 et 3
+        </p>
+        <p>
+          Le tempo est modéré (environ 130 bpm). Le morceau doit sonner léger,
+          presque comme des gouttes de pluie.
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '9',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Comptine d\'un autre été - motif',
+      description: 'Maîtrise le motif répétitif caractéristique',
+      steps: [
+        'Main droite seule : La-Do-Mi-Do, répète en boucle',
+        'Commence TRÈS lentement, chaque note claire',
+        'Augmente progressivement le tempo jusqu\'à ce que ça coule',
+        'Main gauche seule : La grave sur temps 1, silence, La sur temps 3',
+        'Combine les deux mains : le défi est de garder la régularité',
+        'La main droite joue 4 notes pendant que la gauche en joue 1',
+        'Répète pendant 2 minutes : laisse-toi emporter par le motif',
+        'C\'est hypnotique et méditatif !'
+      ]
+    }
+  },
+  {
+    id: '10',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Apprendre des maîtres : l'importance des morceaux célèbres</h2>
+        <p>
+          Pourquoi est-il si important de jouer des morceaux célèbres, même
+          dans des versions simplifiées ?
+        </p>
+        <ul>
+          <li><strong>Motivation :</strong> Tu reconnais la musique, c'est gratifiant</li>
+          <li><strong>Culture musicale :</strong> Tu comprends l'histoire de la musique</li>
+          <li><strong>Oreille musicale :</strong> Tu intériorises les grandes mélodies</li>
+          <li><strong>Inspiration :</strong> Tu découvres différents styles et époques</li>
+          <li><strong>Répertoire :</strong> Tu peux jouer pour les autres</li>
+        </ul>
+        <p>
+          Chaque morceau célèbre enseigne quelque chose : Beethoven la noblesse,
+          Pachelbel la structure harmonique, Tiersen la texture minimaliste.
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '11',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Comment aborder un nouveau morceau célèbre</h2>
+        <p>
+          Quand tu veux apprendre un nouveau morceau célèbre, suis cette méthode :
+        </p>
+        <ol>
+          <li><strong>Écoute plusieurs versions</strong> : Comprends l'esprit du morceau</li>
+          <li><strong>Trouve une version adaptée à ton niveau</strong> : Ne vise pas trop haut</li>
+          <li><strong>Apprends chaque main séparément</strong> : Patience et rigueur</li>
+          <li><strong>Décompose en petites sections</strong> : Mesure par mesure si nécessaire</li>
+          <li><strong>Identifie les motifs répétitifs</strong> : La plupart des morceaux en ont</li>
+          <li><strong>Travaille lentement</strong> : La vitesse viendra naturellement</li>
+          <li><strong>Ajoute l'expression progressivement</strong> : D'abord les notes, puis l'émotion</li>
+        </ol>
+      `,
+      variant: 'tip'
+    }
+  },
+  {
+    id: '12',
+    type: 'practice',
+    data: {
+      title: 'Projet : Choisis ton morceau favori',
+      description: 'Commence à apprendre un morceau célèbre qui te plaît',
+      steps: [
+        'Pense à 3 morceaux célèbres que tu aimes',
+        'Recherche des versions "facile" ou "débutant" sur internet',
+        'Choisis celui qui te semble le plus accessible',
+        'Écoute-le 5 fois pour bien le connaître',
+        'Trouve la partition (gratuite sur IMSLP ou Musescore)',
+        'Commence par identifier les notes de la première mesure',
+        'Travaille cette première mesure jusqu\'à la maîtriser',
+        'Continue mesure par mesure : dans quelques semaines, tu le joueras !'
+      ]
+    }
+  },
+  {
+    id: '13',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Ton répertoire personnel</h2>
+        <p>
+          À partir de maintenant, tu vas construire ton <strong>répertoire personnel</strong> :
+          l'ensemble des morceaux que tu sais jouer de mémoire.
+        </p>
+        <p>
+          <strong>Conseils pour entretenir ton répertoire :</strong>
+        </p>
+        <ul>
+          <li><strong>Joue régulièrement tes anciens morceaux</strong> : Ne les oublie pas</li>
+          <li><strong>Améliore constamment</strong> : Chaque fois que tu rejoues, affine</li>
+          <li><strong>Varie les styles</strong> : Baroque, classique, romantique, moderne</li>
+          <li><strong>Garde une liste</strong> : Note tous les morceaux que tu maîtrises</li>
+          <li><strong>Partage ta musique</strong> : Joue pour ta famille et tes amis</li>
+        </ul>
+        <p>
+          Dans quelques années, tu auras un répertoire impressionnant de dizaines
+          de morceaux. C'est un trésor personnel qui t'accompagnera toute ta vie !
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  }
+]
+
+export default function Lecon6Page() {
   return (
     <LessonTemplate
       levelId={3}
       lessonNumber={6}
       title="Morceaux célèbres faciles"
-      description="Apprenez vos premiers extraits de pièces classiques célèbres et découvrez les grands compositeurs."
-      duration="18 min"
+      duration={18}
       objectives={[
-        "Apprendre des extraits de pièces classiques célèbres",
-        "Découvrir les grands compositeurs et leurs styles",
-        "Appliquer toutes les techniques apprises jusqu'ici",
-        "Développer l'interprétation musicale",
-        "Comprendre la structure de pièces simples",
-        "Gagner confiance pour aborder le répertoire classique"
+        'Jouer "Ode à la joie" de Beethoven avec accompagnement',
+        'Apprendre la progression du "Canon en Ré" de Pachelbel',
+        'Découvrir "Comptine d\'un autre été" de Yann Tiersen',
+        'Développer une méthode pour apprendre de nouveaux morceaux'
       ]}
-      previousLesson="/parcours/niveau-3/lecon-5"
-      nextLesson="/parcours/niveau-3/lecon-7"
-    >
-      <ContentBlock variant="highlight">
-        <h2>Votre entrée dans le répertoire classique</h2>
-        <p>
-          Félicitations ! Vous avez maintenant toutes les bases techniques pour aborder de vraies
-          pièces musicales. Dans cette leçon, nous allons explorer des extraits de morceaux célèbres
-          que vous reconnaîtrez peut-être. C'est un moment excitant : vous allez jouer de la VRAIE
-          musique classique !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Pourquoi commencer par des extraits ?</h2>
-        <p>
-          Les pièces classiques complètes peuvent être longues et décourageantes pour débuter.
-          En apprenant d'abord des extraits courts mais représentatifs, vous allez :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li>Goûter au style de différents compositeurs</li>
-          <li>Obtenir rapidement des résultats satisfaisants</li>
-          <li>Construire votre répertoire progressivement</li>
-          <li>Développer votre culture musicale</li>
-          <li>Identifier les compositeurs que vous aimez</li>
-        </ul>
-        <p className="mt-4">
-          Chaque extrait sera comme une fenêtre ouverte sur l'univers d'un compositeur.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Morceau 1 : "Ode à la joie" - Beethoven</h2>
-        <p>
-          Commençons par l'une des mélodies les plus célèbres de l'histoire de la musique,
-          tirée de la 9e Symphonie de Beethoven.
-        </p>
-        <div className="mt-4 space-y-2">
-          <p><strong>Mélodie (main droite) :</strong></p>
-          <p className="ml-4">Mi - Mi - Fa - Sol | Sol - Fa - Mi - Ré | Do - Do - Ré - Mi | Mi - Ré - Ré</p>
-          <p className="ml-4 text-sm opacity-80">(Chaque note = une noire, tempo modéré)</p>
-        </div>
-        <p className="mt-4">
-          <strong>Accompagnement simple (main gauche) :</strong> Accord de Do majeur (Do-Mi-Sol)
-          tenu pendant les 4 premières mesures.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 1 : Apprendre "Ode à la joie"</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Main droite seule : apprenez la mélodie note par note, lentement</li>
-          <li>Trouvez le bon doigté : 3-3-4-5 | 5-4-3-2 | 1-1-2-3 | 3-2-2</li>
-          <li>Répétez 10 fois jusqu'à fluidité</li>
-          <li>Main gauche : accord de Do majeur (Do-Mi-Sol) en position grave</li>
-          <li>Jouez l'accord au début de chaque phrase de 4 notes</li>
-          <li>Mains ensemble : très lentement au début</li>
-          <li>Ajoutez la pédale : changez à chaque phrase</li>
-        </ol>
-        <p className="mt-4">
-          <strong>Expression :</strong> Jouez avec noblesse et majesté, mezzo-forte (moyennement
-          fort). C'est un hymne à la joie universelle !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Morceau 2 : "Prélude en Do majeur" - Bach (extrait)</h2>
-        <p>
-          Un des préludes les plus apaisants de Bach, basé sur un arpège simple mais hypnotique.
-          Nous allons apprendre le motif de base.
-        </p>
-        <div className="mt-4 space-y-2">
-          <p><strong>Motif d'arpège (deux mains) :</strong></p>
-          <p className="ml-4">Main gauche : Do grave</p>
-          <p className="ml-4">Main droite : Mi - Sol - Do - Mi - Sol - Do - Mi - Sol</p>
-          <p className="ml-4 text-sm opacity-80">(Notes égales, fluides, comme une vague)</p>
-        </div>
-        <p className="mt-4">
-          Le secret de cette pièce : maintenir la pédale pendant tout l'arpège pour créer
-          une nappe harmonique continue.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 2 : Le style de Bach</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Main droite seule : pratiquez l'arpège Mi-Sol-Do-Mi-Sol-Do-Mi-Sol</li>
-          <li>Doigté : 1-2-3-1-2-3-1-2 (passage du pouce fluide)</li>
-          <li>Toutes les notes doivent être égales en volume et durée</li>
-          <li>Ajoutez le Do grave à la main gauche (pouce ou 5e doigt)</li>
-          <li>Enfoncez la pédale quand vous jouez le Do grave</li>
-          <li>Maintenez la pédale pendant tout l'arpège</li>
-          <li>Répétez ce motif 10 fois : Do grave + arpège</li>
-        </ol>
-        <p className="mt-4">
-          <strong>Expression :</strong> Jouez doucement (piano), régulièrement, comme une méditation
-          musicale. Bach recherchait l'équilibre et la sérénité.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>Comprendre les styles des compositeurs</h2>
-        <div className="mt-3 space-y-3">
-          <p><strong>Bach (1685-1750) - Baroque :</strong></p>
-          <p className="ml-4">Lignes mélodiques entrelacées, régularité, mathématique musicale,
-          spiritualité</p>
-
-          <p><strong>Mozart (1756-1791) - Classique :</strong></p>
-          <p className="ml-4">Clarté, élégance, équilibre, mélodies chantantes, légèreté</p>
-
-          <p><strong>Beethoven (1770-1827) - Classique/Romantique :</strong></p>
-          <p className="ml-4">Puissance, émotion intense, dramaturgie, humanisme, lutte héroïque</p>
-
-          <p><strong>Chopin (1810-1849) - Romantique :</strong></p>
-          <p className="ml-4">Poésie, mélancolie, virtuosité pianistique, rubato, intimité</p>
-        </div>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Morceau 3 : "Petite musique de nuit" - Mozart (thème)</h2>
-        <p>
-          Une des mélodies les plus reconnaissables de Mozart, élégante et enjouée.
-        </p>
-        <div className="mt-4 space-y-2">
-          <p><strong>Thème principal (main droite) :</strong></p>
-          <p className="ml-4">Sol Sol | Ré Ré | Sol Sol | Ré Ré Sol-Ré | Do Do | Sol</p>
-          <p className="ml-4 text-sm opacity-80">(Rythme : noire-noire | noire-noire | etc.)</p>
-        </div>
-        <p className="mt-4">
-          <strong>Accompagnement (main gauche) :</strong> Alternez Sol grave et l'accord
-          Sol-Si-Ré en rythme régulier.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 3 : L'élégance mozartienne</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Main droite : apprenez le thème avec précision rythmique</li>
-          <li>Articulation : les notes répétées (Sol-Sol, Ré-Ré) doivent être détachées mais légères</li>
-          <li>Main gauche : pratiquez l'alternance basse-accord (Sol grave, puis Sol-Si-Ré)</li>
-          <li>Coordonnez les deux mains très lentement</li>
-          <li>Pédale discrète : changez à chaque mesure</li>
-          <li>Accélérez progressivement jusqu'à tempo allegro (joyeux et vif)</li>
-        </ol>
-        <p className="mt-4">
-          <strong>Expression :</strong> Jouez avec légèreté, clarté et bonne humeur. Mozart
-          aimait que sa musique semble facile et naturelle, même si elle est techniquement exigeante.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Morceau 4 : "Lettre à Élise" - Beethoven (ouverture)</h2>
-        <p>
-          L'une des pièces pour piano les plus célèbres au monde, tendre et mélancolique.
-        </p>
-        <div className="mt-4 space-y-2">
-          <p><strong>Motif d'ouverture (main droite, très simplifié) :</strong></p>
-          <p className="ml-4">Mi - Ré# - Mi - Ré# - Mi - Si - Ré - Do - La</p>
-          <p className="ml-4 text-sm opacity-80">(Ré# = touche noire entre Ré et Mi)</p>
-        </div>
-        <p className="mt-4">
-          <strong>Accompagnement (main gauche) :</strong> La grave (octave basse) au début
-          de la phrase.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 4 : Jouer "Lettre à Élise"</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Main droite seule : repérez le Ré# (touche noire entre Ré et Mi)</li>
-          <li>Doigté suggéré : 3-2-3-2-3-1-3-2-1 (majeur commence)</li>
-          <li>Jouez lentement, en sentant l'alternance Mi-Ré#-Mi</li>
-          <li>Le caractère : doux, interrogatif, un peu mélancolique</li>
-          <li>Ajoutez le La grave à la main gauche au début</li>
-          <li>Pédale légère : enfoncez sur le La, maintenez pendant la phrase</li>
-          <li>Répétez 10 fois en cherchant l'expression romantique</li>
-        </ol>
-        <p className="mt-4">
-          <strong>Note :</strong> Cette pièce utilise une touche noire (Ré#), votre première
-          sortie hors des touches blanches. Prenez le temps de bien localiser cette note.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="normal">
-        <h2>Morceau 5 : "Le Cygne" - Saint-Saëns (mélodie)</h2>
-        <p>
-          Une mélodie d'une beauté poignante, évoquant la grâce d'un cygne glissant sur l'eau.
-        </p>
-        <div className="mt-4 space-y-2">
-          <p><strong>Début de la mélodie (main droite, simplifié) :</strong></p>
-          <p className="ml-4">Sol - La - Sol - Fa - Mi - Fa - Sol</p>
-          <p className="ml-4 text-sm opacity-80">(Notes longues, très liées, chantantes)</p>
-        </div>
-        <p className="mt-4">
-          <strong>Accompagnement (main gauche) :</strong> Arpège lent de Do majeur : Do-Mi-Sol-Mi
-          en boucle.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 5 : Chanter au piano</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Main droite : jouez la mélodie en legato PARFAIT</li>
-          <li>Chaque note doit couler dans la suivante sans rupture</li>
-          <li>Imaginez un chanteur ou un violoncelliste jouant cette ligne</li>
-          <li>Main gauche : arpège Do-Mi-Sol-Mi en notes égales, douces</li>
-          <li>L'accompagnement doit rester discret sous la mélodie</li>
-          <li>Mains ensemble : la mélodie doit ressortir, l'arpège bercer</li>
-          <li>Pédale généreuse : changez tous les deux temps</li>
-        </ol>
-        <p className="mt-4">
-          <strong>Expression :</strong> Jouez avec une grande douceur (pianissimo), comme si vous
-          ne vouliez pas déranger la beauté fragile du cygne. Laissez la mélodie respirer.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="warning">
-        <h2>Erreurs d'interprétation à éviter</h2>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>Jouer trop vite :</strong> Prenez le temps. La musique a besoin d'espace pour respirer</li>
-          <li><strong>Volume uniforme :</strong> Variez les nuances, même dans ces extraits simples</li>
-          <li><strong>Accompagnement trop fort :</strong> L'accompagnement soutient, il ne concurrence pas</li>
-          <li><strong>Manque de caractère :</strong> Chaque compositeur a son style, adaptez votre jeu</li>
-          <li><strong>Pédale excessive :</strong> Même dans les pièces romantiques, changez régulièrement</li>
-          <li><strong>Ignorer les silences :</strong> Les silences font partie de la musique</li>
-        </ul>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Morceau 6 : "Menuet en Sol" - Bach</h2>
-        <p>
-          Un menuet élégant, souvent le premier morceau baroque que les étudiants apprennent.
-        </p>
-        <div className="mt-4 space-y-2">
-          <p><strong>Ouverture (très simplifiée) :</strong></p>
-          <p className="ml-4">Main droite : Ré - Sol - La - Si - Do</p>
-          <p className="ml-4">Main gauche : Sol grave - Si - Ré (accord en arpège)</p>
-        </div>
-        <p className="mt-4">
-          Le menuet est une danse à trois temps (1-2-3, 1-2-3), avec un caractère noble et
-          mesuré.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 6 : Comprendre la danse baroque</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Sentez le rythme à trois temps : 1-2-3, 1-2-3 (un peu comme une valse)</li>
-          <li>Main droite : mélodie Ré-Sol-La-Si-Do avec phrasé élégant</li>
-          <li>Main gauche : Sol grave sur le temps 1, puis Si-Ré sur les temps 2-3</li>
-          <li>Pédale minimale : Bach privilégie la clarté des voix</li>
-          <li>Articulez légèrement les notes (ni trop legato, ni staccato)</li>
-          <li>Tempo modéré : assez pour danser, pas trop rapide</li>
-        </ol>
-        <p className="mt-4">
-          <strong>Style :</strong> Imaginez une danse de cour du 18e siècle - élégante, raffinée,
-          avec de petites révérences. La musique baroque demande clarté et précision.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Comment apprendre un nouveau morceau ?</h2>
-        <p>Méthode professionnelle en 7 étapes :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li><strong>Écouter :</strong> Écoutez l'œuvre complète plusieurs fois avant de jouer</li>
-          <li><strong>Analyser :</strong> Identifiez les sections, répétitions, difficultés</li>
-          <li><strong>Main droite :</strong> Apprenez très lentement, note par note</li>
-          <li><strong>Main gauche :</strong> Idem, séparément, avec patience</li>
-          <li><strong>Mains ensemble :</strong> Section par section, extrêmement lentement</li>
-          <li><strong>Assembler :</strong> Reliez les sections progressivement</li>
-          <li><strong>Interpréter :</strong> Ajoutez expression, nuances, votre touche personnelle</li>
-        </ol>
-        <p className="mt-4 text-sm opacity-80">
-          Règle d'or : si vous vous trompez, c'est que vous allez trop vite. Ralentissez !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>Construire votre répertoire</h2>
-        <p>Conseils pour développer un répertoire solide :</p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>Variété :</strong> Apprenez des pièces de différentes époques et styles</li>
-          <li><strong>Révision :</strong> Rejouez régulièrement vos anciennes pièces (ne les oubliez pas !)</li>
-          <li><strong>Progression :</strong> Alternez pièces faciles et légèrement difficiles</li>
-          <li><strong>Plaisir :</strong> Choisissez des morceaux que vous aimez vraiment</li>
-          <li><strong>Patience :</strong> Il vaut mieux une pièce bien maîtrisée que dix à moitié apprises</li>
-        </ul>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Ressources pour aller plus loin</h2>
-        <p>
-          Pour continuer à explorer le répertoire des pièces faciles :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>Livres recommandés :</strong> "Le Petit Livre d'Anna Magdalena Bach", "ABRSM Grade 1-2"</li>
-          <li><strong>En ligne :</strong> IMSLP.org (partitions gratuites du domaine public)</li>
-          <li><strong>Applications :</strong> Simply Piano, Flowkey (avec vraies partitions)</li>
-          <li><strong>Chaînes YouTube :</strong> Tutoriels de pièces classiques pour débutants</li>
-        </ul>
-        <p className="mt-4">
-          N'hésitez pas à chercher des versions simplifiées de vos pièces préférées - presque
-          tout peut être adapté pour votre niveau !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="highlight">
-        <h2>Programme de pratique pour cette leçon</h2>
-        <p>Sur 2 semaines, travaillez ces extraits :</p>
-        <div className="mt-3 space-y-3">
-          <p><strong>Semaine 1 :</strong></p>
-          <ul className="list-disc list-inside ml-4">
-            <li>Jours 1-2 : Ode à la joie (Beethoven)</li>
-            <li>Jours 3-4 : Prélude en Do (Bach)</li>
-            <li>Jours 5-6 : Petite musique de nuit (Mozart)</li>
-            <li>Jour 7 : Révision des trois</li>
-          </ul>
-          <p className="mt-2"><strong>Semaine 2 :</strong></p>
-          <ul className="list-disc list-inside ml-4">
-            <li>Jours 1-2 : Lettre à Élise (Beethoven)</li>
-            <li>Jours 3-4 : Le Cygne (Saint-Saëns)</li>
-            <li>Jours 5-6 : Menuet en Sol (Bach)</li>
-            <li>Jour 7 : Mini-récital personnel des 6 extraits</li>
-          </ul>
-        </div>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Célébrez vos progrès !</h2>
-        <p>
-          Vous jouez maintenant des morceaux que des millions de personnes reconnaissent et
-          apprécient. C'est un accomplissement majeur ! Ces extraits ne sont que le début :
-          le répertoire pianistique contient des milliers de merveilles qui n'attendent que vous.
-        </p>
-        <p className="mt-3">
-          Chaque compositeur a quelque chose d'unique à offrir. En explorant différents styles,
-          vous découvrirez quelles musiques résonnent le plus en vous. Et c'est exactement ce
-          qui fera de vous un musicien unique.
-        </p>
-        <p className="mt-3">
-          Dans la prochaine leçon, nous approfondirons l'expression musicale : comment utiliser
-          les nuances et les variations de tempo pour raconter une histoire avec votre jeu.
-        </p>
-      </ContentBlock>
-    </LessonTemplate>
+      content={content}
+      previousLesson={{
+        title: 'La pédale de sustain',
+        href: '/parcours/niveau-3/lecon-5'
+      }}
+      nextLesson={{
+        title: 'L\'expression musicale',
+        href: '/parcours/niveau-3/lecon-7'
+      }}
+    />
   )
 }

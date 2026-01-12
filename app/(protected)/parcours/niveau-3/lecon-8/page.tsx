@@ -1,461 +1,417 @@
-import LessonTemplate from '@/components/lessons/LessonTemplate'
+import { LessonTemplate } from '@/components/lessons/LessonTemplate'
 import type { ContentBlock } from '@/types/lesson'
 
-export default function Niveau3Lecon8() {
+const content: ContentBlock[] = [
+  {
+    id: '1',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Le moment est venu : ton premier morceau complet !</h2>
+        <p>
+          Félicitations ! Tu es arrivé à un moment décisif de ton parcours pianistique :
+          apprendre et maîtriser ton <strong>premier morceau complet</strong>.
+        </p>
+        <p>
+          Jusqu'à présent, tu as travaillé des exercices, des extraits, des versions
+          simplifiées. Maintenant, tu vas choisir un morceau entier et le travailler
+          du début à la fin, jusqu'à pouvoir le jouer de mémoire, avec expression,
+          et même le présenter à d'autres.
+        </p>
+        <p>
+          Ce morceau deviendra une partie de toi. Tu le porteras avec toi pour
+          toujours. C'est un accomplissement majeur et une étape émotionnelle
+          importante dans ta vie de musicien.
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '2',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Choisir le bon morceau</h2>
+        <p>
+          Le choix de ton premier morceau complet est crucial. Il doit être :
+        </p>
+        <ul>
+          <li><strong>À ton niveau</strong> : Ni trop facile (ennuyeux), ni trop difficile (décourageant)</li>
+          <li><strong>Motivant</strong> : Un morceau que tu AIMES vraiment</li>
+          <li><strong>Complet mais accessible</strong> : 2-3 minutes maximum</li>
+          <li><strong>Varié</strong> : Qui te fait travailler plusieurs techniques</li>
+        </ul>
+        <p>
+          <strong>Suggestions de morceaux adaptés au niveau 3 :</strong>
+        </p>
+        <ul>
+          <li><strong>Classique :</strong> "Prélude en Do majeur" de Bach (simplifié), "Für Elise" (début)</li>
+          <li><strong>Romantique :</strong> "Gymnopédie n°1" de Satie, "Rêverie" de Debussy (simplifié)</li>
+          <li><strong>Moderne :</strong> "River Flows in You" de Yiruma, "Nuvole Bianche" de Einaudi (simplifié)</li>
+          <li><strong>Film/Pop :</strong> Thèmes de films célèbres, chansons pop arrangées pour piano solo</li>
+        </ul>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '3',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Test du "niveau 80%"</h2>
+        <p>
+          Comment savoir si un morceau est à ton niveau ? Utilise la règle du
+          <strong>"niveau 80%"</strong> :
+        </p>
+        <p>
+          Quand tu essaies de déchiffrer la première page :
+        </p>
+        <ul>
+          <li><strong>Tu reconnais 80% des notes et rythmes</strong> : Parfait !</li>
+          <li><strong>Tu reconnais 90-100%</strong> : Trop facile, choisis plus difficile</li>
+          <li><strong>Tu reconnais moins de 70%</strong> : Trop dur pour l'instant</li>
+        </ul>
+        <p>
+          Le morceau idéal doit être un <strong>défi accessible</strong> : assez
+          difficile pour te faire progresser, mais pas au point de te décourager.
+        </p>
+        <p>
+          Si tu hésites entre deux morceaux, choisis le plus facile. Tu progresseras
+          plus vite avec un morceau légèrement trop facile qu'avec un morceau
+          trop difficile qui te frustrera.
+        </p>
+      `,
+      variant: 'tip'
+    }
+  },
+  {
+    id: '4',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Choisir ton morceau',
+      description: 'Prends le temps de faire le bon choix',
+      steps: [
+        'Fais une liste de 5 morceaux qui te plaisent vraiment',
+        'Pour chaque morceau, cherche une partition adaptée à ton niveau',
+        'Écoute chaque version plusieurs fois',
+        'Essaie de déchiffrer les 8 premières mesures de chaque',
+        'Applique le test du "niveau 80%"',
+        'Élimine ceux qui sont trop faciles ou trop durs',
+        'Parmi ceux qui restent, choisis celui qui te parle le plus',
+        'Félicitations : tu as ton morceau !'
+      ]
+    }
+  },
+  {
+    id: '5',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Méthodologie d'apprentissage : le plan d'attaque</h2>
+        <p>
+          Apprendre un morceau complet demande une approche structurée. Voici
+          la méthode éprouvée en <strong>7 phases</strong> :
+        </p>
+        <ol>
+          <li><strong>Analyse globale</strong> : Structure, tonalité, difficultés (1 session)</li>
+          <li><strong>Déchiffrage mains séparées</strong> : Note par note, lentement (2-3 semaines)</li>
+          <li><strong>Assemblage progressif</strong> : Combiner les mains section par section (1-2 semaines)</li>
+          <li><strong>Fluidification</strong> : Augmenter le tempo graduellement (1-2 semaines)</li>
+          <li><strong>Mémorisation</strong> : Jouer sans partition (1 semaine)</li>
+          <li><strong>Expression</strong> : Ajouter dynamiques et phrasé (1 semaine)</li>
+          <li><strong>Performance</strong> : Peaufiner et jouer pour les autres (continu)</li>
+        </ol>
+        <p>
+          Total : environ <strong>2 mois</strong> pour un morceau de 2-3 minutes.
+          C'est normal ! La patience est essentielle.
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '6',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Phase 1 : Analyse globale</h2>
+        <p>
+          Avant de jouer une seule note, <strong>comprends le morceau</strong> :
+        </p>
+        <ul>
+          <li><strong>Écoute 10 fois</strong> : Imprégnez-toi de la mélodie</li>
+          <li><strong>Structure</strong> : Combien de sections ? A-B-A ? A-B-C ?</li>
+          <li><strong>Tonalité</strong> : Quelle est la tonalité principale ?</li>
+          <li><strong>Tempo</strong> : Rapide, modéré, lent ?</li>
+          <li><strong>Difficultés techniques</strong> : Où sont les passages délicats ?</li>
+          <li><strong>Motifs récurrents</strong> : Quels patterns se répètent ?</li>
+        </ul>
+        <p>
+          Cette analyse te donne une <strong>carte mentale</strong> du morceau.
+          Tu sais où tu vas, ce qui te guide tout au long de l'apprentissage.
+        </p>
+        <p>
+          Astuce : Note tes observations sur la partition avec un crayon.
+          Marque les sections (A, B, C), les passages difficiles (⚠️), les
+          répétitions (idem).
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '7',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Phases 2-3 : Déchiffrage et assemblage</h2>
+        <p>
+          <strong>Règle d'or : JAMAIS les deux mains ensemble au début !</strong>
+        </p>
+        <p>
+          <strong>Phase 2 : Mains séparées (2-3 semaines)</strong>
+        </p>
+        <ul>
+          <li>Travaille chaque main jusqu'à la maîtrise complète</li>
+          <li>Divise en sections de 4-8 mesures</li>
+          <li>Tempo : 50% du tempo final, ou plus lent</li>
+          <li>Marque les doigtés optimaux dès le début</li>
+        </ul>
+        <p>
+          <strong>Phase 3 : Assemblage (1-2 semaines)</strong>
+        </p>
+        <ul>
+          <li>Combine les mains section par section (pas tout d'un coup !)</li>
+          <li>Commence par les sections les plus faciles</li>
+          <li>Garde un tempo très lent (40-50% du tempo final)</li>
+          <li>Ne passe à la section suivante que quand la précédente est fluide</li>
+        </ul>
+        <p>
+          La clé : <strong>patience et répétition</strong>. Chaque section doit
+          être jouée 20-30 fois avant de passer à la suivante.
+        </p>
+      `,
+      variant: 'tip'
+    }
+  },
+  {
+    id: '8',
+    type: 'practice',
+    data: {
+      title: 'Exercice : Travail méthodique d\'une section',
+      description: 'Applique la méthode sur 8 mesures',
+      steps: [
+        'Choisis les 8 premières mesures de ton morceau',
+        'Main droite seule : joue 10 fois très lentement',
+        'Main gauche seule : joue 10 fois très lentement',
+        'Combine les 2 premières mesures : 10 fois',
+        'Ajoute les mesures 3-4 : joue mesures 1-4, 10 fois',
+        'Ajoute les mesures 5-6 : joue mesures 1-6, 10 fois',
+        'Ajoute les mesures 7-8 : joue tout, 10 fois',
+        'Si c\'est fluide, augmente légèrement le tempo',
+        'Répète ce processus pour chaque section du morceau'
+      ]
+    }
+  },
+  {
+    id: '9',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Phase 4 : Fluidification et tempo</h2>
+        <p>
+          Une fois que tu peux jouer le morceau entier lentement sans erreur,
+          il est temps d'augmenter progressivement le tempo.
+        </p>
+        <p>
+          <strong>Méthode d'augmentation du tempo :</strong>
+        </p>
+        <ol>
+          <li>Joue le morceau complet au tempo actuel sans erreur (3 fois de suite)</li>
+          <li>Augmente le tempo de 5% (si tu utilises un métronome)</li>
+          <li>Rejoue 5 fois au nouveau tempo</li>
+          <li>Si c'est fluide, garde ce tempo pour ta session suivante</li>
+          <li>Si ce n'est pas fluide, reviens au tempo précédent</li>
+          <li>Répète ce processus sur plusieurs semaines</li>
+        </ol>
+        <p>
+          <strong>Important :</strong> Ne sacrifie JAMAIS la précision pour la vitesse.
+          Un tempo plus lent joué parfaitement est infiniment préférable à un
+          tempo rapide avec des erreurs.
+        </p>
+      `,
+      variant: 'normal'
+    }
+  },
+  {
+    id: '10',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Phase 5 : Mémorisation</h2>
+        <p>
+          Jouer de mémoire est une compétence précieuse. Voici comment mémoriser
+          efficacement :
+        </p>
+        <p>
+          <strong>Les 4 types de mémoire musicale :</strong>
+        </p>
+        <ul>
+          <li><strong>Mémoire auditive</strong> : Tu connais la mélodie par cœur</li>
+          <li><strong>Mémoire visuelle</strong> : Tu "vois" la partition dans ta tête</li>
+          <li><strong>Mémoire tactile</strong> : Tes doigts "savent" où aller</li>
+          <li><strong>Mémoire analytique</strong> : Tu comprends la structure harmonique</li>
+        </ul>
+        <p>
+          <strong>Technique de mémorisation :</strong>
+        </p>
+        <ol>
+          <li>Mémorise section par section (4-8 mesures)</li>
+          <li>Joue chaque section 10 fois avec partition, 10 fois sans</li>
+          <li>Teste-toi : peux-tu commencer de n'importe quel point ?</li>
+          <li>Visualise le morceau sans piano (dans le bus, avant de dormir)</li>
+          <li>Chante les mélodies à voix haute</li>
+        </ol>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '11',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Phase 6 : Expression et interprétation</h2>
+        <p>
+          Une fois les notes maîtrisées, c'est le moment de transformer ton jeu
+          technique en <strong>art</strong>.
+        </p>
+        <p>
+          <strong>Checklist d'expression :</strong>
+        </p>
+        <ul>
+          <li>✓ Dynamiques variées : Où sont les crescendos, diminuendos ?</li>
+          <li>✓ Phrasé clair : Où sont les respirations musicales ?</li>
+          <li>✓ Articulation : Legato, staccato, accents appropriés ?</li>
+          <li>✓ Pédale : Utilisée judicieusement pour enrichir (pas noyer) ?</li>
+          <li>✓ Rubato : Légères variations de tempo pour l'expressivité ?</li>
+          <li>✓ Caractère global : Le morceau a-t-il une identité émotionnelle ?</li>
+        </ul>
+        <p>
+          <strong>Méthode :</strong> Enregistre-toi et écoute objectivement. Compare
+          avec des enregistrements professionnels. Qu'est-ce qui manque ? Qu'est-ce
+          qui pourrait être amélioré ?
+        </p>
+      `,
+      variant: 'tip'
+    }
+  },
+  {
+    id: '12',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Phase 7 : Performance et partage</h2>
+        <p>
+          La musique n'existe pleinement que lorsqu'elle est <strong>partagée</strong>.
+          Jouer pour les autres, même (et surtout) pour un petit public familial,
+          est une expérience transformatrice.
+        </p>
+        <p>
+          <strong>Comment se préparer à jouer devant les autres :</strong>
+        </p>
+        <ul>
+          <li><strong>Pratique la performance</strong> : Joue comme si tu avais un public</li>
+          <li><strong>Gère le trac</strong> : Respire profondément, commence lentement</li>
+          <li><strong>Accepte l'imperfection</strong> : Les erreurs font partie de la musique live</li>
+          <li><strong>Raconte l'histoire</strong> : Présente brièvement le morceau</li>
+          <li><strong>Savoure l'instant</strong> : C'est un moment unique et précieux</li>
+        </ul>
+        <p>
+          Conseil : Filme-toi en train de jouer. C'est stressant comme une vraie
+          performance, et tu peux revoir ta prestation objectivement.
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  },
+  {
+    id: '13',
+    type: 'practice',
+    data: {
+      title: 'Projet final : Ton premier morceau complet',
+      description: 'Plan d\'action pour les 8 prochaines semaines',
+      steps: [
+        'Semaine 1 : Analyse et déchiffrage main droite (première moitié)',
+        'Semaine 2 : Main droite (deuxième moitié) + main gauche (première moitié)',
+        'Semaine 3 : Main gauche (deuxième moitié) + révision mains séparées',
+        'Semaine 4 : Assemblage première moitié du morceau',
+        'Semaine 5 : Assemblage deuxième moitié + morceau complet lent',
+        'Semaine 6 : Augmentation progressive du tempo',
+        'Semaine 7 : Mémorisation + ajout de l\'expression',
+        'Semaine 8 : Peaufinage + première performance pour un proche',
+        'Célèbre cette victoire : tu as accompli quelque chose d\'extraordinaire !'
+      ]
+    }
+  },
+  {
+    id: '14',
+    type: 'text',
+    data: {
+      content: `
+        <h2>Félicitations : Niveau 3 terminé !</h2>
+        <p>
+          Tu as parcouru un chemin extraordinaire au cours de ce niveau. Tu maîtrises maintenant :
+        </p>
+        <ul>
+          <li>✅ Les gammes complètes avec doigté correct</li>
+          <li>✅ La lecture de partition (clé de Sol et Fa)</li>
+          <li>✅ Les accords enrichis (7, maj7) et leurs inversions</li>
+          <li>✅ Les techniques d'articulation (legato, staccato, accents)</li>
+          <li>✅ L'utilisation expressive de la pédale de sustain</li>
+          <li>✅ Des morceaux célèbres (Beethoven, Pachelbel, Tiersen)</li>
+          <li>✅ L'expression musicale (dynamiques, tempo, phrasé)</li>
+          <li>✅ La méthodologie pour apprendre un morceau complet</li>
+        </ul>
+        <p>
+          Tu n'es plus un débutant. Tu es un <strong>pianiste en progression</strong>
+          avec des compétences réelles et un premier répertoire. Le Niveau 4 va
+          t'ouvrir les portes de morceaux encore plus beaux et complexes.
+        </p>
+        <p>
+          <strong>Continue à pratiquer, reste patient, et surtout : prends du plaisir
+          dans chaque note que tu joues. La musique est un voyage sans fin !</strong>
+        </p>
+      `,
+      variant: 'highlight'
+    }
+  }
+]
+
+export default function Lecon8Page() {
   return (
     <LessonTemplate
       levelId={3}
       lessonNumber={8}
       title="Premier morceau complet"
-      description="Apprenez et maîtrisez votre premier morceau complet en intégrant toutes les compétences acquises."
-      duration="18 min"
+      duration={18}
       objectives={[
-        "Apprendre un morceau complet de A à Z",
-        "Intégrer toutes les techniques apprises (gammes, lecture, accords, articulation, pédale)",
-        "Développer une méthodologie d'apprentissage efficace",
-        "Travailler la mémorisation musicale",
-        "Polir et perfectionner une interprétation",
-        "Préparer une performance (même pour soi-même)"
+        'Choisir un morceau adapté à ton niveau',
+        'Apprendre une méthodologie d\'apprentissage structurée',
+        'Maîtriser les techniques de mémorisation',
+        'Préparer et réaliser ta première performance'
       ]}
-      previousLesson="/parcours/niveau-3/lecon-7"
-      nextLesson="/parcours/niveau-4/lecon-1"
-    >
-      <ContentBlock variant="highlight">
-        <h2>Votre premier chef-d'œuvre personnel</h2>
-        <p>
-          Vous avez parcouru un chemin extraordinaire depuis le Niveau 1. Vous maîtrisez la posture,
-          la technique de base, la lecture de notes, les accords, l'articulation, la pédale, et
-          l'expression. Il est temps de réunir toutes ces compétences dans un accomplissement majeur :
-          votre premier morceau complet, de la première à la dernière note.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Le morceau choisi : "Prélude en Do majeur" de Bach (simplifié)</h2>
-        <p>
-          Nous allons travailler une version simplifiée mais complète du célèbre Prélude en Do majeur
-          du "Clavier bien tempéré" de Bach. C'est un choix idéal car :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li>Structure simple : un motif d'arpège répété avec des harmonies changeantes</li>
-          <li>Magnifique musicalité malgré sa simplicité technique</li>
-          <li>Excellent pour travailler la régularité et le legato</li>
-          <li>Utilisation essentielle de la pédale</li>
-          <li>Pièce reconnue mondialement (vous impressionnerez votre entourage !)</li>
-        </ul>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Structure du Prélude : comprendre avant de jouer</h2>
-        <p>
-          Le Prélude est construit sur un motif répétitif : chaque mesure contient un arpège
-          de 8 notes (ou 16 croches réparties sur deux mains).
-        </p>
-        <p className="mt-3">
-          <strong>Motif de base :</strong>
-        </p>
-        <ul className="list-disc list-inside space-y-1 mt-2 ml-4">
-          <li>Main gauche : Note de basse (tenue avec la pédale)</li>
-          <li>Main droite : Arpège de 5 notes, répété</li>
-          <li>Le motif rythmique reste identique, seules les notes changent</li>
-        </ul>
-        <p className="mt-3">
-          <strong>Version simplifiée (8 mesures) :</strong> Nous apprendrons les 8 premières
-          mesures qui contiennent l'essence du morceau.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Mesure 1 : Le motif de base en Do majeur</h2>
-        <p>Décortiquons la première mesure en détail :</p>
-        <div className="mt-3 space-y-2">
-          <p><strong>Main gauche :</strong> Do grave (octave basse)</p>
-          <p><strong>Main droite :</strong> Mi - Sol - Do - Mi - Sol - Do - Mi - Sol</p>
-          <p className="text-sm opacity-80 ml-4">
-            (Doigté : 1-2-3-1-2-3-1-2, passage du pouce fluide)
-          </p>
-        </div>
-        <p className="mt-3">
-          <strong>Pédale :</strong> Enfoncez quand vous jouez le Do grave, maintenez pendant
-          tout l'arpège.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 1 : Maîtriser la mesure 1</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Main droite seule : jouez l'arpège Mi-Sol-Do-Mi-Sol-Do-Mi-Sol</li>
-          <li>Chaque note doit être parfaitement égale en volume et durée</li>
-          <li>Utilisez un métronome à 60 BPM (4 notes par temps = 4 doubles-croches)</li>
-          <li>Répétez 20 fois jusqu'à régularité parfaite</li>
-          <li>Ajoutez la main gauche : Do grave au début, silence pendant l'arpège</li>
-          <li>Coordonnez : Do grave + premier Mi de l'arpège en même temps</li>
-          <li>Ajoutez la pédale : enfoncez sur le Do, maintenez, relâchez à la fin</li>
-          <li>Répétez 10 fois la mesure complète avec pédale</li>
-        </ol>
-        <p className="mt-4 text-sm opacity-80">
-          Cette première mesure est votre fondation. Ne passez pas à la suite tant qu'elle
-          n'est pas fluide et automatique.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Mesures 2-4 : Progression harmonique</h2>
-        <p>Les mesures suivantes utilisent le même motif rythmique mais changent les notes :</p>
-        <div className="mt-3 space-y-3">
-          <p><strong>Mesure 2 (Ré mineur 7) :</strong></p>
-          <p className="ml-4">MG: Ré | MD: Ré-Fa-La-Ré-Fa-La-Ré-Fa</p>
-
-          <p><strong>Mesure 3 (Sol 7) :</strong></p>
-          <p className="ml-4">MG: Sol | MD: Ré-Fa-Sol-Si-Ré-Fa-Sol-Si</p>
-
-          <p><strong>Mesure 4 (Do majeur) :</strong></p>
-          <p className="ml-4">MG: Do | MD: Mi-Sol-Do-Mi-Sol-Do-Mi-Sol</p>
-        </div>
-        <p className="mt-4">
-          Remarquez : la main droite garde toujours la même structure d'arpège, mais les notes
-          changent pour suivre l'harmonie.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 2 : Apprendre les mesures 2-4</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li><strong>Mesure 2 :</strong> Apprenez séparément comme vous avez fait pour la mesure 1</li>
-          <li>Main droite seule 10 fois, puis avec main gauche et pédale</li>
-          <li><strong>Mesure 3 :</strong> Même processus, attention au Fa# (touche noire)</li>
-          <li><strong>Mesure 4 :</strong> Retour au Do majeur (comme mesure 1)</li>
-          <li><strong>Enchaînement :</strong> Reliez maintenant les mesures 1-2</li>
-          <li>Point crucial : changez la pédale au début de chaque mesure (pédalage syncopé)</li>
-          <li>Puis enchaînez 1-2-3, puis 1-2-3-4</li>
-          <li>Répétez l'ensemble 5 fois très lentement (60 BPM)</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>Méthodologie d'apprentissage efficace</h2>
-        <p>
-          Cette approche systématique fonctionne pour N'IMPORTE quel morceau :
-        </p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li><strong>Analyse :</strong> Comprendre la structure avant de jouer</li>
-          <li><strong>Décomposition :</strong> Diviser en petites sections (mesure par mesure)</li>
-          <li><strong>Main droite :</strong> Maîtriser chaque section séparément</li>
-          <li><strong>Main gauche :</strong> Idem, jusqu'à automatisme</li>
-          <li><strong>Coordination :</strong> Réunir les mains très lentement</li>
-          <li><strong>Assemblage :</strong> Relier les sections progressivement</li>
-          <li><strong>Perfectionnement :</strong> Travailler les transitions et l'expression</li>
-          <li><strong>Tempo :</strong> Augmenter la vitesse graduellement</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Mesures 5-8 : Développement musical</h2>
-        <p>Continuons avec les 4 dernières mesures de notre version simplifiée :</p>
-        <div className="mt-3 space-y-3">
-          <p><strong>Mesure 5 (La mineur) :</strong></p>
-          <p className="ml-4">MG: La | MD: Do-Mi-La-Do-Mi-La-Do-Mi</p>
-
-          <p><strong>Mesure 6 (Ré mineur) :</strong></p>
-          <p className="ml-4">MG: Ré | MD: Ré-Fa-La-Ré-Fa-La-Ré-Fa</p>
-
-          <p><strong>Mesure 7 (Sol majeur) :</strong></p>
-          <p className="ml-4">MG: Sol | MD: Ré-Sol-Si-Ré-Sol-Si-Ré-Sol</p>
-
-          <p><strong>Mesure 8 (Do majeur - conclusion) :</strong></p>
-          <p className="ml-4">MG: Do | MD: Mi-Sol-Do-Mi-Sol-Do-Mi-Sol (ritardando et diminuendo)</p>
-        </div>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 3 : Compléter le morceau</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Apprenez les mesures 5-8 avec la même méthode que 1-4</li>
-          <li>Une mesure à la fois, ne précipitez rien</li>
-          <li>Quand chaque mesure est solide, commencez les assemblages :</li>
-          <li className="ml-4">Mesures 1-4 ensemble (groupe A)</li>
-          <li className="ml-4">Mesures 5-8 ensemble (groupe B)</li>
-          <li className="ml-4">Enchaînement A+B avec pause entre les deux</li>
-          <li className="ml-4">Enfin, les 8 mesures en continu</li>
-          <li>Objectif : jouer les 8 mesures sans arrêt, même très lentement</li>
-        </ol>
-        <p className="mt-4">
-          Prenez votre temps. Il vaut mieux passer une semaine entière sur ces 8 mesures et
-          les maîtriser que de survoler 20 mesures approximativement.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="warning">
-        <h2>Pièges courants lors de l'apprentissage</h2>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>Aller trop vite :</strong> L'erreur #1. Si vous vous trompez, c'est trop rapide</li>
-          <li><strong>Négliger les mains séparées :</strong> Toujours maîtriser chaque main avant de combiner</li>
-          <li><strong>Pratiquer les erreurs :</strong> Chaque répétition avec erreur renforce la mauvaise habitude</li>
-          <li><strong>Sessions trop longues :</strong> 20 min concentré &gt; 1h distrait</li>
-          <li><strong>Ignorer le métronome :</strong> Il garantit la régularité rythmique</li>
-          <li><strong>Sauter l'analyse :</strong> Comprendre la structure accélère l'apprentissage</li>
-        </ul>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 4 : Travailler la régularité</h2>
-        <p>
-          La beauté de ce Prélude repose sur l'égalité parfaite des notes. Exercice spécifique :
-        </p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Choisissez une mesure (par exemple la mesure 1)</li>
-          <li>Jouez-la 5 fois en accentuant la 1ère note de chaque groupe de 4</li>
-          <li>Jouez-la 5 fois en accentuant la 2ème note de chaque groupe</li>
-          <li>Idem pour la 3ème, puis la 4ème note</li>
-          <li>Enfin, jouez-la 5 fois sans aucun accent (toutes égales)</li>
-        </ol>
-        <p className="mt-4">
-          Cet exercice de déplacement d'accent développe une régularité et un contrôle extraordinaires.
-          Appliquez-le à chaque mesure difficile.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 5 : Perfectionner la pédale</h2>
-        <p>Le pédalage est crucial dans ce Prélude. Raffinons-le :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Jouez les mesures 1-4 en changeant la pédale à chaque mesure (début de chaque basse)</li>
-          <li>Le changement doit être simultané avec la nouvelle basse (pédalage syncopé)</li>
-          <li>Écoutez attentivement : aucun mélange entre les harmonies</li>
-          <li>Expérimentez : que se passe-t-il si vous gardez la pédale trop longtemps ? (boue sonore)</li>
-          <li>Enregistrez-vous et écoutez la clarté harmonique</li>
-        </ol>
-        <p className="mt-4 text-sm opacity-80">
-          Un pédalage imprécis ruinerait ce morceau. Un pédalage parfait crée une nappe harmonique
-          paradisiaque.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 6 : Ajouter l'expression</h2>
-        <p>
-          Une fois les notes et le rythme maîtrisés, travaillons l'expression musicale :
-        </p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li><strong>Nuances globales :</strong> Commencez p (doux), crescendo vers la mesure 4</li>
-          <li><strong>Point culminant :</strong> Mesure 5 ou 6 en mf, puis diminuendo</li>
-          <li><strong>Conclusion :</strong> Mesure 8 en p ou pp, avec ritardando</li>
-          <li><strong>Qualité du son :</strong> Toucher délicat, notes perlées (comme des perles)</li>
-          <li><strong>Caractère :</strong> Serein, méditatif, contemplatif, comme une prière</li>
-          <li>Jouez en imaginant des images : ciel étoilé, cathédrale, lever de soleil...</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock variant="normal">
-        <h2>La mémorisation musicale</h2>
-        <p>
-          Jouer de mémoire (sans partition) est un objectif important. Plusieurs types de mémoire
-          travaillent ensemble :
-        </p>
-        <div className="mt-3 space-y-3">
-          <p><strong>Mémoire musculaire :</strong> Vos doigts "connaissent" le chemin (répétition)</p>
-          <p><strong>Mémoire auditive :</strong> Vous entendez mentalement ce qui vient ensuite</p>
-          <p><strong>Mémoire visuelle :</strong> Vous visualisez la partition ou les touches</p>
-          <p><strong>Mémoire analytique :</strong> Vous comprenez la structure harmonique</p>
-        </div>
-        <p className="mt-4">
-          Plus vous utilisez de types de mémoire, plus la mémorisation est solide.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 7 : Mémoriser le Prélude</h2>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li>Jouez les mesures 1-4 en regardant la partition (ou vos notes)</li>
-          <li>Rejouez-les en regardant ailleurs (seulement si elles sont très sûres)</li>
-          <li>Si vous bloquez, vérifiez la partition et recommencez</li>
-          <li>Répétez jusqu'à jouer 1-4 de mémoire sans hésitation</li>
-          <li>Même processus pour les mesures 5-8</li>
-          <li>Enfin, jouez les 8 mesures complètes de mémoire</li>
-          <li>Testez-vous le lendemain : la mémoire s'est-elle consolidée ?</li>
-        </ol>
-        <p className="mt-4">
-          La vraie mémorisation demande plusieurs sessions sur plusieurs jours. Soyez patient.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 8 : Préparer votre "performance"</h2>
-        <p>
-          Même si vous ne jouez que pour vous-même, préparez une interprétation aboutie :
-        </p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li><strong>Run-through :</strong> Jouez le morceau entier sans arrêt, même avec erreurs</li>
-          <li>Si vous bloquez, improvisez quelque chose et continuez (ne vous arrêtez jamais)</li>
-          <li>Répétez 3-5 "performances" complètes par session</li>
-          <li><strong>Enregistrement :</strong> Enregistrez-vous (téléphone suffit)</li>
-          <li>Écoutez objectivement : tempo, régularité, pédale, expression</li>
-          <li>Identifiez 2-3 points à améliorer</li>
-          <li>Travaillez ces points spécifiquement</li>
-          <li>Enregistrez à nouveau et comparez</li>
-        </ol>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Exercice 9 : Variations pour approfondir</h2>
-        <p>Une fois le morceau maîtrisé, enrichissez-le avec des variations :</p>
-        <ol className="list-decimal list-inside space-y-2 mt-3">
-          <li><strong>Variation dynamique :</strong> Jouez en crescendo continu du début à la fin</li>
-          <li><strong>Variation tempo :</strong> Version molto lento (très lent), puis version plus fluide</li>
-          <li><strong>Variation toucher :</strong> Version staccato léger, puis version legato extrême</li>
-          <li><strong>Variation sans pédale :</strong> Jouez sans pédale pour tester votre legato de doigts</li>
-        </ol>
-        <p className="mt-4">
-          Ces variations développent votre contrôle et votre compréhension profonde du morceau.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>Le plateau d'apprentissage : c'est normal !</h2>
-        <p>
-          Pendant l'apprentissage d'un morceau, vous traverserez des phases :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>Découverte :</strong> Excitation, progrès rapides (jours 1-3)</li>
-          <li><strong>Plateau :</strong> Impression de stagner, frustration (jours 4-7)</li>
-          <li><strong>Percée :</strong> Soudain, tout devient fluide ! (jour 8+)</li>
-          <li><strong>Consolidation :</strong> Le morceau devient solide et expressif</li>
-        </ul>
-        <p className="mt-4">
-          Le plateau est normal et nécessaire. C'est pendant ces moments que votre cerveau
-          consolide les apprentissages. Persistez !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="highlight">
-        <h2>Plan de travail sur 2 semaines</h2>
-        <div className="mt-3 space-y-3">
-          <p><strong>Semaine 1 : Apprentissage technique</strong></p>
-          <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>Jours 1-2 : Mesures 1-2 (mains séparées puis ensemble)</li>
-            <li>Jours 3-4 : Mesures 3-4, puis enchaîner 1-4</li>
-            <li>Jours 5-6 : Mesures 5-6 (mains séparées puis ensemble)</li>
-            <li>Jour 7 : Mesures 7-8, puis enchaîner 5-8</li>
-          </ul>
-          <p className="mt-3"><strong>Semaine 2 : Perfectionnement et interprétation</strong></p>
-          <ul className="list-disc list-inside ml-4 space-y-1">
-            <li>Jours 1-2 : Enchaînement complet 1-8, travail de la régularité</li>
-            <li>Jours 3-4 : Pédalage précis, mémorisation</li>
-            <li>Jours 5-6 : Expression, nuances, caractère musical</li>
-            <li>Jour 7 : Performance finale enregistrée, célébration !</li>
-          </ul>
-        </div>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Au-delà de ce morceau</h2>
-        <p>
-          Une fois ce Prélude maîtrisé, vous pouvez :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li>Apprendre la version complète du Prélude (35 mesures)</li>
-          <li>Explorer d'autres préludes du Clavier bien tempéré</li>
-          <li>Aborder des pièces similaires (Gymnopédies de Satie, Comptine d'Yann Tiersen)</li>
-          <li>Commencer un deuxième morceau complet pendant que vous maintenez celui-ci</li>
-        </ul>
-        <p className="mt-4">
-          La méthodologie que vous avez apprise ici fonctionne pour n'importe quel morceau,
-          quel que soit le niveau. C'est votre méthode pour la vie !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Célébrer votre accomplissement</h2>
-        <p>
-          Terminer un morceau complet est un jalon majeur dans votre parcours de pianiste.
-          Vous n'êtes plus un débutant absolu - vous êtes maintenant un pianiste qui peut
-          apprendre et interpréter de vraies œuvres musicales.
-        </p>
-        <p className="mt-3">
-          <strong>Quelques façons de célébrer :</strong>
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li>Jouez pour votre famille ou vos amis (ou votre chat !)</li>
-          <li>Enregistrez une version "officielle" à conserver</li>
-          <li>Partagez votre accomplissement sur les réseaux sociaux</li>
-          <li>Notez dans un journal votre ressenti sur ce parcours</li>
-          <li>Fixez-vous un nouveau défi musical excitant</li>
-        </ul>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Réflexion sur votre parcours</h2>
-        <p>
-          Prenez un moment pour réfléchir à tout ce que vous avez accompli depuis le Niveau 1 :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li>Vous êtes passé de "trouver le Do central" à jouer Bach</li>
-          <li>Vous maîtrisez la coordination des deux mains</li>
-          <li>Vous lisez les notes sur une partition</li>
-          <li>Vous comprenez les harmonies et les accords</li>
-          <li>Vous utilisez la pédale avec contrôle</li>
-          <li>Vous exprimez des émotions à travers la musique</li>
-        </ul>
-        <p className="mt-4">
-          Cette progression est extraordinaire. Soyez fier de vous !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="highlight">
-        <h2>Et maintenant ? Vers le Niveau 4</h2>
-        <p>
-          Le Niveau 3 vous a donné des bases solides et complètes. Le Niveau 4 (Maîtrise) vous
-          emmènera encore plus loin :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li>Technique avancée : octaves, trilles, passages rapides</li>
-          <li>Répertoire plus ambitieux : Chopin, Debussy, pièces romantiques</li>
-          <li>Improvisation et création musicale</li>
-          <li>Compréhension approfondie de l'harmonie</li>
-          <li>Développement de votre style personnel</li>
-        </ul>
-        <p className="mt-4">
-          Mais avant de vous lancer, consolidez ce niveau. Assurez-vous que tout est fluide,
-          naturel, automatique. Un édifice solide se construit sur des fondations inébranlables.
-        </p>
-      </ContentBlock>
-
-      <ContentBlock>
-        <h2>Message final du Niveau 3</h2>
-        <p>
-          La musique est un voyage sans fin. Chaque morceau appris ouvre la porte à dix autres.
-          Chaque technique maîtrisée révèle de nouvelles possibilités. Vous avez maintenant
-          les outils pour explorer librement le vaste océan du répertoire pianistique.
-        </p>
-        <p className="mt-3">
-          Rappelez-vous toujours pourquoi vous avez commencé : l'amour de la musique, le plaisir
-          de créer de la beauté, la joie de progresser. Gardez cette flamme vivante. Jouez avec
-          votre cœur autant qu'avec vos doigts.
-        </p>
-        <p className="mt-3 font-semibold">
-          Félicitations pour avoir complété le Niveau 3 ! Vous êtes officiellement un pianiste
-          intermédiaire capable d'apprendre et d'interpréter de vraies œuvres musicales.
-          Bravo, et bon courage pour la suite de votre magnifique voyage musical !
-        </p>
-      </ContentBlock>
-
-      <ContentBlock variant="tip">
-        <h2>Pratique continue recommandée</h2>
-        <p>
-          Avant de passer au Niveau 4, maintenez votre niveau 3 pendant 2-4 semaines :
-        </p>
-        <ul className="list-disc list-inside space-y-2 mt-3">
-          <li><strong>Quotidiennement :</strong> Gammes (5 min) + Prélude (10 min) + Nouveau morceau (15 min)</li>
-          <li><strong>Répertoire :</strong> Apprenez 2-3 morceaux supplémentaires de ce niveau</li>
-          <li><strong>Révision :</strong> Rejouez vos anciens morceaux pour ne pas les oublier</li>
-          <li><strong>Lecture :</strong> Déchiffrez régulièrement de nouvelles partitions simples</li>
-          <li><strong>Créativité :</strong> Improvisez, expérimentez, jouez pour le plaisir !</li>
-        </ul>
-        <p className="mt-4">
-          Quand tout cela vous semble naturel et que vous avez soif de nouveaux défis,
-          vous serez prêt pour le Niveau 4 !
-        </p>
-      </ContentBlock>
-    </LessonTemplate>
+      content={content}
+      previousLesson={{
+        title: 'L\'expression musicale',
+        href: '/parcours/niveau-3/lecon-7'
+      }}
+      nextLesson={{
+        title: 'Techniques avancées du rythme',
+        href: '/parcours/niveau-4/lecon-1'
+      }}
+    />
   )
 }
