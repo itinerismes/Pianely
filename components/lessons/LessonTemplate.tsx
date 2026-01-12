@@ -58,13 +58,13 @@ export function LessonTemplate({
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-6">
+    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 py-6">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Back link */}
         <Button
           variant="ghost"
           asChild
-          className="mb-6 hover:bg-purple-50"
+          className="mb-6 hover:bg-purple-50 dark:hover:bg-purple-900/20"
         >
           <Link href={`/parcours/niveau-${levelId}`}>
             <ArrowLeft className="w-4 h-4 mr-2" />

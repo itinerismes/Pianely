@@ -119,13 +119,13 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
 
       {/* Sidebar */}
       <aside className={`
-        fixed left-0 top-0 z-50 h-full w-72 bg-gradient-to-b from-white to-indigo-50 border-r border-indigo-100 transform transition-transform duration-300 ease-in-out shadow-xl
+        fixed left-0 top-0 z-50 h-full w-72 bg-gradient-to-b from-white to-indigo-50 dark:from-gray-950 dark:to-gray-900 border-r border-indigo-100 dark:border-gray-800 transform transition-transform duration-300 ease-in-out shadow-xl
         md:relative md:transform-none
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
           {/* Mobile Close Button */}
-          <div className="flex items-center justify-between p-4 border-b md:hidden">
+          <div className="flex items-center justify-between p-4 border-b dark:border-gray-800 md:hidden">
             <h2 className="font-semibold">Navigation</h2>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <ChevronLeft className="w-5 h-5" />
@@ -146,7 +146,7 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
                   className={`w-full justify-start gap-3 h-10 transition-all duration-200 ${
                     item.active
                       ? 'bg-gradient-to-r from-purple-500 to-blue-600 text-white hover:from-purple-600 hover:to-blue-700 transform scale-105 shadow-lg'
-                      : 'hover:bg-indigo-50 hover:transform hover:scale-105 hover:shadow-md'
+                      : 'hover:bg-indigo-50 dark:hover:bg-gray-800/50 hover:transform hover:scale-105 hover:shadow-md'
                   }`}
                 >
                   {item.icon}
@@ -178,8 +178,8 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
                     onClick={() => handleNiveauClick(niveau)}
                     className={`w-full justify-start gap-3 h-9 text-sm transition-all duration-200 ${
                       isSelected
-                        ? 'bg-indigo-100 border-l-4 border-indigo-500 transform scale-105 shadow-md'
-                        : 'hover:bg-indigo-50 hover:transform hover:scale-102'
+                        ? 'bg-indigo-100 dark:bg-gray-800/50 border-l-4 border-indigo-500 dark:border-indigo-400 transform scale-105 shadow-md'
+                        : 'hover:bg-indigo-50 dark:hover:bg-gray-800/30 hover:transform hover:scale-102'
                     }`}
                   >
                     <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${niveau.color} shadow-sm transition-all duration-200 ${
@@ -194,14 +194,14 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
           </ScrollArea>
 
           {/* Bottom Navigation */}
-          <div className="border-t border-indigo-100 p-3 space-y-1">
+          <div className="border-t border-indigo-100 dark:border-gray-800 p-3 space-y-1">
             <Button
               variant="ghost"
               onClick={handleSettings}
               className={`w-full justify-start gap-3 h-10 transition-all duration-200 ${
                 pathname === '/settings'
-                  ? 'bg-indigo-100 text-indigo-700 font-medium'
-                  : 'hover:bg-indigo-50 hover:text-indigo-600'
+                  ? 'bg-indigo-100 dark:bg-gray-800/50 text-indigo-700 dark:text-indigo-400 font-medium'
+                  : 'hover:bg-indigo-50 dark:hover:bg-gray-800/30 hover:text-indigo-600 dark:hover:text-indigo-400'
               }`}
             >
               <Settings className="w-5 h-5" />
@@ -210,7 +210,7 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
             <Button
               variant="ghost"
               onClick={handleLogout}
-              className="w-full justify-start gap-3 h-10 transition-all duration-200 hover:bg-red-50 hover:text-red-600"
+              className="w-full justify-start gap-3 h-10 transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
             >
               <LogOut className="w-5 h-5" />
               Déconnexion
