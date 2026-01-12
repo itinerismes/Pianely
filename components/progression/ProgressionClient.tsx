@@ -69,7 +69,7 @@ export function ProgressionClient({
 
       {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-gradient-to-br from-white to-purple-50 border-purple-200 shadow-lg">
+        <Card className="bg-gradient-to-br from-white to-purple-50 dark:from-gray-900 dark:to-purple-950/50 border-purple-200 dark:border-purple-800 shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Progression globale
@@ -84,7 +84,7 @@ export function ProgressionClient({
               {stats.totalLessonsCompleted}/{totalLessons} leçons
             </p>
             <div className="mt-3">
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-600 transition-all"
                   style={{ width: `${overallCompletion}%` }}
@@ -94,7 +94,7 @@ export function ProgressionClient({
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-white to-green-50 border-green-200 shadow-lg">
+        <Card className="bg-gradient-to-br from-white to-green-50 dark:from-gray-900 dark:to-green-950/50 border-green-200 dark:border-green-800 shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Temps de pratique
@@ -111,7 +111,7 @@ export function ProgressionClient({
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-white to-orange-50 border-orange-200 shadow-lg">
+        <Card className="bg-gradient-to-br from-white to-orange-50 dark:from-gray-900 dark:to-orange-950/50 border-orange-200 dark:border-orange-800 shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Streak actuel
@@ -130,7 +130,7 @@ export function ProgressionClient({
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-white to-amber-50 border-amber-200 shadow-lg">
+        <Card className="bg-gradient-to-br from-white to-amber-50 dark:from-gray-900 dark:to-amber-950/50 border-amber-200 dark:border-amber-800 shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Succès débloqués
@@ -154,7 +154,7 @@ export function ProgressionClient({
         {/* Left Column - 2 sections */}
         <div className="lg:col-span-2 space-y-6">
           {/* Level Progress */}
-          <Card className="shadow-lg border-2">
+          <Card className="shadow-lg border-2 dark:border-gray-700 dark:bg-gray-900/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-600 text-white">
@@ -175,7 +175,7 @@ export function ProgressionClient({
                     </div>
                     <span className="text-sm font-bold">{level.completion}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
                     <div
                       className={`h-full rounded-full bg-gradient-to-r ${level.color} transition-all duration-500`}
                       style={{ width: `${level.completion}%` }}
@@ -187,7 +187,7 @@ export function ProgressionClient({
           </Card>
 
           {/* Practice History */}
-          <Card className="shadow-lg border-2">
+          <Card className="shadow-lg border-2 dark:border-gray-700 dark:bg-gray-900/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-600 text-white">
@@ -202,7 +202,7 @@ export function ProgressionClient({
                   {practiceStats.slice(0, 10).map((stat, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200"
+                      className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-200 dark:border-blue-800"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white font-semibold text-sm">
@@ -222,7 +222,7 @@ export function ProgressionClient({
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-blue-600">{stat.duration} min</p>
+                        <p className="font-bold text-blue-600 dark:text-blue-400">{stat.duration} min</p>
                       </div>
                     </div>
                   ))}
@@ -242,7 +242,7 @@ export function ProgressionClient({
         {/* Right Column - Sidebar */}
         <div className="space-y-6">
           {/* Streak Calendar */}
-          <Card className="shadow-lg border-2 border-orange-200 bg-gradient-to-br from-white to-orange-50">
+          <Card className="shadow-lg border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-br from-white to-orange-50 dark:from-gray-900 dark:to-orange-950/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-600 text-white">
@@ -266,7 +266,7 @@ export function ProgressionClient({
                         className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${
                           hasActivity > 0
                             ? 'bg-gradient-to-br from-orange-400 to-amber-500 text-white shadow-md'
-                            : 'bg-gray-100 text-gray-400'
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'
                         }`}
                       >
                         {hasActivity > 0 ? '✓' : '-'}
@@ -279,7 +279,7 @@ export function ProgressionClient({
           </Card>
 
           {/* Quick Stats */}
-          <Card className="shadow-lg border-2 border-green-200 bg-gradient-to-br from-white to-green-50">
+          <Card className="shadow-lg border-2 border-green-200 dark:border-green-800 bg-gradient-to-br from-white to-green-50 dark:from-gray-900 dark:to-green-950/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white">
@@ -289,23 +289,23 @@ export function ProgressionClient({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80 dark:bg-gray-800/80">
                 <span className="text-sm text-muted-foreground">Leçons complétées</span>
                 <span className="font-bold">{stats.totalLessonsCompleted}</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80 dark:bg-gray-800/80">
                 <span className="text-sm text-muted-foreground">Niveaux terminés</span>
                 <span className="font-bold">
                   {Object.values(stats.levelsCompletion).filter(c => c === 100).length}/5
                 </span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80 dark:bg-gray-800/80">
                 <span className="text-sm text-muted-foreground">Moyenne par niveau</span>
                 <span className="font-bold">
                   {Math.round(Object.values(stats.levelsCompletion).reduce((a, b) => a + b, 0) / 5)}%
                 </span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80 dark:bg-gray-800/80">
                 <span className="text-sm text-muted-foreground">Sessions cette semaine</span>
                 <span className="font-bold">
                   {stats.recentActivity.reduce((sum, a) => sum + a.sessions, 0)}

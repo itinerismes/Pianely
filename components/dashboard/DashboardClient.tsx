@@ -156,7 +156,7 @@ export function DashboardClient({
           />
 
           {/* Continue Learning */}
-          <Card className="bg-gradient-to-br from-white to-orange-50 border-orange-200 shadow-lg">
+          <Card className="bg-gradient-to-br from-white to-orange-50 dark:from-gray-900 dark:to-orange-950/50 border-orange-200 dark:border-orange-800 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-600 text-white">
@@ -166,7 +166,7 @@ export function DashboardClient({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="p-3 rounded-lg bg-white/80 space-y-2">
+              <div className="p-3 rounded-lg bg-white/80 dark:bg-gray-800/80 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-sm">Niveau 1 - Leçon 1</span>
                   <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-white border-0">
@@ -188,7 +188,7 @@ export function DashboardClient({
           </Card>
 
           {/* Recent Activity */}
-          <Card className="bg-gradient-to-br from-white to-green-50 border-green-200 shadow-lg">
+          <Card className="bg-gradient-to-br from-white to-green-50 dark:from-gray-900 dark:to-green-950/50 border-green-200 dark:border-green-800 shadow-lg">
             <CardHeader>
               <CardTitle>Activité récente 📈</CardTitle>
             </CardHeader>
