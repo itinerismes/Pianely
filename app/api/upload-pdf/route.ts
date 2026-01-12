@@ -8,12 +8,28 @@ import { promisify } from 'util'
 const execAsync = promisify(exec)
 
 export async function POST(request: NextRequest) {
+  // Note: Cette route nécessite Python + Audiveris installés localement ou sur VPS
+  // Elle ne fonctionne PAS sur Vercel (timeouts + pas de Java/Python)
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Vérifier que les services Python sont disponibles (local/VPS uniquement)
+    const scriptPath = path.join(process.cwd(), 'services', 'ocr', 'pdf_to_midi.py')
+    const pythonPath = path.join(process.cwd(), 'services', 'ocr', 'venv', 'bin', 'python')
+
+    try {
+      await fs.access(scriptPath)
+      await fs.access(pythonPath)
+    } catch {
+      return NextResponse.json({
+        error: 'Service non disponible',
+        message: 'La conversion PDF → MIDI nécessite un environnement local ou VPS avec Python et Audiveris installés. Cette fonctionnalité n\'est pas disponible sur Vercel.'
+      }, { status: 503 })
     }
 
     const formData = await request.formData()

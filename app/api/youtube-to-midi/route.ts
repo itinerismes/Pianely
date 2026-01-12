@@ -12,6 +12,8 @@ export const runtime = 'nodejs'
 export const maxDuration = 300 // 5 minutes
 
 export async function POST(request: NextRequest) {
+  // Note: Cette route nécessite Python + FFmpeg + ytdl installés localement ou sur VPS
+  // Elle ne fonctionne PAS sur Vercel (timeouts + pas de binaires)
   let webmPath = ''
   let wavPath = ''
 
@@ -21,6 +23,20 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Vérifier que les services sont disponibles (local/VPS uniquement)
+    const scriptPath = path.join(process.cwd(), 'services', 'transcription', 'transcribe_service.py')
+    const pythonPath = path.join(process.cwd(), 'services', 'transcription', 'venv', 'bin', 'python')
+
+    try {
+      await fs.access(scriptPath)
+      await fs.access(pythonPath)
+    } catch {
+      return NextResponse.json({
+        error: 'Service non disponible',
+        message: 'La conversion YouTube → MIDI nécessite un environnement local ou VPS avec Python, FFmpeg et ytdl installés. Cette fonctionnalité n\'est pas disponible sur Vercel.'
+      }, { status: 503 })
     }
 
     const body = await request.json()

@@ -43,5 +43,14 @@ next-env.d.ts
 
 # Python
 services/transcription/venv/
+services/ocr/venv/
 *.pyc
 __pycache__/
+
+# Audiveris temporary files
+services/ocr/audiveris/
+services/ocr/*.deb
+services/ocr/opt/
+services/ocr/control.tar.*
+services/ocr/data.tar.*
+services/ocr/debian-binary

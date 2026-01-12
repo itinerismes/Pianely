@@ -9,6 +9,8 @@ export const runtime = 'nodejs'
 export const maxDuration = 300 // 5 minutes pour transcription
 
 export async function POST(request: NextRequest) {
+  // Note: Cette route nécessite Python + Basic Pitch installés localement ou sur VPS
+  // Elle ne fonctionne PAS sur Vercel (timeouts + pas de Python)
   let tempPath = ''
 
   try {
@@ -17,6 +19,20 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Vérifier que les services Python sont disponibles (local/VPS uniquement)
+    const scriptPath = path.join(process.cwd(), 'services', 'transcription', 'transcribe_service.py')
+    const pythonPath = path.join(process.cwd(), 'services', 'transcription', 'venv', 'bin', 'python')
+
+    try {
+      await fs.access(scriptPath)
+      await fs.access(pythonPath)
+    } catch {
+      return NextResponse.json({
+        error: 'Service non disponible',
+        message: 'La transcription audio → MIDI nécessite un environnement local ou VPS avec Python et Basic Pitch installés. Cette fonctionnalité n\'est pas disponible sur Vercel.'
+      }, { status: 503 })
     }
 
     // Parser le FormData
