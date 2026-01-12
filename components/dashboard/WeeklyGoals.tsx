@@ -49,7 +49,7 @@ export function WeeklyGoals({ stats }: WeeklyGoalsProps) {
   ];
 
   return (
-    <Card className="bg-gradient-to-br from-white to-indigo-50 border-indigo-200 shadow-lg">
+    <Card className="bg-gradient-to-br from-white to-indigo-50 dark:from-gray-900 dark:to-indigo-950/50 border-indigo-200 dark:border-indigo-800 shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <div className="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
@@ -68,11 +68,11 @@ export function WeeklyGoals({ stats }: WeeklyGoalsProps) {
                 </div>
                 <span className="font-medium text-sm">{goal.title}</span>
               </div>
-              <span className="text-sm font-medium text-gray-600">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 {goal.current}/{goal.target}
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
               <div
                 className={`h-full rounded-full bg-gradient-to-r ${goal.color} transition-all duration-500`}
                 style={{ width: `${goal.progress}%` }}

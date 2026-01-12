@@ -28,7 +28,7 @@ export default async function SettingsPage() {
       </div>
 
       {/* Profile card */}
-      <Card className="bg-gradient-to-br from-white to-indigo-50 border-indigo-200 shadow-lg">
+      <Card className="bg-gradient-to-br from-white to-indigo-50 dark:from-gray-900 dark:to-indigo-950/50 border-indigo-200 dark:border-indigo-800 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
@@ -39,7 +39,7 @@ export default async function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-            <Avatar className="w-16 h-16 ring-2 ring-purple-200">
+            <Avatar className="w-16 h-16 ring-2 ring-purple-200 dark:ring-purple-800">
               <AvatarFallback className="bg-gradient-to-br from-purple-400 to-blue-500 text-white text-lg">
                 {userName.split(' ').map((n: string) => n[0]).join('')}
               </AvatarFallback>
@@ -78,9 +78,9 @@ export default async function SettingsPage() {
       </Card>
 
       {/* Danger zone */}
-      <Card className="border-red-200 shadow-lg">
+      <Card className="border-red-200 dark:border-red-800 shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-red-600">
+          <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
             <div className="p-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-600 text-white">
               <Shield className="h-4 w-4" />
             </div>

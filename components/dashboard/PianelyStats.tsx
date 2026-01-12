@@ -19,12 +19,12 @@ interface StatCardProps {
 function StatCard({ title, value, change, changeType, icon, progress, progressLabel }: StatCardProps) {
   const getCardGradient = (title: string) => {
     const gradients = {
-      'Niveaux complétés': 'bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-200',
-      'Heures de pratique': 'bg-gradient-to-br from-green-50 to-emerald-100 border-green-200',
-      'Leçons terminées': 'bg-gradient-to-br from-yellow-50 to-orange-100 border-yellow-200',
-      'Progression moyenne': 'bg-gradient-to-br from-purple-50 to-pink-100 border-purple-200'
+      'Niveaux complétés': 'bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-900/50 border-blue-200 dark:border-blue-800',
+      'Heures de pratique': 'bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950/50 dark:to-emerald-900/50 border-green-200 dark:border-green-800',
+      'Leçons terminées': 'bg-gradient-to-br from-yellow-50 to-orange-100 dark:from-yellow-950/50 dark:to-orange-900/50 border-yellow-200 dark:border-yellow-800',
+      'Progression moyenne': 'bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-950/50 dark:to-pink-900/50 border-purple-200 dark:border-purple-800'
     };
-    return gradients[title as keyof typeof gradients] || 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200';
+    return gradients[title as keyof typeof gradients] || 'bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 border-gray-200 dark:border-gray-700';
   };
 
   const getIconGradient = (title: string) => {
@@ -64,7 +64,7 @@ function StatCard({ title, value, change, changeType, icon, progress, progressLa
               <span className="text-muted-foreground">{progressLabel}</span>
               <span className="font-medium">{progress}%</span>
             </div>
-            <div className="w-full bg-white/50 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-white/50 dark:bg-gray-800/50 rounded-full h-2 overflow-hidden">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500"
                 style={{ width: `${progress}%` }}

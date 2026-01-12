@@ -42,7 +42,7 @@ export function Achievements({ achievements, totalAchievements, unlockedCount }:
   }
 
   return (
-    <Card className="bg-gradient-to-br from-white to-amber-50 border-amber-200 shadow-lg">
+    <Card className="bg-gradient-to-br from-white to-amber-50 dark:from-gray-900 dark:to-amber-950/50 border-amber-200 dark:border-amber-800 shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <div className="p-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white">
@@ -63,7 +63,7 @@ export function Achievements({ achievements, totalAchievements, unlockedCount }:
               {Math.round((unlockedCount / totalAchievements) * 100)}%
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
             <div
               className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-500"
               style={{ width: `${(unlockedCount / totalAchievements) * 100}%` }}
@@ -78,8 +78,8 @@ export function Achievements({ achievements, totalAchievements, unlockedCount }:
               key={achievement.id}
               className={`aspect-square rounded-xl flex flex-col items-center justify-center p-2 transition-all duration-300 ${
                 achievement.unlocked
-                  ? 'bg-gradient-to-br from-amber-100 to-orange-100 border-2 border-amber-300 shadow-md hover:shadow-lg hover:scale-105'
-                  : 'bg-gray-100 border-2 border-gray-200 opacity-40 grayscale'
+                  ? 'bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/50 dark:to-orange-900/50 border-2 border-amber-300 dark:border-amber-700 shadow-md hover:shadow-lg hover:scale-105'
+                  : 'bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 opacity-40 grayscale'
               }`}
               title={achievement.unlocked ? achievement.title : '???'}
             >
@@ -90,7 +90,7 @@ export function Achievements({ achievements, totalAchievements, unlockedCount }:
                 }
               </span>
               {achievement.unlocked && (
-                <span className="text-[9px] font-medium text-center line-clamp-2 text-amber-800">
+                <span className="text-[9px] font-medium text-center line-clamp-2 text-amber-800 dark:text-amber-200">
                   {achievement.title}
                 </span>
               )}

@@ -54,7 +54,7 @@ export function NiveauCard({
 
   return (
     <Card
-      className={`group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 ${
+      className={`group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 ${
         !unlocked ? 'opacity-75' : ''
       }`}
       onClick={handleClick}
@@ -78,7 +78,7 @@ export function NiveauCard({
 
           {/* Badge */}
           <div className="absolute top-3 left-3">
-            <Badge className="bg-white/90 backdrop-blur-sm text-gray-700 border-0 shadow-lg">
+            <Badge className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-gray-700 dark:text-gray-200 border-0 shadow-lg">
               Niveau {niveau}
             </Badge>
           </div>
