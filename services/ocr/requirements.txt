@@ -1,0 +1,12 @@
+# OCR Musical - Conversion PDF → MusicXML → MIDI
+
+# Music notation processing
+music21>=9.1.0
+
+# PDF processing
+pdf2image>=1.16.0
+Pillow>=10.0.0
+
+# MIDI processing (déjà dans transcription mais on liste ici aussi)
+pretty-midi>=0.2.10
+mido>=1.3.0
