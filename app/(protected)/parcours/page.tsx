@@ -1,97 +1,78 @@
-'use client';
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import { getLevels, getLevelCompletion } from '@/lib/supabase/progress'
+import { ParcoursClient } from '@/components/parcours/ParcoursClient'
 
-import { NiveauCard } from '@/components/parcours/NiveauCard';
-import { Button } from '@/components/ui/button';
-import { Filter } from 'lucide-react';
+export default async function ParcoursPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
-export default function ParcoursPage() {
-  const niveaux = [
-    {
-      niveau: 1,
-      name: 'Niveau 1 - Découverte',
-      description: 'Tes premiers pas au piano',
-      totalLessons: 5,
-      completedLessons: 0,
-      duration: '57 min',
-      unlocked: true,
-      gradient: 'from-green-500 to-emerald-600',
-      href: '/parcours/niveau-1'
-    },
-    {
-      niveau: 2,
-      name: 'Niveau 2 - Initiation',
-      description: 'Développe ta technique de base',
-      totalLessons: 7,
-      completedLessons: 0,
-      duration: '1h 45min',
-      unlocked: false,
-      gradient: 'from-blue-500 to-cyan-600',
-      href: '/parcours/niveau-2'
-    },
-    {
-      niveau: 3,
-      name: 'Niveau 3 - Progression',
-      description: 'Explore des morceaux plus complexes',
-      totalLessons: 8,
-      completedLessons: 0,
-      duration: '2h 10min',
-      unlocked: false,
-      gradient: 'from-purple-500 to-violet-600',
-      href: '/parcours/niveau-3'
-    },
-    {
-      niveau: 4,
-      name: 'Niveau 4 - Maîtrise',
-      description: 'Affine ton jeu et ton style',
-      totalLessons: 10,
-      completedLessons: 0,
-      duration: '2h 45min',
-      unlocked: false,
-      gradient: 'from-orange-500 to-amber-600',
-      href: '/parcours/niveau-4'
-    },
-    {
-      niveau: 5,
-      name: 'Niveau 5 - Expert',
-      description: 'Deviens un virtuoso',
-      totalLessons: 12,
-      completedLessons: 0,
-      duration: '3h 30min',
-      unlocked: false,
-      gradient: 'from-pink-500 to-rose-600',
-      href: '/parcours/niveau-5'
-    },
-  ];
+  if (!user) {
+    redirect('/connexion')
+  }
 
-  return (
-    <div className="space-y-6">
-      {/* Header with decorative blob */}
-      <div className="space-y-2 relative">
-        <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-10 blur-xl decorative-blob" />
+  // Get all levels from Supabase
+  const levels = await getLevels()
 
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent relative z-10">
-          Ton Parcours d'Apprentissage 🎹
-        </h1>
-        <p className="text-muted-foreground relative z-10">
-          5 niveaux pour passer de débutant à virtuose
-        </p>
-      </div>
+  // Calculate completion for each level
+  const levelsWithCompletion = await Promise.all(
+    levels.map(async (level) => {
+      const completion = await getLevelCompletion(user.id, level.id)
 
-      {/* View controls */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Tous les niveaux</h2>
-        <Button variant="outline" size="sm" className="hover:bg-purple-50">
-          <Filter className="w-4 h-4 mr-2" />
-          Filtrer
-        </Button>
-      </div>
+      // Total lessons mapping (hardcoded until lessons are created)
+      const totalLessonsMap: Record<number, number> = {
+        1: 5,
+        2: 7,
+        3: 8,
+        4: 10,
+        5: 12
+      }
 
-      {/* Niveaux Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {niveaux.map((niveau) => (
-          <NiveauCard key={niveau.niveau} {...niveau} />
-        ))}
-      </div>
-    </div>
-  );
+      const totalLessons = totalLessonsMap[level.level_number] || 5
+      const completedLessons = Math.round((completion / 100) * totalLessons)
+
+      // Gradient mapping for each level
+      const gradientMap: Record<number, string> = {
+        1: 'from-green-500 to-emerald-600',
+        2: 'from-blue-500 to-cyan-600',
+        3: 'from-purple-500 to-violet-600',
+        4: 'from-orange-500 to-amber-600',
+        5: 'from-pink-500 to-rose-600'
+      }
+
+      // Duration mapping
+      const durationMap: Record<number, string> = {
+        1: '57 min',
+        2: '1h 45min',
+        3: '2h 10min',
+        4: '2h 45min',
+        5: '3h 30min'
+      }
+
+      // Level 1 is always unlocked, others unlock when previous level is completed
+      let unlocked = level.level_number === 1
+      if (level.level_number > 1) {
+        const previousLevel = levels.find(l => l.level_number === level.level_number - 1)
+        if (previousLevel) {
+          const previousCompletion = await getLevelCompletion(user.id, previousLevel.id)
+          unlocked = previousCompletion === 100
+        }
+      }
+
+      return {
+        niveau: level.level_number,
+        name: `Niveau ${level.level_number} - ${level.title}`,
+        description: level.description || 'Description du niveau',
+        totalLessons,
+        completedLessons,
+        duration: durationMap[level.level_number] || '1h',
+        unlocked,
+        gradient: gradientMap[level.level_number] || 'from-gray-500 to-gray-600',
+        href: `/parcours/niveau-${level.level_number}`,
+        completion
+      }
+    })
+  )
+
+  return <ParcoursClient niveaux={levelsWithCompletion} />
 }

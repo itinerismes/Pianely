@@ -14,6 +14,7 @@ interface NiveauCardProps {
   unlocked: boolean;
   gradient: string;
   href: string;
+  completion: number;
   onClick?: () => void;
 }
 
@@ -27,10 +28,12 @@ export function NiveauCard({
   unlocked,
   gradient,
   href,
+  completion,
   onClick
 }: NiveauCardProps) {
   const router = useRouter();
-  const progress = Math.round((completedLessons / totalLessons) * 100);
+  // Use completion from database instead of calculating locally
+  const progress = completion;
 
   const getProgressColor = (progress: number) => {
     if (progress >= 80) return 'from-green-400 to-emerald-500';
