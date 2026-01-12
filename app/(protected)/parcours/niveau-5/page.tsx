@@ -1,199 +1,102 @@
-import { ArrowLeft, Clock, CheckCircle2, Circle, Lock } from 'lucide-react'
+import { ArrowLeft, Clock, CheckCircle2, Play, Lock } from 'lucide-react'
 import Link from 'next/link'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
-const lessons = Array.from({ length: 12 }, (_, i) => ({
-  id: i + 1,
-  title: 'Bientôt disponible',
-  description: 'Cette leçon sera disponible prochainement',
-  duration: 20,
-  completed: false,
-  unlocked: false,
-  href: `/parcours/niveau-5/lecon-${i + 1}`
-}))
+const lessons = [
+  { id: 1, title: 'Gammes avancées', description: 'Chromatiques, tierces, sixtes, mouvement contraire et octaves', duration: 20, unlocked: true },
+  { id: 2, title: 'Accords complexes et voicings', description: 'Accords de 9ème, 11ème, 13ème et slash chords', duration: 22, unlocked: true },
+  { id: 3, title: 'Polyphonie et contrepoint', description: 'Canons, fugues et style Bach', duration: 24, unlocked: true },
+  { id: 4, title: 'Rythmes avancés et polyrythmies', description: 'Mesures asymétriques, 3:2, 4:3 et swing', duration: 23, unlocked: true },
+  { id: 5, title: 'Technique véloce', description: 'Trilles, ornements, gammes rapides et glissandos', duration: 21, unlocked: true },
+  { id: 6, title: 'Pédales avancées', description: 'Pédale syncopée, una corda et sostenuto', duration: 19, unlocked: true },
+  { id: 7, title: 'Répertoire baroque (Bach)', description: 'BWV 846, Inventions et style baroque', duration: 22, unlocked: true },
+  { id: 8, title: 'Répertoire classique (Mozart, Beethoven)', description: 'K.545, Für Elise et Pathétique', duration: 23, unlocked: true },
+  { id: 9, title: 'Répertoire romantique (Chopin, Liszt)', description: 'Préludes, Nocturnes et Consolations', duration: 24, unlocked: true },
+  { id: 10, title: 'Improvisation et jazz', description: 'Blues, II-V-I, standards et comping', duration: 25, unlocked: true },
+  { id: 11, title: 'Composition et arrangement', description: 'Créer, harmoniser et arranger', duration: 26, unlocked: true },
+  { id: 12, title: 'Préparation concert et carrière', description: 'Récital, mémorisation, trac et carrières musicales', duration: 28, unlocked: true }
+]
 
 export default function Niveau5Page() {
-  const completedCount = lessons.filter((l) => l.completed).length
+  const completedCount = 0
   const totalDuration = lessons.reduce((acc, l) => acc + l.duration, 0)
 
   return (
-    <main className="min-h-screen pt-24 pb-16">
-      <div className="max-w-3xl mx-auto px-6 md:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link
-            href="/parcours"
-            className="group inline-flex items-center gap-2 font-semibold text-sm mb-6 transition-all duration-200"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            <span className="group-hover:text-[var(--text-primary)] transition-colors">Retour au parcours</span>
-          </Link>
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Button variant="ghost" asChild>
+          <Link href="/parcours"><ArrowLeft className="w-4 h-4 mr-2" />Retour au parcours</Link>
+        </Button>
 
-          <div
-            className="backdrop-blur-xl rounded-3xl p-8 border"
-            style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-            }}
-          >
-            <div className="flex items-start gap-6 mb-8">
-              <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
-                style={{
-                  background: 'linear-gradient(135deg, var(--accent-danger) 0%, var(--accent-danger-hover) 100%)',
-                  boxShadow: '0 4px 24px rgba(244, 63, 94, 0.4)'
-                }}
-              >
+        <Card className="bg-gradient-to-br from-white to-rose-50 border-pink-200 shadow-lg">
+          <CardContent className="p-8">
+            <div className="flex items-start gap-6">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-600 flex items-center justify-center shadow-lg flex-shrink-0">
                 <span className="text-3xl font-bold text-white">5</span>
               </div>
               <div className="flex-1">
-                <h1
-                  className="text-3xl md:text-4xl font-bold mb-3"
-                  style={{
-                    color: 'var(--text-primary)',
-                    letterSpacing: '-0.02em'
-                  }}
-                >
-                  Niveau 5 - Virtuosité
-                </h1>
-                <p className="text-lg mb-5" style={{ color: 'var(--text-secondary)' }}>
-                  Atteins l&apos;excellence
-                </p>
-
-                {/* Stats */}
-                <div className="flex items-center gap-8 text-sm flex-wrap">
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-5 h-5" style={{ color: 'var(--accent-danger)' }} />
-                    <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>
-                      {completedCount} / {lessons.length} leçons
-                    </span>
+                <h1 className="text-3xl font-bold mb-2">Niveau 5 - Maîtrise</h1>
+                <p className="text-muted-foreground mb-4">Deviens un virtuose accompli</p>
+                <div className="flex items-center gap-6 text-sm">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-pink-500" />
+                    <span className="font-medium">{completedCount} / {lessons.length} leçons</span>
                   </div>
-                  <div className="flex items-center gap-2.5">
-                    <Clock className="w-5 h-5" style={{ color: 'var(--accent-danger)' }} />
-                    <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>~{totalDuration} min</span>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-pink-500" />
+                    <span className="font-medium">~{totalDuration} min</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Progress bar */}
-            <div>
-              <div className="flex justify-between text-sm mb-3">
-                <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>Progression du niveau</span>
-                <span className="font-bold" style={{ color: 'var(--text-primary)' }}>
-                  {Math.round((completedCount / lessons.length) * 100)}%
-                </span>
+            <div className="mt-6">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-muted-foreground">Progression du niveau</span>
+                <span className="font-medium">{Math.round((completedCount / lessons.length) * 100)}%</span>
               </div>
-              <div
-                className="h-3 rounded-full overflow-hidden backdrop-blur-sm"
-                style={{ background: 'rgba(255, 255, 255, 0.05)' }}
-              >
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    background: 'linear-gradient(90deg, var(--accent-danger) 0%, var(--accent-danger-light) 100%)',
-                    width: `${(completedCount / lessons.length) * 100}%`,
-                    boxShadow: '0 0 16px rgba(244, 63, 94, 0.5)'
-                  }}
-                />
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="h-full rounded-full bg-gradient-to-r from-pink-400 to-rose-500 transition-all" style={{ width: `${(completedCount / lessons.length) * 100}%` }} />
               </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* Coming Soon Message */}
-        <div
-          className="backdrop-blur-xl rounded-3xl p-10 border text-center mb-8"
-          style={{
-            background: 'rgba(244, 63, 94, 0.1)',
-            borderColor: 'rgba(244, 63, 94, 0.3)',
-            boxShadow: '0 8px 32px rgba(244, 63, 94, 0.2)'
-          }}
-        >
-          <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5"
-            style={{
-              background: 'linear-gradient(135deg, var(--accent-danger) 0%, var(--accent-danger-hover) 100%)',
-              boxShadow: '0 4px 24px rgba(244, 63, 94, 0.4)'
-            }}
-          >
-            <Lock className="w-10 h-10 text-white" />
-          </div>
-          <h3 className="text-2xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
-            Niveau 5 en développement
-          </h3>
-          <p className="text-base mb-6" style={{ color: 'var(--text-secondary)' }}>
-            Les leçons du Niveau 5 - Virtuosité seront bientôt disponibles.
-            <br />
-            Continue à pratiquer les niveaux précédents en attendant !
-          </p>
-          <Link
-            href="/parcours/niveau-1"
-            className="inline-flex items-center gap-2 px-8 py-4 text-white font-bold rounded-xl transition-all duration-300 hover:scale-110"
-            style={{
-              background: 'linear-gradient(135deg, var(--accent-danger) 0%, var(--accent-danger-hover) 100%)',
-              boxShadow: '0 4px 24px rgba(244, 63, 94, 0.4)'
-            }}
-          >
-            Retour au Niveau 1
-            <ArrowLeft className="w-5 h-5 rotate-180" />
-          </Link>
-        </div>
-
-        {/* Lessons List (placeholder) */}
-        <div className="flex flex-col gap-5">
+        <div className="grid gap-4 sm:grid-cols-2">
           {lessons.map((lesson) => (
-            <div
-              key={lesson.id}
-              className="backdrop-blur-xl rounded-2xl p-6 border opacity-40"
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)'
-              }}
-            >
-              <div className="flex items-center gap-5">
-                {/* Status Icon */}
-                <div className="flex-shrink-0">
-                  <Circle className="w-7 h-7" style={{ color: 'rgba(255, 255, 255, 0.1)' }} />
-                </div>
-
-                {/* Lesson Info */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-2">
-                    <span className="text-sm font-bold" style={{ color: 'var(--text-tertiary)' }}>
-                      Leçon {lesson.id}
-                    </span>
-                    <div className="flex items-center gap-2 text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
-                      <Clock className="w-4 h-4" />
-                      <span>{lesson.duration} min</span>
+            <Card key={lesson.id} className="group cursor-pointer hover:-translate-y-1 transition-all duration-300 hover:shadow-xl">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-r from-pink-400 to-rose-500 flex-shrink-0">
+                    {lesson.unlocked ? <Play className="w-6 h-6 text-white" /> : <Lock className="w-6 h-6 text-white" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-bold text-muted-foreground">Leçon {lesson.id}</span>
+                      <Badge variant="secondary" className="text-xs">{lesson.duration} min</Badge>
+                    </div>
+                    <h3 className="font-semibold mb-1 line-clamp-1">{lesson.title}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{lesson.description}</p>
+                    <div className="mt-3">
+                      {lesson.unlocked ? (
+                        <Link href={`/parcours/niveau-5/lecon-${lesson.id}`}>
+                          <Button size="sm" className="bg-gradient-to-r from-pink-500 to-rose-600 hover:opacity-90">
+                            Commencer<ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Button size="sm" variant="ghost" disabled><Lock className="w-4 h-4 mr-2" />Verrouillé</Button>
+                      )}
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-                    {lesson.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{lesson.description}</p>
                 </div>
-
-                {/* CTA Button */}
-                <div className="flex-shrink-0">
-                  <button
-                    disabled
-                    className="px-6 py-3 font-bold rounded-xl cursor-not-allowed backdrop-blur-sm"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.03)',
-                      color: 'var(--text-muted)'
-                    }}
-                  >
-                    Bientôt
-                  </button>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
-    </main>
+    </div>
   )
 }
