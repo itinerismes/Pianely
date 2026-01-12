@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getDashboardStats, getLevels, getLevelCompletion } from '@/lib/supabase/progress'
+import { getDashboardStats, getLevels, getLevelCompletion, getAchievements, getUserAchievements } from '@/lib/supabase/progress'
 import { DashboardClient } from '@/components/dashboard/DashboardClient'
 
 export default async function DashboardPage() {
@@ -11,10 +11,12 @@ export default async function DashboardPage() {
     redirect('/connexion')
   }
 
-  // Get all data from Supabase
-  const [stats, levels] = await Promise.all([
+  // Get all data from Supabase in parallel
+  const [stats, levels, allAchievements, userAchievements] = await Promise.all([
     getDashboardStats(user.id),
-    getLevels()
+    getLevels(),
+    getAchievements(),
+    getUserAchievements(user.id)
   ])
 
   // Calculate completion for each level
@@ -77,6 +79,13 @@ export default async function DashboardPage() {
     })
   )
 
+  // Combine achievements with user unlock status
+  const userAchievementIds = new Set(userAchievements.map(ua => ua.achievement_id))
+  const achievementsWithStatus = allAchievements.map(achievement => ({
+    ...achievement,
+    unlocked: userAchievementIds.has(achievement.id)
+  }))
+
   const userName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Utilisateur'
 
   return (
@@ -84,6 +93,9 @@ export default async function DashboardPage() {
       userName={userName}
       stats={stats}
       niveaux={levelsWithCompletion}
+      achievements={achievementsWithStatus}
+      totalAchievements={allAchievements.length}
+      unlockedAchievementsCount={userAchievements.length}
     />
   )
 }

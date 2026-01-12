@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { PianelyStats } from '@/components/dashboard/PianelyStats'
 import { WeeklyGoals } from '@/components/dashboard/WeeklyGoals'
+import { Achievements } from '@/components/dashboard/Achievements'
 import { NiveauCard } from '@/components/parcours/NiveauCard'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -25,13 +26,33 @@ interface NiveauData {
   completion: number
 }
 
+interface Achievement {
+  id: string
+  code: string
+  title: string
+  description: string | null
+  icon_url: string | null
+  category: string | null
+  unlocked: boolean
+}
+
 interface DashboardClientProps {
   userName: string
   stats: DashboardStats
   niveaux: NiveauData[]
+  achievements: Achievement[]
+  totalAchievements: number
+  unlockedAchievementsCount: number
 }
 
-export function DashboardClient({ userName, stats, niveaux }: DashboardClientProps) {
+export function DashboardClient({
+  userName,
+  stats,
+  niveaux,
+  achievements,
+  totalAchievements,
+  unlockedAchievementsCount
+}: DashboardClientProps) {
   const router = useRouter()
   const [selectedTab, setSelectedTab] = useState('all')
 
@@ -126,6 +147,13 @@ export function DashboardClient({ userName, stats, niveaux }: DashboardClientPro
         {/* Sidebar */}
         <div className="space-y-6">
           <WeeklyGoals stats={stats} />
+
+          {/* Achievements */}
+          <Achievements
+            achievements={achievements}
+            totalAchievements={totalAchievements}
+            unlockedCount={unlockedAchievementsCount}
+          />
 
           {/* Continue Learning */}
           <Card className="bg-gradient-to-br from-white to-orange-50 border-orange-200 shadow-lg">
