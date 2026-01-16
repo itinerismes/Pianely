@@ -31,16 +31,13 @@ interface PiecePlayerProps {
 export function PiecePlayer({ piece }: PiecePlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [notes, setNotes] = useState<Note[]>([])
-  const [currentNoteIndex, setCurrentNoteIndex] = useState(0)
   const [highlightedKeys, setHighlightedKeys] = useState<string[]>([])
   const [progress, setProgress] = useState(0)
-  const [currentTime, setCurrentTime] = useState(0) // Temps actuel en secondes
+  const [currentTime, setCurrentTime] = useState(0)
   const [tempo, setTempo] = useState(120)
   const [sampler, setSampler] = useState<Tone.Sampler | null>(null)
   const [loading, setLoading] = useState(false)
-  const playbackRef = useRef<number | null>(null)
   const timeUpdateRef = useRef<number | null>(null)
-  const startTimeRef = useRef<number>(0)
   const totalDuration = useRef<number>(0)
 
   // Charger et parser le MIDI
@@ -112,103 +109,94 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
       if (sampler) {
         sampler.dispose()
       }
-      if (playbackRef.current) {
-        cancelAnimationFrame(playbackRef.current)
+      Tone.Transport.stop()
+      Tone.Transport.cancel()
+      if (timeUpdateRef.current) {
+        cancelAnimationFrame(timeUpdateRef.current)
       }
     }
   }, [])
 
-  // Jouer une note
-  const playNote = (note: Note) => {
-    if (!sampler) return
-
-    try {
-      sampler.triggerAttackRelease(note.name, note.duration)
-
-      // Illuminer la touche
-      setHighlightedKeys([note.name])
-
-      // Retirer après la durée
-      setTimeout(() => {
-        setHighlightedKeys([])
-      }, note.duration * 1000)
-    } catch (err) {
-      console.error('Error playing note:', err)
-    }
-  }
+  // Mettre à jour le tempo du Transport
+  useEffect(() => {
+    Tone.Transport.bpm.value = tempo
+  }, [tempo])
 
   const startPlayback = async () => {
-    if (notes.length === 0) {
-      console.warn('No notes to play')
+    if (notes.length === 0 || !sampler) {
+      console.warn('No notes to play or sampler not ready')
       return
     }
 
     await Tone.start()
+    
+    // Nettoyer les événements précédents
+    Tone.Transport.cancel()
+    
+    // Planifier toutes les notes sur le Transport
+    notes.forEach((note) => {
+      Tone.Transport.schedule((time) => {
+        sampler.triggerAttackRelease(note.name, note.duration, time, note.velocity)
+        
+        // Illuminer la touche (utiliser Tone.Draw pour la synchronisation)
+        Tone.Draw.schedule(() => {
+          setHighlightedKeys([note.name])
+          setTimeout(() => {
+            setHighlightedKeys([])
+          }, note.duration * 1000)
+        }, time)
+      }, note.time)
+    })
+
+    // Planifier l'arrêt automatique à la fin
+    Tone.Transport.schedule(() => {
+      Tone.Transport.stop()
+      setIsPlaying(false)
+      resetPlayback()
+    }, totalDuration.current)
+
+    // Démarrer le transport
+    Tone.Transport.start()
     setIsPlaying(true)
-    startTimeRef.current = Date.now() - (currentTime * 1000) // Reprendre où on était
-
-    // Mettre à jour le temps toutes les 16ms (60fps)
-    const updateTime = () => {
-      const elapsed = (Date.now() - startTimeRef.current) / 1000
+    
+    // Mettre à jour la progression
+    const updateProgress = () => {
+      const elapsed = Tone.Transport.seconds
       setCurrentTime(elapsed)
-
-      // Mise à jour de la progression
+      
       if (totalDuration.current > 0) {
         setProgress((elapsed / totalDuration.current) * 100)
       }
-
-      // Continue si on joue
-      if (elapsed < totalDuration.current) {
-        timeUpdateRef.current = requestAnimationFrame(updateTime)
-      } else {
-        // Fin du morceau
-        setIsPlaying(false)
-        setCurrentTime(0)
-        setCurrentNoteIndex(0)
-        setProgress(0)
+      
+      if (Tone.Transport.state === 'started') {
+        timeUpdateRef.current = requestAnimationFrame(updateProgress)
       }
     }
-
-    // Jouer les notes
-    const playNextNote = () => {
-      if (currentNoteIndex >= notes.length) {
-        return
-      }
-
-      const note = notes[currentNoteIndex]
-      const elapsed = (Date.now() - startTimeRef.current) / 1000
-
-      if (elapsed >= note.time) {
-        playNote(note)
-        setCurrentNoteIndex(prev => prev + 1)
-      }
-
-      if (currentNoteIndex < notes.length) {
-        playbackRef.current = requestAnimationFrame(playNextNote)
-      }
-    }
-
-    updateTime()
-    playNextNote()
+    
+    updateProgress()
   }
 
   const pausePlayback = () => {
+    Tone.Transport.pause()
     setIsPlaying(false)
-    if (playbackRef.current) {
-      cancelAnimationFrame(playbackRef.current)
-    }
     if (timeUpdateRef.current) {
       cancelAnimationFrame(timeUpdateRef.current)
+      timeUpdateRef.current = null
     }
   }
 
   const resetPlayback = () => {
-    pausePlayback()
-    setCurrentNoteIndex(0)
+    Tone.Transport.stop()
+    Tone.Transport.position = 0
+    Tone.Transport.cancel()
+    setIsPlaying(false)
     setProgress(0)
     setCurrentTime(0)
     setHighlightedKeys([])
-    startTimeRef.current = 0
+    if (timeUpdateRef.current) {
+      cancelAnimationFrame(timeUpdateRef.current)
+      timeUpdateRef.current = null
+    }
   }
 
   const handlePlay = () => {
@@ -330,6 +318,7 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
                       max={180}
                       step={1}
                       className="w-full"
+                      disabled={isPlaying}
                     />
                   </div>
                 </div>
