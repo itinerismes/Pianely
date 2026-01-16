@@ -18,6 +18,30 @@ interface Note {
   velocity: number
 }
 
+// Convertir numéro MIDI en nom de note standardisé (C#, pas Db)
+function midiToNoteName(midiNumber: number): string {
+  const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+  const octave = Math.floor(midiNumber / 12) - 1
+  const noteIndex = midiNumber % 12
+  return `${noteNames[noteIndex]}${octave}`
+}
+
+// Normaliser le nom de note (convertir bémols en dièses)
+function normalizeNoteName(name: string): string {
+  // Mapping bémols → dièses
+  const flatToSharp: Record<string, string> = {
+    'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#'
+  }
+
+  // Extraire la note et l'octave
+  const match = name.match(/^([A-G][b#]?)(\d+)$/)
+  if (!match) return name
+
+  const [, notePart, octave] = match
+  const normalizedNote = flatToSharp[notePart] || notePart
+  return `${normalizedNote}${octave}`
+}
+
 interface PiecePlayerProps {
   piece: {
     id: string
@@ -51,13 +75,15 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
         const arrayBuffer = await response.arrayBuffer()
         const midiData = new Midi.Midi(arrayBuffer)
 
-        // Extraire toutes les notes
+        // Extraire toutes les notes avec noms normalisés
         const allNotes: Note[] = []
         for (const track of midiData.tracks) {
           for (const note of track.notes) {
+            // Utiliser midiToNoteName pour un format cohérent (C#, pas Db)
+            const normalizedName = midiToNoteName(note.midi)
             allNotes.push({
               midi: note.midi,
-              name: note.name,
+              name: normalizedName,
               time: note.time,
               duration: note.duration,
               velocity: note.velocity
@@ -75,7 +101,11 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
         }
 
         setNotes(allNotes)
+
+        // Debug: afficher les notes uniques pour vérifier le format
+        const uniqueNotes = [...new Set(allNotes.map(n => n.name))].sort()
         console.log(`🎹 Loaded ${allNotes.length} notes from MIDI (${Math.round(totalDuration.current)}s)`)
+        console.log(`🎹 Unique notes: ${uniqueNotes.join(', ')}`)
         setLoading(false)
       } catch (error) {
         console.error('Error loading MIDI:', error)
