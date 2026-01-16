@@ -339,8 +339,8 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
         <CardContent>
           <Piano
             highlightedKeys={highlightedKeys}
-            startOctave={3}
-            octaves={3}
+            startOctave={1}
+            octaves={5}
           />
         </CardContent>
       </Card>
