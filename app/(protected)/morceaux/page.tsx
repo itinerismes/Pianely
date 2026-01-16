@@ -14,8 +14,9 @@ export default async function MorceauxPage() {
   // Récupérer les morceaux de la bibliothèque utilisateur
   let pieces: any[] = []
   try {
-    pieces = await getUserPieces(user.id)
-  } catch {
+    pieces = await getUserPieces(supabase, user.id)
+  } catch (error) {
+    console.error('Error loading pieces:', error)
     // Si erreur (ex: table n'existe pas encore), retourner array vide
     pieces = []
   }

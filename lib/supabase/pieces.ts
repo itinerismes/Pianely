@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 /**
  * Interface représentant un morceau de piano
@@ -31,9 +31,7 @@ export interface Piece {
  * Récupérer tous les morceaux avec leur status utilisateur
  * Effectue un LEFT JOIN pour inclure les morceaux de la bibliothèque utilisateur
  */
-export async function getPiecesWithUserStatus(userId: string): Promise<Piece[]> {
-  const supabase = await createClient()
-
+export async function getPiecesWithUserStatus(supabase: SupabaseClient, userId: string): Promise<Piece[]> {
   const { data, error } = await supabase
     .from('pieces')
     .select(`
@@ -61,9 +59,7 @@ export async function getPiecesWithUserStatus(userId: string): Promise<Piece[]> 
 /**
  * Récupérer uniquement les morceaux de la bibliothèque utilisateur
  */
-export async function getUserPieces(userId: string): Promise<Piece[]> {
-  const supabase = await createClient()
-
+export async function getUserPieces(supabase: SupabaseClient, userId: string): Promise<Piece[]> {
   const { data, error } = await supabase
     .from('user_pieces')
     .select(`
@@ -90,9 +86,7 @@ export async function getUserPieces(userId: string): Promise<Piece[]> {
 /**
  * Ajouter un morceau à la bibliothèque utilisateur
  */
-export async function addPieceToUserLibrary(userId: string, pieceId: string) {
-  const supabase = await createClient()
-
+export async function addPieceToUserLibrary(supabase: SupabaseClient, userId: string, pieceId: string) {
   const { data, error } = await supabase
     .from('user_pieces')
     .insert({ user_id: userId, piece_id: pieceId })
@@ -105,7 +99,6 @@ export async function addPieceToUserLibrary(userId: string, pieceId: string) {
       console.log('Piece already in user library')
       return null
     }
-    // Error will be thrown
     throw error
   }
 
@@ -115,9 +108,7 @@ export async function addPieceToUserLibrary(userId: string, pieceId: string) {
 /**
  * Retirer un morceau de la bibliothèque utilisateur
  */
-export async function removePieceFromUserLibrary(userId: string, pieceId: string) {
-  const supabase = await createClient()
-
+export async function removePieceFromUserLibrary(supabase: SupabaseClient, userId: string, pieceId: string) {
   const { error } = await supabase
     .from('user_pieces')
     .delete()
@@ -125,7 +116,6 @@ export async function removePieceFromUserLibrary(userId: string, pieceId: string
     .eq('piece_id', pieceId)
 
   if (error) {
-    // Error will be thrown
     throw error
   }
 
@@ -136,14 +126,13 @@ export async function removePieceFromUserLibrary(userId: string, pieceId: string
  * Mettre à jour la progression d'un morceau
  */
 export async function updatePieceProgress(
+  supabase: SupabaseClient,
   userId: string,
   pieceId: string,
   progress: number,
   measuresCompleted?: number,
   timeSpentMinutes?: number
 ) {
-  const supabase = await createClient()
-
   const updateData: any = {
     user_id: userId,
     piece_id: pieceId,
@@ -176,7 +165,6 @@ export async function updatePieceProgress(
     .single()
 
   if (error) {
-    // Error will be thrown
     throw error
   }
 
@@ -201,9 +189,7 @@ export async function updatePieceProgress(
 /**
  * Filtrer les morceaux par niveau
  */
-export async function getPiecesByLevel(level: number, userId: string): Promise<Piece[]> {
-  const supabase = await createClient()
-
+export async function getPiecesByLevel(supabase: SupabaseClient, level: number, userId: string): Promise<Piece[]> {
   const { data, error } = await supabase
     .from('pieces')
     .select(`
@@ -216,7 +202,6 @@ export async function getPiecesByLevel(level: number, userId: string): Promise<P
     .order('composer', { ascending: true })
 
   if (error) {
-    // Error will be thrown
     throw error
   }
 
@@ -230,9 +215,7 @@ export async function getPiecesByLevel(level: number, userId: string): Promise<P
 /**
  * Rechercher des morceaux par titre ou compositeur
  */
-export async function searchPieces(query: string, userId: string): Promise<Piece[]> {
-  const supabase = await createClient()
-
+export async function searchPieces(supabase: SupabaseClient, query: string, userId: string): Promise<Piece[]> {
   const { data, error } = await supabase
     .from('pieces')
     .select(`
@@ -246,7 +229,6 @@ export async function searchPieces(query: string, userId: string): Promise<Piece
     .order('composer', { ascending: true })
 
   if (error) {
-    // Error will be thrown
     throw error
   }
 
@@ -260,22 +242,7 @@ export async function searchPieces(query: string, userId: string): Promise<Piece
 /**
  * Récupérer un morceau par ID
  */
-export async function getPieceById(pieceId: string, userId?: string): Promise<Piece | null> {
-  const supabase = await createClient()
-
-  let query = supabase
-    .from('pieces')
-    .select(`
-      *,
-      user_pieces!left(status),
-      piece_progress!left(progress, last_practiced_at, time_spent_minutes)
-    `)
-    .eq('id', pieceId)
-
-  if (userId) {
-    query = query.eq('user_pieces.user_id', userId)
-  }
-
+export async function getPieceById(supabase: SupabaseClient, pieceId: string, userId?: string): Promise<Piece | null> {
   const { data, error } = await supabase
     .from('pieces')
     .select('*')
@@ -283,7 +250,6 @@ export async function getPieceById(pieceId: string, userId?: string): Promise<Pi
     .single()
 
   if (error) {
-    // Error will be thrown
     return null
   }
 
@@ -293,9 +259,7 @@ export async function getPieceById(pieceId: string, userId?: string): Promise<Pi
 /**
  * Créer un nouveau morceau (upload utilisateur, IMSLP, etc.)
  */
-export async function createPiece(pieceData: Omit<Piece, 'id' | 'created_at' | 'updated_at'>) {
-  const supabase = await createClient()
-
+export async function createPiece(supabase: SupabaseClient, pieceData: Omit<Piece, 'id' | 'created_at' | 'updated_at'>) {
   const { data, error } = await supabase
     .from('pieces')
     .insert(pieceData)
@@ -303,7 +267,6 @@ export async function createPiece(pieceData: Omit<Piece, 'id' | 'created_at' | '
     .single()
 
   if (error) {
-    // Error will be thrown
     throw error
   }
 
@@ -313,9 +276,7 @@ export async function createPiece(pieceData: Omit<Piece, 'id' | 'created_at' | '
 /**
  * Récupérer les statistiques de progression utilisateur sur les morceaux
  */
-export async function getPieceStats(userId: string) {
-  const supabase = await createClient()
-
+export async function getPieceStats(supabase: SupabaseClient, userId: string) {
   // Nombre total de morceaux dans la bibliothèque
   const { count: totalPieces } = await supabase
     .from('user_pieces')
