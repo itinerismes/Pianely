@@ -9,8 +9,11 @@ import { ArrowLeft } from 'lucide-react'
 export default async function PiecePage({
   params
 }: {
-  params: { pieceId: string }
+  params: Promise<{ pieceId: string }> // CHANGEMENT : params est une Promise
 }) {
+  // CHANGEMENT : await params avant de l'utiliser
+  const { pieceId } = await params
+  
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -18,8 +21,8 @@ export default async function PiecePage({
     redirect('/connexion')
   }
 
-  // Récupérer le morceau - CORRECTION : passer supabase en premier paramètre
-  const piece = await getPieceById(supabase, params.pieceId, user.id)
+  // Utiliser pieceId au lieu de params.pieceId
+  const piece = await getPieceById(supabase, pieceId, user.id)
 
   if (!piece) {
     redirect('/morceaux')
