@@ -152,6 +152,23 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     Tone.Transport.bpm.value = tempo
   }, [tempo])
 
+  // Calculer les touches illuminées basées sur le temps actuel
+  useEffect(() => {
+    if (!isPlaying || notes.length === 0) {
+      return
+    }
+
+    // Trouver toutes les notes actuellement actives
+    const activeNotes = notes.filter(note => {
+      const noteStart = note.time
+      const noteEnd = note.time + note.duration
+      return currentTime >= noteStart && currentTime < noteEnd
+    })
+
+    const activeNoteNames = activeNotes.map(n => n.name)
+    setHighlightedKeys(activeNoteNames)
+  }, [currentTime, notes, isPlaying])
+
   const startPlayback = async () => {
     if (notes.length === 0 || !sampler) {
       console.warn('No notes to play or sampler not ready')
@@ -159,29 +176,14 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     }
 
     await Tone.start()
-    
+
     // Nettoyer les événements précédents
     Tone.Transport.cancel()
-    
-    // Planifier toutes les notes sur le Transport
+
+    // Planifier toutes les notes sur le Transport (audio seulement)
     notes.forEach((note) => {
       Tone.Transport.schedule((time) => {
         sampler.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-        
-        // Ajouter la note aux notes actives
-        Tone.Draw.schedule(() => {
-          setHighlightedKeys(prev => {
-            if (!prev.includes(note.name)) {
-              return [...prev, note.name]
-            }
-            return prev
-          })
-        }, time)
-        
-        // Retirer la note après sa durée
-        Tone.Draw.schedule(() => {
-          setHighlightedKeys(prev => prev.filter(k => k !== note.name))
-        }, time + note.duration)
       }, note.time)
     })
 
@@ -195,21 +197,21 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     // Démarrer le transport
     Tone.Transport.start()
     setIsPlaying(true)
-    
-    // Mettre à jour la progression
+
+    // Mettre à jour la progression et le temps actuel
     const updateProgress = () => {
       const elapsed = Tone.Transport.seconds
       setCurrentTime(elapsed)
-      
+
       if (totalDuration.current > 0) {
         setProgress((elapsed / totalDuration.current) * 100)
       }
-      
+
       if (Tone.Transport.state === 'started') {
         timeUpdateRef.current = requestAnimationFrame(updateProgress)
       }
     }
-    
+
     updateProgress()
   }
 
