@@ -153,19 +153,34 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
   }, [tempo])
 
   // Calculer les touches illuminées basées sur le temps actuel
+  // Utiliser la même logique que FallingNotesVisualizer pour la synchronisation
   useEffect(() => {
     if (!isPlaying || notes.length === 0) {
       return
     }
 
-    // Trouver toutes les notes actuellement actives
+    // Configuration identique au FallingNotesVisualizer
+    const hitLineY = 500
+    const noteSpeed = 166.67 // pixels par seconde
+
+    // Trouver toutes les notes "actives" (proches de la ligne de frappe)
     const activeNotes = notes.filter(note => {
-      const noteStart = note.time
-      const noteEnd = note.time + note.duration
-      return currentTime >= noteStart && currentTime < noteEnd
+      // Calculer la position Y de la note (même formule que FallingNotesVisualizer)
+      const timeDiff = note.time - currentTime
+      const noteY = hitLineY - (timeDiff * noteSpeed)
+
+      // Une note est active si elle est proche de la ligne de frappe (même seuil que le visualiseur)
+      const distanceFromHitLine = Math.abs(noteY - hitLineY)
+      return distanceFromHitLine < 50
     })
 
-    const activeNoteNames = activeNotes.map(n => n.name)
+    const activeNoteNames = [...new Set(activeNotes.map(n => n.name))]
+
+    // Debug logging
+    if (activeNoteNames.length > 0) {
+      console.log(`🎹 Active notes at ${currentTime.toFixed(2)}s:`, activeNoteNames.join(', '))
+    }
+
     setHighlightedKeys(activeNoteNames)
   }, [currentTime, notes, isPlaying])
 
