@@ -138,13 +138,20 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
       Tone.Transport.schedule((time) => {
         sampler.triggerAttackRelease(note.name, note.duration, time, note.velocity)
         
-        // Illuminer la touche (utiliser Tone.Draw pour la synchronisation)
+        // Ajouter la note aux notes actives
         Tone.Draw.schedule(() => {
-          setHighlightedKeys([note.name])
-          setTimeout(() => {
-            setHighlightedKeys([])
-          }, note.duration * 1000)
+          setHighlightedKeys(prev => {
+            if (!prev.includes(note.name)) {
+              return [...prev, note.name]
+            }
+            return prev
+          })
         }, time)
+        
+        // Retirer la note après sa durée
+        Tone.Draw.schedule(() => {
+          setHighlightedKeys(prev => prev.filter(k => k !== note.name))
+        }, time + note.duration)
       }, note.time)
     })
 
