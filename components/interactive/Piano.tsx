@@ -110,14 +110,21 @@ export function Piano({
 
   const isKeyHighlighted = (note: string) => {
     // Check highlightedKeys (full note like "C4")
-    if (highlightedKeys.includes(note)) return true
-    
+    const isHighlighted = highlightedKeys.includes(note)
+
     // Check highlightedNotes (note without octave like "C")
     const noteWithoutOctave = note.replace(/[0-9]/g, '')
-    if (highlightedNotes.includes(noteWithoutOctave)) return true
-    
-    return false
+    const isNoteHighlighted = highlightedNotes.includes(noteWithoutOctave)
+
+    return isHighlighted || isNoteHighlighted
   }
+
+  // Debug: log when highlightedKeys changes
+  useEffect(() => {
+    if (highlightedKeys.length > 0) {
+      console.log('🎹 Piano received highlightedKeys:', highlightedKeys)
+    }
+  }, [highlightedKeys])
 
   const isKeyActive = (note: string) => {
     return activeKeys.has(note)
