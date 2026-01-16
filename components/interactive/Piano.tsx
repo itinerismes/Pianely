@@ -123,8 +123,18 @@ export function Piano({
   useEffect(() => {
     if (highlightedKeys.length > 0) {
       console.log('🎹 Piano received highlightedKeys:', highlightedKeys)
+      // Vérifier quelles touches existent dans le piano
+      const pianoKeys = keys.map(k => k.note)
+      const matchingKeys = highlightedKeys.filter(k => pianoKeys.includes(k))
+      const missingKeys = highlightedKeys.filter(k => !pianoKeys.includes(k))
+      if (matchingKeys.length > 0) {
+        console.log('🎹 Matching keys on piano:', matchingKeys)
+      }
+      if (missingKeys.length > 0) {
+        console.log('⚠️ Keys NOT on piano (out of range):', missingKeys)
+      }
     }
-  }, [highlightedKeys])
+  }, [highlightedKeys, keys])
 
   const isKeyActive = (note: string) => {
     return activeKeys.has(note)
@@ -142,11 +152,13 @@ export function Piano({
         zIndex: 10,
         marginLeft: '-15px',
         marginRight: '-15px',
-        border: '1px solid #000',
+        border: isHighlighted ? '3px solid #fbbf24' : '1px solid #000', // Yellow border when highlighted
         borderRadius: '0 0 3px 3px',
         cursor: 'pointer',
         transition: 'all 0.1s ease',
-        boxShadow: isActive ? '0 4px 8px rgba(0,0,0,0.4)' : '0 2px 4px rgba(0,0,0,0.3)',
+        boxShadow: isHighlighted
+          ? '0 0 15px 5px rgba(251, 191, 36, 0.6)'  // Glow effect
+          : (isActive ? '0 4px 8px rgba(0,0,0,0.4)' : '0 2px 4px rgba(0,0,0,0.3)'),
         transform: isActive ? 'translateY(2px)' : 'translateY(0)',
       }
     } else {
@@ -154,11 +166,13 @@ export function Piano({
         width: '45px',
         height: '180px',
         backgroundColor: isActive ? '#86efac' : (isHighlighted ? '#a78bfa' : '#ffffff'),
-        border: '1px solid #d1d5db',
+        border: isHighlighted ? '3px solid #8b5cf6' : '1px solid #d1d5db', // Purple border when highlighted
         borderRadius: '0 0 3px 3px',
         cursor: 'pointer',
         transition: 'all 0.1s ease',
-        boxShadow: isActive ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)',
+        boxShadow: isHighlighted
+          ? '0 0 15px 5px rgba(139, 92, 246, 0.5)'  // Glow effect
+          : (isActive ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)'),
         transform: isActive ? 'translateY(2px)' : 'translateY(0)',
       }
     }
