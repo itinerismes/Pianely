@@ -36,8 +36,7 @@ export async function getPiecesWithUserStatus(supabase: SupabaseClient, userId: 
     .from('pieces')
     .select(`
       *,
-      user_pieces!left(status, added_at),
-      piece_progress!left(progress, last_practiced_at)
+      user_pieces!left(status, added_at)
     `)
     .eq('user_pieces.user_id', userId)
     .order('composer', { ascending: true })
@@ -46,14 +45,32 @@ export async function getPiecesWithUserStatus(supabase: SupabaseClient, userId: 
     throw error
   }
 
+  // Récupérer la progression séparément
+  const pieceIds = (data || []).map(item => item.id)
+  let progressData: any[] = []
+  
+  if (pieceIds.length > 0) {
+    const { data: progress } = await supabase
+      .from('piece_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .in('piece_id', pieceIds)
+    
+    progressData = progress || []
+  }
+
   // Flatten la structure des données
-  return (data || []).map((item: any) => ({
-    ...item,
-    status: item.user_pieces?.[0]?.status || 'not_started',
-    added_at: item.user_pieces?.[0]?.added_at,
-    progress: item.piece_progress?.[0]?.progress || 0,
-    last_practiced_at: item.piece_progress?.[0]?.last_practiced_at,
-  }))
+  return (data || []).map((item: any) => {
+    const progress = progressData.find(p => p.piece_id === item.id)
+    
+    return {
+      ...item,
+      status: item.user_pieces?.[0]?.status || 'not_started',
+      added_at: item.user_pieces?.[0]?.added_at,
+      progress: progress?.progress || 0,
+      last_practiced_at: progress?.last_practiced_at,
+    }
+  })
 }
 
 /**
@@ -64,8 +81,7 @@ export async function getUserPieces(supabase: SupabaseClient, userId: string): P
     .from('user_pieces')
     .select(`
       *,
-      pieces(*),
-      piece_progress(progress, last_practiced_at)
+      pieces(*)
     `)
     .eq('user_id', userId)
     .order('added_at', { ascending: false })
@@ -74,13 +90,31 @@ export async function getUserPieces(supabase: SupabaseClient, userId: string): P
     throw error
   }
 
-  return (data || []).map((item: any) => ({
-    ...item.pieces,
-    status: item.status,
-    added_at: item.added_at,
-    progress: item.piece_progress?.[0]?.progress || 0,
-    last_practiced_at: item.piece_progress?.[0]?.last_practiced_at,
-  }))
+  // Récupérer la progression séparément
+  const pieceIds = (data || []).map(item => item.piece_id)
+  let progressData: any[] = []
+  
+  if (pieceIds.length > 0) {
+    const { data: progress } = await supabase
+      .from('piece_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .in('piece_id', pieceIds)
+    
+    progressData = progress || []
+  }
+
+  return (data || []).map((item: any) => {
+    const progress = progressData.find(p => p.piece_id === item.piece_id)
+    
+    return {
+      ...item.pieces,
+      status: item.status,
+      added_at: item.added_at,
+      progress: progress?.progress || 0,
+      last_practiced_at: progress?.last_practiced_at,
+    }
+  })
 }
 
 /**
@@ -194,8 +228,7 @@ export async function getPiecesByLevel(supabase: SupabaseClient, level: number, 
     .from('pieces')
     .select(`
       *,
-      user_pieces!left(status),
-      piece_progress!left(progress)
+      user_pieces!left(status)
     `)
     .eq('level', level)
     .eq('user_pieces.user_id', userId)
@@ -205,11 +238,29 @@ export async function getPiecesByLevel(supabase: SupabaseClient, level: number, 
     throw error
   }
 
-  return (data || []).map((item: any) => ({
-    ...item,
-    status: item.user_pieces?.[0]?.status || 'not_started',
-    progress: item.piece_progress?.[0]?.progress || 0,
-  }))
+  // Récupérer la progression séparément
+  const pieceIds = (data || []).map(item => item.id)
+  let progressData: any[] = []
+  
+  if (pieceIds.length > 0) {
+    const { data: progress } = await supabase
+      .from('piece_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .in('piece_id', pieceIds)
+    
+    progressData = progress || []
+  }
+
+  return (data || []).map((item: any) => {
+    const progress = progressData.find(p => p.piece_id === item.id)
+    
+    return {
+      ...item,
+      status: item.user_pieces?.[0]?.status || 'not_started',
+      progress: progress?.progress || 0,
+    }
+  })
 }
 
 /**
@@ -220,8 +271,7 @@ export async function searchPieces(supabase: SupabaseClient, query: string, user
     .from('pieces')
     .select(`
       *,
-      user_pieces!left(status),
-      piece_progress!left(progress)
+      user_pieces!left(status)
     `)
     .or(`title.ilike.%${query}%,composer.ilike.%${query}%`)
     .eq('user_pieces.user_id', userId)
@@ -232,11 +282,29 @@ export async function searchPieces(supabase: SupabaseClient, query: string, user
     throw error
   }
 
-  return (data || []).map((item: any) => ({
-    ...item,
-    status: item.user_pieces?.[0]?.status || 'not_started',
-    progress: item.piece_progress?.[0]?.progress || 0,
-  }))
+  // Récupérer la progression séparément
+  const pieceIds = (data || []).map(item => item.id)
+  let progressData: any[] = []
+  
+  if (pieceIds.length > 0) {
+    const { data: progress } = await supabase
+      .from('piece_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .in('piece_id', pieceIds)
+    
+    progressData = progress || []
+  }
+
+  return (data || []).map((item: any) => {
+    const progress = progressData.find(p => p.piece_id === item.id)
+    
+    return {
+      ...item,
+      status: item.user_pieces?.[0]?.status || 'not_started',
+      progress: progress?.progress || 0,
+    }
+  })
 }
 
 /**
