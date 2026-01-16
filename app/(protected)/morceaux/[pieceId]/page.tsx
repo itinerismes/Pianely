@@ -18,8 +18,8 @@ export default async function PiecePage({
     redirect('/connexion')
   }
 
-  // Récupérer le morceau
-  const piece = await getPieceById(params.pieceId, user.id)
+  // Récupérer le morceau - CORRECTION : passer supabase en premier paramètre
+  const piece = await getPieceById(supabase, params.pieceId, user.id)
 
   if (!piece) {
     redirect('/morceaux')
