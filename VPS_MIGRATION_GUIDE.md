@@ -10,6 +10,7 @@
 - ✅ Compte Hetzner/Contabo/DigitalOcean créé
 - ✅ Nom de domaine (optionnel mais recommandé)
 - ✅ Clés Supabase production prêtes
+- ✅ Bucket `sheet-music` créé dans Supabase Storage
 
 ---
 
@@ -43,491 +44,371 @@
 
 ---
 
-## Étape 2 : Configuration DNS (Si domaine)
-
-```
-Si tu as un domaine (ex: pianely.com) :
-
-1. Chez ton registrar (Namecheap, OVH, etc.)
-2. Ajoute un record A :
-   - Type : A
-   - Name : @ (ou app)
-   - Value : IP_DU_VPS
-   - TTL : 300
-
-3. Attends 5-10 minutes (propagation DNS)
-```
-
----
-
-## Étape 3 : Connexion SSH
+## Étape 2 : Connexion SSH
 
 ```bash
 # Depuis ton terminal local
 ssh root@XXX.XXX.XXX.XXX
 
 # Première connexion : accepte la fingerprint
-# Connecté ✅
 ```
 
 ---
 
-## Étape 4 : Installation Automatique
-
-### Script d'Installation Complet
-
-Je vais créer ce script pour toi. Il installe :
-- Docker & Docker Compose
-- Nginx (reverse proxy)
-- SSL Let's Encrypt (HTTPS)
-- Firewall
-- Auto-restart
-- Monitoring
+## Étape 3 : Installation des Dépendances Système
 
 ```bash
-# Sur le VPS, lance :
-curl -fsSL https://raw.githubusercontent.com/ton-repo/pianely/main/vps-setup.sh | bash
-```
-
-**Ou installation manuelle** (voir section suivante)
-
----
-
-## Étape 5 : Installation Manuelle (Alternative)
-
-```bash
-# Sur le VPS
-
-# 1. Update système
+# Mise à jour du système
 apt update && apt upgrade -y
 
-# 2. Install Docker
-curl -fsSL https://get.docker.com | sh
-systemctl enable docker
-systemctl start docker
+# Installer les outils de base
+apt install -y curl wget git unzip zip build-essential
 
-# 3. Install Docker Compose
-apt install docker-compose -y
+# Installer Node.js 20 LTS
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
 
-# 4. Install Git
-apt install git -y
-
-# 5. Clone le repo
-cd /opt
-git clone https://github.com/ton-repo/pianely.git
-cd pianely
-
-# 6. Configure .env
-cp .env.example .env.production
-nano .env.production
-
-# Édite avec tes vraies clés :
-NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbG...
-NODE_ENV=production
-
-# 7. Build et lance
-docker-compose -f docker-compose.prod.yml up -d --build
-
-# 8. Vérifie que ça tourne
-docker-compose ps
-# Doit afficher : pianely_app ... Up
+# Vérifier
+node -v  # v20.x.x
+npm -v   # 10.x.x
 ```
 
 ---
 
-## Étape 6 : Configuration Nginx + SSL
+## Étape 4 : Installation Java 25
 
 ```bash
-# 1. Install Nginx
-apt install nginx certbot python3-certbot-nginx -y
+# Ajouter le PPA pour Java 25
+apt install -y openjdk-25-jre
 
-# 2. Configure Nginx
-nano /etc/nginx/sites-available/pianely
+# Ou si non disponible, installer manuellement
+# wget https://download.java.net/java/GA/jdk25/...
+# tar -xzf openjdk-25_linux-x64_bin.tar.gz
+# mv jdk-25 /opt/
+# export JAVA_HOME=/opt/jdk-25
+# export PATH=$JAVA_HOME/bin:$PATH
 
-# Copie cette config :
+# Vérifier
+java -version  # openjdk version "25.x.x"
+```
+
+---
+
+## Étape 5 : Installation Python et Dépendances OCR
+
+```bash
+# Installer Python 3.11+
+apt install -y python3 python3-pip python3-venv
+
+# Installer Tesseract OCR
+apt install -y tesseract-ocr tesseract-ocr-eng tesseract-ocr-fra libtesseract-dev libleptonica-dev
+
+# Télécharger les fichiers traineddata LEGACY (obligatoire pour Audiveris)
+cd /usr/share/tesseract-ocr/5/tessdata/
+wget https://github.com/tesseract-ocr/tessdata/raw/main/eng.traineddata -O eng.traineddata
+wget https://github.com/tesseract-ocr/tessdata/raw/main/fra.traineddata -O fra.traineddata
+
+# Vérifier
+python3 --version  # Python 3.11+
+tesseract --version  # tesseract 5.x.x
+```
+
+---
+
+## Étape 6 : Cloner et Configurer l'Application
+
+```bash
+# Créer le dossier application
+mkdir -p /var/www
+cd /var/www
+
+# Cloner le repo
+git clone https://github.com/ton-username/pianely.git
+cd pianely
+
+# Installer les dépendances Node.js
+npm install
+
+# Créer le fichier .env
+cat > .env.local << 'EOF'
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
+SUPABASE_SERVICE_ROLE_KEY=xxx
+EOF
+
+# Éditer avec tes vraies clés
+nano .env.local
+```
+
+---
+
+## Étape 7 : Installation du Service OCR (Audiveris 5.6.2)
+
+```bash
+cd /var/www/pianely/services/ocr
+
+# Créer l'environnement Python
+python3 -m venv venv
+source venv/bin/activate
+
+# Installer les dépendances Python
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+
+# Télécharger Audiveris 5.6.2
+mkdir -p audiveris
+cd audiveris
+
+# Télécharger le package .deb
+wget "https://github.com/Audiveris/audiveris/releases/download/5.6.2/Audiveris-5.6.2-ubuntu22.04-x86_64.deb" -O audiveris.deb
+
+# Extraire le contenu
+ar x audiveris.deb
+tar -xf data.tar.zst
+
+# Copier les fichiers nécessaires
+cp -r opt/audiveris/lib/app/* .
+
+# Extraire le dossier res/ du JAR
+unzip -o audiveris.jar "res/*"
+
+# Nettoyer
+rm -rf opt usr audiveris.deb control.tar.* data.tar.* debian-binary
+
+# Créer le script de lancement
+cat > run-audiveris.sh << 'EOF'
+#!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Configure Tesseract data path
+export TESSDATA_PREFIX="/usr/share/tesseract-ocr/5/tessdata"
+
+# Run Audiveris with all JARs in classpath
+java -cp ".:*" org.audiveris.omr.Main "$@"
+EOF
+
+chmod +x run-audiveris.sh
+
+# Tester Audiveris
+./run-audiveris.sh -help
+# Devrait afficher "Audiveris: 5.6.2:xxx"
+
+cd ..
+deactivate
+```
+
+---
+
+## Étape 8 : Installation du Service Transcription (Basic Pitch)
+
+```bash
+cd /var/www/pianely/services/transcription
+
+# Créer l'environnement Python
+python3 -m venv venv
+source venv/bin/activate
+
+# Installer les dépendances
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+
+# Tester
+python3 -c "import basic_pitch; print('Basic Pitch OK')"
+
+deactivate
+```
+
+---
+
+## Étape 9 : Build et Test
+
+```bash
+cd /var/www/pianely
+
+# Build l'application
+npm run build
+
+# Tester en local
+npm run start
+
+# Dans un autre terminal, tester l'API
+curl http://localhost:3000/api/health
+# Devrait retourner {"status":"ok"}
+```
+
+---
+
+## Étape 10 : Configuration Nginx
+
+```bash
+# Installer Nginx
+apt install -y nginx
+
+# Créer la config
+cat > /etc/nginx/sites-available/pianely << 'EOF'
 server {
     listen 80;
-    server_name pianely.com www.pianely.com;
+    server_name pianely.com www.pianely.com;  # Remplace par ton domaine
 
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
 
-        # Timeouts pour conversions longues
-        proxy_connect_timeout 300s;
-        proxy_send_timeout 300s;
-        proxy_read_timeout 300s;
+        # Timeout pour les longues conversions PDF
+        proxy_read_timeout 600s;
+        proxy_connect_timeout 600s;
+        proxy_send_timeout 600s;
     }
 }
+EOF
 
-# 3. Active la config
+# Activer le site
 ln -s /etc/nginx/sites-available/pianely /etc/nginx/sites-enabled/
-nginx -t  # Test config
-systemctl restart nginx
+rm /etc/nginx/sites-enabled/default
 
-# 4. SSL gratuit avec Let's Encrypt
+# Tester et recharger
+nginx -t
+systemctl reload nginx
+```
+
+---
+
+## Étape 11 : SSL avec Let's Encrypt
+
+```bash
+# Installer Certbot
+apt install -y certbot python3-certbot-nginx
+
+# Obtenir le certificat (remplace par ton domaine)
 certbot --nginx -d pianely.com -d www.pianely.com
 
-# Suit les instructions (email, accepte TOS)
-# SSL configuré automatiquement ✅
+# Renouvellement automatique (déjà configuré par certbot)
+certbot renew --dry-run
 ```
 
 ---
 
-## Étape 7 : Firewall
+## Étape 12 : Service Systemd
 
 ```bash
-# Configure UFW
-ufw allow 22/tcp    # SSH
-ufw allow 80/tcp    # HTTP
-ufw allow 443/tcp   # HTTPS
+# Créer le service
+cat > /etc/systemd/system/pianely.service << 'EOF'
+[Unit]
+Description=Pianely Next.js App
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/pianely
+ExecStart=/usr/bin/npm run start
+Restart=on-failure
+RestartSec=10
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Activer et démarrer
+systemctl daemon-reload
+systemctl enable pianely
+systemctl start pianely
+
+# Vérifier
+systemctl status pianely
+```
+
+---
+
+## Étape 13 : Firewall
+
+```bash
+# Configurer UFW
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow ssh
+ufw allow http
+ufw allow https
 ufw enable
-ufw status
 ```
 
 ---
 
-## Étape 8 : Auto-Restart & Monitoring
+## Étape 14 : Mise à Jour Automatique
 
 ```bash
-# 1. Auto-restart Docker au boot
-systemctl enable docker
+# Script de mise à jour
+cat > /var/www/pianely/update.sh << 'EOF'
+#!/bin/bash
+cd /var/www/pianely
+git pull origin main
+npm install
+npm run build
+systemctl restart pianely
+echo "✅ Mise à jour terminée"
+EOF
 
-# 2. Auto-restart app si crash
-# (Déjà configuré dans docker-compose.yml avec restart: unless-stopped)
-
-# 3. Monitoring simple
-apt install htop -y
-
-# Surveille RAM/CPU :
-htop
-
-# Surveille logs :
-docker-compose logs -f --tail=100
+chmod +x /var/www/pianely/update.sh
 ```
 
 ---
 
-## Étape 9 : CI/CD - Deploy Automatique
-
-### Créer GitHub Action
-
-```yaml
-# .github/workflows/deploy-vps.yml
-
-name: Deploy to VPS
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: root
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd /opt/pianely
-            git pull origin main
-            docker-compose -f docker-compose.prod.yml up -d --build
-```
-
-### Configure les Secrets GitHub
-
-```
-1. GitHub repo → Settings → Secrets → Actions
-2. Ajoute :
-   - VPS_HOST : IP du VPS
-   - VPS_SSH_KEY : Ta clé SSH privée
-
-3. Push sur main → Deploy automatique ! 🚀
-```
-
----
-
-## Étape 10 : Vérification Post-Installation
+## Commandes Utiles
 
 ```bash
-# 1. Vérifie que l'app répond
-curl http://localhost:3000
-# Doit retourner du HTML
+# Voir les logs
+journalctl -u pianely -f
 
-# 2. Vérifie SSL
-curl https://pianely.com
-# Doit retourner du HTML en HTTPS
+# Redémarrer l'application
+systemctl restart pianely
 
-# 3. Test conversion PDF
-# Upload un PDF depuis l'interface web
-# Vérifie les logs :
-docker-compose logs -f pianely_app
+# Mettre à jour
+cd /var/www/pianely && ./update.sh
 
-# 4. Vérifie l'utilisation ressources
-htop
-# RAM utilisée doit être < 3GB
-# CPU < 50% en idle
-```
+# Vérifier l'espace disque
+df -h
 
----
-
-## 📊 Monitoring & Maintenance
-
-### Logs
-
-```bash
-# Voir logs en temps réel
-cd /opt/pianely
-docker-compose logs -f
-
-# Logs des 100 dernières lignes
-docker-compose logs --tail=100
-
-# Logs d'une erreur spécifique
-docker-compose logs | grep ERROR
-```
-
-### Redémarrage
-
-```bash
-# Redémarrer l'app
-docker-compose restart
-
-# Rebuild complet
-docker-compose down
-docker-compose up -d --build
-```
-
-### Nettoyage
-
-```bash
-# Nettoie les images Docker inutilisées
-docker system prune -a
-
-# Libère de l'espace
-```
-
-### Backup Base de Données
-
-```bash
-# Backup Supabase (déjà géré par Supabase)
-# Mais backup des fichiers locaux si besoin
-
-# Backup uploads
-tar -czf backup-uploads-$(date +%Y%m%d).tar.gz /opt/pianely/uploads
-```
-
----
-
-## 🔒 Sécurité
-
-### 1. Change le Port SSH (Optionnel)
-
-```bash
-nano /etc/ssh/sshd_config
-# Change Port 22 → Port 2222
-systemctl restart sshd
-
-# N'oublie pas d'ouvrir le port :
-ufw allow 2222/tcp
-ufw delete allow 22/tcp
-```
-
-### 2. Désactive Root Login
-
-```bash
-# Crée un user non-root d'abord
-adduser pianely
-usermod -aG sudo pianely
-usermod -aG docker pianely
-
-# Puis :
-nano /etc/ssh/sshd_config
-# Change PermitRootLogin yes → no
-systemctl restart sshd
-```
-
-### 3. Fail2Ban (Protection brute-force)
-
-```bash
-apt install fail2ban -y
-systemctl enable fail2ban
-systemctl start fail2ban
-```
-
----
-
-## 💰 Estimation Coûts VPS
-
-### Hetzner CPX21 (Recommandé)
-- **€8.50/mois** (~$9)
-- 3 vCPU, 4GB RAM
-- 80GB SSD
-- 20TB traffic
-- **Handle : 100-200 users/jour**
-
-### Upgrade si Croissance
-
-**200-500 users/jour** :
-- CPX31 : €15.90/mois (4 vCPU, 8GB RAM)
-
-**500-1000 users/jour** :
-- CPX41 : €29.90/mois (8 vCPU, 16GB RAM)
-
-**1000+ users/jour** :
-- Load balancer + 2× CPX21 : ~€40/mois
-- Ou CDN + Cache (Cloudflare gratuit)
-
----
-
-## 🎯 Performance Optimizations
-
-### 1. Redis Cache (Optionnel)
-
-```yaml
-# docker-compose.prod.yml
-services:
-  redis:
-    image: redis:alpine
-    restart: unless-stopped
-
-  pianely:
-    depends_on:
-      - redis
-    environment:
-      - REDIS_URL=redis://redis:6379
-```
-
-### 2. Queue System (Si beaucoup de conversions)
-
-```bash
-# Install Redis + Bull Queue
-npm install bull ioredis
-
-# Gère les conversions en file d'attente
-# Évite surcharge CPU
-```
-
-### 3. CDN (Cloudflare)
-
-```
-1. Ajoute ton domaine sur Cloudflare (gratuit)
-2. Active le proxy (nuage orange)
-3. Cache automatique des assets statiques
-4. Protection DDoS gratuite
-5. SSL automatique
-```
-
----
-
-## 🐛 Troubleshooting Production
-
-### "Connection refused"
-```bash
-# Vérifie que Docker tourne
-docker-compose ps
-
-# Vérifie les logs
-docker-compose logs
-
-# Redémarre
-docker-compose restart
-```
-
-### "Out of Memory"
-```bash
-# Vérifie RAM
+# Vérifier la mémoire
 free -h
-
-# Vérifie processus gourmands
-htop
-
-# Upgrade VPS si nécessaire
-```
-
-### "SSL Certificate Expired"
-```bash
-# Renouvelle (automatique normalement)
-certbot renew
-
-# Force renouvellement
-certbot renew --force-renewal
-```
-
-### "Conversions Lentes"
-```bash
-# Vérifie CPU
-htop
-
-# Limite conversions simultanées dans le code
-# Ou upgrade vers VPS plus puissant
 ```
 
 ---
 
-## 📈 Scaling Strategy
+## Dépannage
 
-### Phase 1 : Single VPS (0-200 users/day)
-- 1× Hetzner CPX21 : €8.50/mois
-- Suffit largement
+### Erreur "Bucket not found"
+- Crée le bucket `sheet-music` dans Supabase Storage
+- Assure-toi qu'il est public
 
-### Phase 2 : Vertical Scaling (200-500 users/day)
-- Upgrade vers CPX31 : €15.90/mois
-- Plus de RAM/CPU
+### Erreur Tesseract "legacy engine"
+- Télécharge les fichiers traineddata depuis GitHub (voir Étape 5)
 
-### Phase 3 : Horizontal Scaling (500+ users/day)
-- Load balancer
-- 2× CPX21 : ~€40/mois
-- Redis cache partagé
+### Timeout conversion PDF
+- Le timeout Nginx est configuré à 600s
+- Vérifie les logs : `journalctl -u pianely -f`
 
-### Phase 4 : Multi-Region (1000+ users/day)
-- VPS EU + VPS US
-- CDN global
-- ~€100/mois
+### Java non trouvé
+- Vérifie : `java -version`
+- Ajoute au PATH si nécessaire
 
 ---
 
-## ✅ Checklist Migration Complète
+## Coûts Estimés
 
-```
-□ VPS créé et accessible via SSH
-□ Docker installé
-□ App déployée (docker-compose up)
-□ Nginx configuré
-□ SSL Let's Encrypt actif (HTTPS)
-□ Firewall configuré (UFW)
-□ DNS pointant vers VPS
-□ CI/CD GitHub Actions configuré
-□ Logs accessibles (docker-compose logs)
-□ Monitoring en place (htop)
-□ Backup strategy définie
-□ Test complet des conversions
-□ Performance acceptable
-□ Domaine accessible publiquement
-```
+| Service | Coût/mois |
+|---------|-----------|
+| VPS Hetzner CPX21 | €8.50 |
+| Domaine (.com) | ~€1 |
+| **Total** | ~**€10/mois** |
 
----
-
-## 🎉 Tu Es En Prod !
-
-**L'app est maintenant accessible à** :
-- https://pianely.com (ou ton domaine)
-- Conversions PDF/Audio/YouTube fonctionnent
-- SSL sécurisé
-- Auto-restart si crash
-- Logs disponibles
-- Deploy automatique sur push
-
-**Coût** : €8.50/mois pour 100-200 users/jour
-
-**Prochaine étape** : Monétisation avec Stripe ! 💰
+Supabase Free Tier : gratuit jusqu'à 500MB de stockage et 50k requêtes/mois.

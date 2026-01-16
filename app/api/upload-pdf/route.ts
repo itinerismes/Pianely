@@ -7,6 +7,10 @@ import { promisify } from 'util'
 
 const execAsync = promisify(exec)
 
+// Configuration pour les longs traitements
+export const runtime = 'nodejs'
+export const maxDuration = 600 // 10 minutes max
+
 export async function POST(request: NextRequest) {
   // Note: Cette route nécessite Python + Audiveris installés localement ou sur VPS
   // Elle ne fonctionne PAS sur Vercel (timeouts + pas de Java/Python)
@@ -77,7 +81,7 @@ export async function POST(request: NextRequest) {
       console.log(`Executing: ${command}`)
 
       const { stdout, stderr } = await execAsync(command, {
-        timeout: 180000 // 3 minutes max (OCR peut être long)
+        timeout: 600000 // 10 minutes max (OCR + transcription + export)
       })
 
       if (stderr && !stderr.includes('warning')) {
