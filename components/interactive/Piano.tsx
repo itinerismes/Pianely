@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import * as Tone from 'tone'
 
 interface PianoProps {
@@ -11,6 +11,7 @@ interface PianoProps {
   octaves?: number
   startOctave?: number
   showLabels?: boolean
+  autoScroll?: boolean // Auto-scroll to highlighted keys
 }
 
 interface PianoKey {
@@ -26,11 +27,14 @@ export function Piano({
   onNotePlay,
   octaves = 2,
   startOctave = 4,
-  showLabels = true
+  showLabels = true,
+  autoScroll = true
 }: PianoProps) {
   const [sampler, setSampler] = useState<Tone.Sampler | null>(null)
   const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set())
   const [isLoaded, setIsLoaded] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const keyRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
   const generateKeys = (): PianoKey[] => {
     const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
@@ -136,6 +140,37 @@ export function Piano({
     }
   }, [highlightedKeys, keys])
 
+  // Auto-scroll to show highlighted keys
+  useEffect(() => {
+    if (!autoScroll || highlightedKeys.length === 0 || !containerRef.current) return
+
+    // Trouver la première touche highlighted qui a une ref
+    const firstHighlightedKey = highlightedKeys.find(key => keyRefs.current.has(key))
+    if (!firstHighlightedKey) return
+
+    const keyElement = keyRefs.current.get(firstHighlightedKey)
+    if (!keyElement) return
+
+    // Calculer le scroll pour centrer la touche
+    const container = containerRef.current
+    const keyRect = keyElement.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
+
+    // Scroll seulement si la touche est hors de la vue
+    const keyLeft = keyElement.offsetLeft
+    const keyCenter = keyLeft + keyElement.offsetWidth / 2
+    const containerCenter = container.scrollLeft + containerRect.width / 2
+
+    // Scroll smoothly vers la touche si elle est trop loin du centre
+    const distance = Math.abs(keyCenter - containerCenter - container.scrollLeft)
+    if (distance > containerRect.width / 3) {
+      container.scrollTo({
+        left: keyCenter - containerRect.width / 2,
+        behavior: 'smooth'
+      })
+    }
+  }, [highlightedKeys, autoScroll])
+
   const isKeyActive = (note: string) => {
     return activeKeys.has(note)
   }
@@ -179,11 +214,14 @@ export function Piano({
   }
 
   return (
-    <div className="w-full overflow-x-auto pb-4">
+    <div ref={containerRef} className="w-full overflow-x-auto pb-4 scroll-smooth">
       <div className="inline-flex items-end relative min-w-max px-4">
         {keys.map((key, index) => (
           <div
             key={`${key.note}-${index}`}
+            ref={(el) => {
+              if (el) keyRefs.current.set(key.note, el)
+            }}
             style={getKeyStyle(key)}
             onClick={() => playNote(key.note)}
             className="relative hover:opacity-80 select-none"
