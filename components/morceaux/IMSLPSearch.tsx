@@ -31,11 +31,10 @@ import {
 import { importIMSLPPieceAction } from '@/app/actions/pieces'
 
 interface IMSLPSearchProps {
-  userId: string
   onPieceAdded?: () => void
 }
 
-export function IMSLPSearch({ userId, onPieceAdded }: IMSLPSearchProps) {
+export function IMSLPSearch({ onPieceAdded }: IMSLPSearchProps) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<IMSLPSearchResult[]>([])
   const [loading, setLoading] = useState(false)
@@ -76,12 +75,11 @@ export function IMSLPSearch({ userId, onPieceAdded }: IMSLPSearchProps) {
       const workInfo = parseIMSLPWorkInfo(selectedWork.title)
       workInfo.pageid = selectedWork.pageid
 
-      // Importer via server action
+      // Importer via server action (userId récupéré depuis la session côté serveur)
       const result = await importIMSLPPieceAction(
         workInfo,
         importLevel,
-        importDifficulty,
-        userId
+        importDifficulty
       )
 
       if (!result.success) {

@@ -40,10 +40,9 @@ interface Piece {
 
 interface MorceauxClientProps {
   pieces: Piece[]
-  userId: string
 }
 
-export function MorceauxClient({ pieces, userId }: MorceauxClientProps) {
+export function MorceauxClient({ pieces }: MorceauxClientProps) {
   const [selectedTab, setSelectedTab] = useState('all')
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
@@ -129,7 +128,7 @@ export function MorceauxClient({ pieces, userId }: MorceauxClientProps) {
             </TabsList>
 
             <TabsContent value="imslp" className="mt-4">
-              <IMSLPSearch userId={userId} onPieceAdded={handlePieceAdded} />
+              <IMSLPSearch onPieceAdded={handlePieceAdded} />
             </TabsContent>
 
             <TabsContent value="pianosnap" className="mt-4">

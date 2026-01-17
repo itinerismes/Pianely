@@ -12,11 +12,17 @@ export async function importIMSLPPieceAction(
   workData: IMSLPWork,
   level: number,
   difficulty: 'easy' | 'medium' | 'hard',
-  userId: string,
   files?: IMSLPFile[]
 ) {
   try {
     const supabase = await createClient()
+
+    // Vérifier l'authentification - récupérer l'utilisateur depuis la session
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return { success: false, error: 'Utilisateur non authentifié' }
+    }
 
     // Préparer les données du morceau
     const pieceData = prepareIMSLPPieceData(workData, level, difficulty, files)
@@ -24,8 +30,8 @@ export async function importIMSLPPieceAction(
     // Créer le morceau dans la base de données
     const piece = await createPiece(supabase, pieceData)
 
-    // Ajouter à la bibliothèque utilisateur
-    await addPieceToUserLibrary(supabase, userId, piece.id)
+    // Ajouter à la bibliothèque utilisateur (utiliser l'ID de la session, pas un paramètre)
+    await addPieceToUserLibrary(supabase, user.id, piece.id)
 
     return { success: true, piece }
   } catch (error) {
