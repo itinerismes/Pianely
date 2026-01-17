@@ -1,5 +1,6 @@
 'use server'
 
+import { createClient } from '@/lib/supabase/server'
 import { createPiece, addPieceToUserLibrary } from '@/lib/supabase/pieces'
 import { prepareIMSLPPieceData } from '@/lib/imslp/client'
 import type { IMSLPWork, IMSLPFile } from '@/lib/imslp/client'
@@ -15,14 +16,16 @@ export async function importIMSLPPieceAction(
   files?: IMSLPFile[]
 ) {
   try {
+    const supabase = await createClient()
+
     // Préparer les données du morceau
     const pieceData = prepareIMSLPPieceData(workData, level, difficulty, files)
 
     // Créer le morceau dans la base de données
-    const piece = await createPiece(pieceData)
+    const piece = await createPiece(supabase, pieceData)
 
     // Ajouter à la bibliothèque utilisateur
-    await addPieceToUserLibrary(userId, piece.id)
+    await addPieceToUserLibrary(supabase, userId, piece.id)
 
     return { success: true, piece }
   } catch (error) {
