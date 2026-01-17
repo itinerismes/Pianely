@@ -8,8 +8,9 @@ import { promisify } from 'util'
 const execAsync = promisify(exec)
 
 // Configuration pour les longs traitements
+// Note: Vercel Hobby plan limite à 300s max, Pro plan permet 900s
 export const runtime = 'nodejs'
-export const maxDuration = 600 // 10 minutes max
+export const maxDuration = 300 // 5 minutes max (limite Vercel Hobby)
 
 export async function POST(request: NextRequest) {
   // Note: Cette route nécessite Python + Audiveris installés localement ou sur VPS
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
       console.log(`Executing: ${command}`)
 
       const { stdout, stderr } = await execAsync(command, {
-        timeout: 600000 // 10 minutes max (OCR + transcription + export)
+        timeout: 300000 // 5 minutes max (limite Vercel Hobby)
       })
 
       if (stderr && !stderr.includes('warning')) {
