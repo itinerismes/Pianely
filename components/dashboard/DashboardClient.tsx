@@ -84,17 +84,20 @@ export function DashboardClient({
   const router = useRouter()
   const position = findCurrentPosition(niveaux)
 
-  const todayLabel = new Date().toLocaleDateString('fr-FR', {
+  // « mercredi 8 juillet » → « Mercredi 8 juillet » (majuscule initiale
+  // seulement : en français le mois reste en minuscule)
+  const rawDate = new Date().toLocaleDateString('fr-FR', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
   })
+  const todayLabel = rawDate.charAt(0).toUpperCase() + rawDate.slice(1)
 
   return (
     <div className="rise-seq mx-auto max-w-5xl space-y-8 py-4 md:space-y-10 md:py-8">
       {/* Salutation */}
       <div>
-        <p className="text-faint mb-2 text-sm font-semibold capitalize">{todayLabel}</p>
+        <p className="text-faint mb-2 text-sm font-semibold">{todayLabel}</p>
         <h1 className="font-display text-4xl tracking-tight text-[#f2efe8] md:text-5xl">
           {greeting()}, <span className="accent-brass">{userName}</span>
         </h1>

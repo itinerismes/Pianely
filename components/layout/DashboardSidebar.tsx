@@ -94,10 +94,10 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar — pleine hauteur, section basse ancrée en bas */}
       <aside className={`
         fixed left-0 top-0 z-50 h-full w-72 bg-[#0e0d12]/95 border-r border-white/[0.08] backdrop-blur-xl transform transition-transform duration-300 ease-in-out
-        md:relative md:transform-none md:bg-transparent md:backdrop-blur-none
+        md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:transform-none md:bg-transparent md:backdrop-blur-none
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
