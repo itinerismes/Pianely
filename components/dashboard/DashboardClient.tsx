@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { PianelyStats } from '@/components/dashboard/PianelyStats'
 import { WeeklyGoals } from '@/components/dashboard/WeeklyGoals'
+import { DailySession } from '@/components/dashboard/DailySession'
 import { Achievements } from '@/components/dashboard/Achievements'
 import { NiveauCard } from '@/components/parcours/NiveauCard'
 import { ArrowRight, Music, Trophy } from 'lucide-react'
@@ -135,6 +136,12 @@ export function DashboardClient({
 
         {/* Sidebar */}
         <div className="space-y-6">
+          <DailySession
+            recentActivity={stats.recentActivity}
+            nextLessonHref="/parcours/niveau-1/lecon-1"
+            nextLessonLabel="Niveau 1 - Leçon 1 : Anatomie du clavier"
+          />
+
           <WeeklyGoals stats={stats} />
 
           <Achievements

@@ -47,6 +47,21 @@ export function LessonTemplate({
 }: LessonTemplateProps) {
   const [completed, setCompleted] = useState(false)
   const [showCompletion, setShowCompletion] = useState(false)
+  const [playedBlocks, setPlayedBlocks] = useState<Set<string>>(new Set())
+
+  // Exercices piano à jouer réellement (au clic ou sur le clavier USB)
+  // avant de pouvoir valider la leçon
+  const pianoExercises = content.filter(
+    (block) =>
+      block.type === 'interactive' &&
+      (block as any).data.component === 'piano' &&
+      ((block as any).data.targetNotes || []).length > 0
+  )
+  const allExercisesPlayed = pianoExercises.every((block) => playedBlocks.has(block.id))
+
+  const handlePianoExerciseComplete = (blockId: string) => {
+    setPlayedBlocks((prev) => new Set(prev).add(blockId))
+  }
 
   const handleComplete = () => {
     setCompleted(true)
@@ -112,23 +127,35 @@ export function LessonTemplate({
         {/* Lesson Content */}
         <div className="mb-8 space-y-6">
           {content.map((block) => (
-            <ContentBlockRenderer key={block.id} block={block} />
+            <ContentBlockRenderer
+              key={block.id}
+              block={block}
+              onPianoComplete={() => handlePianoExerciseComplete(block.id)}
+            />
           ))}
         </div>
 
         {/* Complete Lesson Button */}
         {!completed && (
           <div className="panel mb-6 rounded-2xl p-6 text-center">
-            <CheckCircle2 className="mx-auto mb-3 h-12 w-12 text-[#4ade80]" />
+            <CheckCircle2 className={`mx-auto mb-3 h-12 w-12 ${allExercisesPlayed ? 'text-[#4ade80]' : 'text-faint'}`} />
             <h3 className="mb-2 text-lg font-bold text-[#f2efe8]">
               Leçon terminée ?
             </h3>
-            <p className="text-dim mb-4">
-              Marque cette leçon comme complétée pour débloquer la suite
-            </p>
+            {allExercisesPlayed ? (
+              <p className="text-dim mb-4">
+                Marque cette leçon comme complétée pour débloquer la suite
+              </p>
+            ) : (
+              <p className="text-dim mb-4">
+                🎹 Joue d'abord les exercices au piano ({playedBlocks.size}/{pianoExercises.length} joué{playedBlocks.size > 1 ? 's' : ''}) —
+                sur ton clavier USB ou en cliquant sur les touches
+              </p>
+            )}
             <button
               onClick={handleComplete}
-              className="btn-accent inline-flex items-center rounded-2xl px-8 py-3.5 font-bold"
+              disabled={!allExercisesPlayed}
+              className="btn-accent inline-flex items-center rounded-2xl px-8 py-3.5 font-bold disabled:cursor-not-allowed disabled:opacity-40"
             >
               Marquer comme terminée
             </button>
@@ -189,7 +216,13 @@ export function LessonTemplate({
 }
 
 // Content Block Renderer Component
-function ContentBlockRenderer({ block }: { block: ContentBlock }) {
+function ContentBlockRenderer({
+  block,
+  onPianoComplete
+}: {
+  block: ContentBlock
+  onPianoComplete?: () => void
+}) {
   if (block.type === 'text') {
     const textBlock = block as any
     const variant = (textBlock.data.variant || 'normal') as 'normal' | 'highlight' | 'warning' | 'tip'
@@ -295,6 +328,7 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
           title={interactiveBlock.data.title}
           instructions={interactiveBlock.data.instructions}
           targetNotes={interactiveBlock.data.targetNotes || []}
+          onComplete={onPianoComplete}
         />
       )
     }

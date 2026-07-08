@@ -19,7 +19,9 @@ import { Piano } from '@/components/interactive/Piano'
 import { Slider } from '@/components/ui/slider'
 import { useMidiInput, useMidiNotes } from '@/hooks/useMidiInput'
 import { midiNoteToName } from '@/lib/midi/midiEngine'
+import { toFrenchNote } from '@/lib/music/noteNames'
 import { createClient } from '@/lib/supabase/client'
+import * as Tone from 'tone'
 
 interface Note {
   midi: number
@@ -39,6 +41,10 @@ interface Gate {
 const EARLY_WINDOW = 0.35
 // Deux notes séparées de moins de 50 ms = un accord
 const CHORD_EPSILON = 0.05
+// En dessous de Do4 (MIDI 60) = main gauche (approximation débutant)
+const LEFT_HAND_SPLIT = 60
+
+type HandMode = 'both' | 'right' | 'left'
 
 interface PracticeModeProps {
   pieceId: string
@@ -53,6 +59,7 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
   const [isRunning, setIsRunning] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [speed, setSpeed] = useState(100) // % du tempo original
+  const [hand, setHand] = useState<HandMode>('both')
   const [waitingNotes, setWaitingNotes] = useState<string[]>([])
   const [stats, setStats] = useState({ hits: 0, errors: 0, streak: 0, bestStreak: 0 })
   const [finished, setFinished] = useState(false)
@@ -70,9 +77,19 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
   const startedAtRef = useRef<number | null>(null)
   const savedRef = useRef(false)
 
-  // Regrouper les notes simultanées en portes
+  // Séparer les mains : en dessous de Do4 = main gauche
+  const { playerNotes, appNotes } = useMemo(() => {
+    if (hand === 'both') return { playerNotes: notes, appNotes: [] as Note[] }
+    const isLeft = (n: Note) => n.midi < LEFT_HAND_SPLIT
+    return {
+      playerNotes: notes.filter(n => (hand === 'left' ? isLeft(n) : !isLeft(n))),
+      appNotes: notes.filter(n => (hand === 'left' ? !isLeft(n) : isLeft(n))),
+    }
+  }, [notes, hand])
+
+  // Regrouper les notes simultanées (du joueur) en portes
   const gates = useMemo<Gate[]>(() => {
-    const sorted = [...notes].sort((a, b) => a.time - b.time)
+    const sorted = [...playerNotes].sort((a, b) => a.time - b.time)
     const result: Gate[] = []
     for (const note of sorted) {
       const last = result[result.length - 1]
@@ -83,7 +100,28 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
       }
     }
     return result
-  }, [notes])
+  }, [playerNotes])
+
+  // Notes de l'autre main, jouées par l'app pendant que le temps avance
+  const appNotesSorted = useMemo(
+    () => [...appNotes].sort((a, b) => a.time - b.time),
+    [appNotes]
+  )
+  const appNoteIndexRef = useRef(0)
+  const samplerRef = useRef<Tone.Sampler | null>(null)
+
+  useEffect(() => {
+    const sampler = new Tone.Sampler({
+      urls: { C4: 'C4.mp3', 'D#4': 'Ds4.mp3', 'F#4': 'Fs4.mp3', A4: 'A4.mp3' },
+      release: 1,
+      baseUrl: 'https://tonejs.github.io/audio/salamander/',
+    }).toDestination()
+    samplerRef.current = sampler
+    return () => {
+      sampler.dispose()
+      samplerRef.current = null
+    }
+  }, [])
 
   const showFlash = useCallback((kind: 'good' | 'bad') => {
     setFlash(kind)
@@ -164,6 +202,21 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
       const dt = ((timestamp - lastFrameRef.current) / 1000) * speedRef.current
       timeRef.current += dt
 
+      // L'app joue l'autre main au fil du temps
+      while (
+        appNoteIndexRef.current < appNotesSorted.length &&
+        appNotesSorted[appNoteIndexRef.current].time <= timeRef.current
+      ) {
+        const appNote = appNotesSorted[appNoteIndexRef.current]
+        samplerRef.current?.triggerAttackRelease(
+          appNote.name,
+          appNote.duration,
+          undefined,
+          appNote.velocity
+        )
+        appNoteIndexRef.current += 1
+      }
+
       const gate = gates[gateIndexRef.current]
       if (gate && timeRef.current >= gate.time) {
         // La porte est atteinte sans avoir été jouée : on fige et on attend
@@ -191,8 +244,9 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
     }
   }, [gates, totalDuration])
 
-  const start = useCallback(() => {
+  const start = useCallback(async () => {
     if (finished) return
+    await Tone.start() // débloquer l'audio (geste utilisateur requis)
     runningRef.current = true
     lastFrameRef.current = null
     if (startedAtRef.current === null) startedAtRef.current = Date.now()
@@ -210,6 +264,7 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
     pause()
     timeRef.current = 0
     gateIndexRef.current = 0
+    appNoteIndexRef.current = 0
     remainingRef.current = new Set()
     waitingRef.current = false
     startedAtRef.current = null
@@ -219,6 +274,12 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
     setStats({ hits: 0, errors: 0, streak: 0, bestStreak: 0 })
     setFinished(false)
   }, [pause])
+
+  // Changer de main relance la session depuis le début
+  const switchHand = useCallback((next: HandMode) => {
+    setHand(next)
+    restart()
+  }, [restart])
 
   useEffect(() => {
     speedRef.current = speed / 100
@@ -324,9 +385,9 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
         </div>
       )}
 
-      {/* Notes tombantes */}
+      {/* Notes tombantes — seulement celles que TU dois jouer */}
       <FallingNotesVisualizer
-        notes={notes}
+        notes={playerNotes}
         isPlaying={isRunning}
         currentTime={currentTime}
       />
@@ -347,6 +408,32 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
           </div>
         ) : (
           <div className="space-y-4">
+            {/* Sélecteur de main */}
+            <div className="flex items-center justify-center">
+              <div className="glass flex rounded-full p-1">
+                {([
+                  { id: 'both', label: '🙌 Deux mains' },
+                  { id: 'right', label: '🤚 Main droite' },
+                  { id: 'left', label: '✋ Main gauche' },
+                ] as { id: HandMode; label: string }[]).map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => switchHand(option.id)}
+                    className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
+                      hand === option.id ? 'btn-accent' : 'text-dim hover:text-[#f2efe8]'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {hand !== 'both' && (
+              <p className="text-faint text-center text-xs">
+                Tu joues la {hand === 'right' ? 'main droite' : 'main gauche'} — Pianely joue l'autre main pour toi
+              </p>
+            )}
+
             <div className="flex items-center justify-center gap-3">
               <button
                 onClick={restart}
@@ -379,7 +466,7 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
 
             {waitingNotes.length > 0 && (
               <p className="badge-brass mx-auto w-fit rounded-full px-4 py-1.5 text-center text-sm font-bold">
-                Joue : {waitingNotes.join(' + ')}
+                Joue : {waitingNotes.map(n => `${toFrenchNote(n)} (${n})`).join(' + ')}
               </p>
             )}
           </div>

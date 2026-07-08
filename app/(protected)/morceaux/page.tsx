@@ -11,13 +11,33 @@ export default async function MorceauxPage() {
     redirect('/connexion')
   }
 
-  // Récupérer les morceaux de la bibliothèque utilisateur
+  // Bibliothèque personnelle + catalogue de morceaux débutants
   let pieces: any[] = []
   try {
-    pieces = await getUserPieces(supabase, user.id)
+    const userPieces = await getUserPieces(supabase, user.id)
+    const userPieceIds = new Set(userPieces.map((p: any) => p.id))
+
+    // Catalogue : les morceaux seedés que l'utilisateur n'a pas encore ajoutés
+    const { data: catalog } = await supabase
+      .from('pieces')
+      .select('*')
+      .eq('source', 'seed')
+      .order('level', { ascending: true })
+
+    const catalogPieces = (catalog || [])
+      .filter((p) => !userPieceIds.has(p.id))
+      .map((p) => ({
+        ...p,
+        status: 'not_started' as const,
+        progress: 0,
+      }))
+
+    pieces = [...userPieces, ...catalogPieces].map((p: any) => ({
+      ...p,
+      duration: p.duration ?? p.duration_minutes ?? 1,
+    }))
   } catch (error) {
     console.error('Error loading pieces:', error)
-    // Si erreur (ex: table n'existe pas encore), retourner array vide
     pieces = []
   }
 

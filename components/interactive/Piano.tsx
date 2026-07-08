@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import * as Tone from 'tone'
 import { useMidiInput, useMidiNotes } from '@/hooks/useMidiInput'
 import { midiNoteToName } from '@/lib/midi/midiEngine'
+import { toFrenchNote } from '@/lib/music/noteNames'
 
 interface PianoProps {
   highlightedKeys?: string[] // For PiecePlayer usage: ["C4", "E4", "G4"]
@@ -247,12 +248,13 @@ export function Piano({
           >
             {!key.isBlack && showLabels && (
               <div
-                className="absolute bottom-2 left-0 right-0 text-center text-xs font-semibold"
+                className="absolute bottom-2 left-0 right-0 text-center text-[10px] font-semibold leading-tight"
                 style={{
                   color: isKeyActive(key.note) || isKeyHighlighted(key.note) ? '#1a1408' : '#8a857b'
                 }}
               >
-                {key.note}
+                <div>{toFrenchNote(key.note)}</div>
+                <div className="opacity-60">{key.note}</div>
               </div>
             )}
           </div>
