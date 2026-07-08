@@ -70,7 +70,8 @@ Identité inspirée du cockpit dark-glass de boardyoplan, transposée au piano :
 - [ ] **Vélocité / nuances** : exploiter la force de frappe (le P-145 la transmet) pour enseigner piano/forte
 - [ ] **Détection d'accords en jeu libre** : afficher le nom de l'accord joué (Do majeur, La mineur…) en temps réel
 
-### Long terme (contenu & social)
+### Long terme (contenu, social & IA)
+- [ ] **Coach IA conversationnel** (tendance 2027 : le site devient un agent) : poser une question en langage naturel pendant une leçon (« pourquoi mon pouce passe sous la main ? », « c'est quoi une octave ? ») et obtenir une réponse adaptée à sa progression ; à terme, le coach compose la séance du jour selon les points faibles détectés (précision par touche, rythme)
 - [ ] **Import de MIDI perso amélioré** : glisser-déposer un fichier MIDI → jouable en Practice immédiatement
 - [ ] **Bibliothèque enrichie** : plus de morceaux par niveau, filtres par envie (film, jeux vidéo, classique, variété)
 - [ ] **Statistiques avancées** : précision par touche/doigt, heatmap du clavier, courbe de progression hebdo

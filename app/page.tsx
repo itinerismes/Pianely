@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Usb, ArrowRight, ArrowDown } from 'lucide-react'
 import { BrandMark } from '@/components/BrandMark'
 import { Reveal } from '@/components/landing/Reveal'
+import { KineticTitle } from '@/components/landing/KineticTitle'
 
 /**
  * Landing « Scène » v2 — grande échelle, beaucoup d'air, entrée orchestrée.
@@ -179,11 +180,13 @@ export default function LandingPage() {
             Compatible piano numérique USB
           </div>
 
-          <h1 className="font-display text-5xl leading-[1.02] tracking-tight text-[#f2efe8] md:text-7xl">
-            Ton piano.
-            <br />
-            <span className="accent-brass">Tes premiers morceaux.</span>
-          </h1>
+          <KineticTitle
+            className="font-display text-5xl leading-[1.02] tracking-tight text-[#f2efe8] md:text-7xl"
+            lines={[
+              { text: 'Ton piano.' },
+              { text: 'Tes premiers morceaux.', accent: true },
+            ]}
+          />
 
           <p className="text-dim mx-auto mt-8 max-w-xl text-lg leading-relaxed md:text-xl">
             Branche ton clavier, suis les notes qui tombent, joue pour de vrai.

@@ -22,8 +22,8 @@
   --brass-deep: #b07d1f;
   --velvet: #8b5cf6;         /* rideau de velours — glows uniquement */
   --stage-green: #4ade80;    /* hit-line des notes tombantes */
-  --dim: #a8a29a;
-  --faint: #6f6a62;
+  --dim: #aca69e;
+  --faint: #837d73; /* ≥ 4.5:1 sur ébène (WCAG AA petit texte) */
 
   /* Tokens shadcn — re-clés sur la Scène (thème unique, sombre) */
   --background: #0a0a0e;
