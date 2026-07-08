@@ -11,18 +11,18 @@ export default async function MorceauxPage() {
     redirect('/connexion')
   }
 
-  // Bibliothèque personnelle + catalogue de morceaux débutants
+  // Bibliothèque personnelle + catalogue, chargés en parallèle
   let pieces: any[] = []
   try {
-    const userPieces = await getUserPieces(supabase, user.id)
+    const [userPieces, { data: catalog }] = await Promise.all([
+      getUserPieces(supabase, user.id),
+      supabase
+        .from('pieces')
+        .select('*')
+        .eq('source', 'seed')
+        .order('level', { ascending: true }),
+    ])
     const userPieceIds = new Set(userPieces.map((p: any) => p.id))
-
-    // Catalogue : les morceaux seedés que l'utilisateur n'a pas encore ajoutés
-    const { data: catalog } = await supabase
-      .from('pieces')
-      .select('*')
-      .eq('source', 'seed')
-      .order('level', { ascending: true })
 
     const catalogPieces = (catalog || [])
       .filter((p) => !userPieceIds.has(p.id))

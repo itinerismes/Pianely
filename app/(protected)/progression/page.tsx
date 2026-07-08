@@ -1,7 +1,18 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getDashboardStats, getLevels, getLevelCompletion, getUserProgress, getPracticeStatsByDate } from '@/lib/supabase/progress'
+import { getDashboardStats, getLevelsWithCompletion, getUserProgress, getPracticeStatsByDate } from '@/lib/supabase/progress'
 import { ProgressionClient } from '@/components/progression/ProgressionClient'
+
+function getLevelColor(levelNumber: number): string {
+  const colors: Record<number, string> = {
+    1: 'from-emerald-400 to-teal-500',
+    2: 'from-sky-400 to-cyan-400',
+    3: 'from-violet-400 to-purple-500',
+    4: 'from-amber-400 to-yellow-500',
+    5: 'from-pink-400 to-rose-400'
+  }
+  return colors[levelNumber] || 'from-gray-500 to-gray-600'
+}
 
 export default async function ProgressionPage() {
   const supabase = await createClient()
@@ -11,26 +22,20 @@ export default async function ProgressionPage() {
     redirect('/connexion')
   }
 
-  // Get all data in parallel
+  // Tout en parallèle — complétions par niveau groupées en 3 requêtes
   const [stats, levels, allProgress, practiceStats] = await Promise.all([
     getDashboardStats(user.id),
-    getLevels(),
+    getLevelsWithCompletion(user.id),
     getUserProgress(user.id),
     getPracticeStatsByDate(user.id, 30) // Last 30 days
   ])
 
-  // Calculate level completions
-  const levelProgress = await Promise.all(
-    levels.map(async (level) => {
-      const completion = await getLevelCompletion(user.id, level.id)
-      return {
-        levelNumber: level.level_number,
-        title: level.title,
-        completion,
-        color: getLevelColor(level.level_number)
-      }
-    })
-  )
+  const levelProgress = levels.map((level) => ({
+    levelNumber: level.level_number,
+    title: level.title,
+    completion: level.completion,
+    color: getLevelColor(level.level_number)
+  }))
 
   // Group progress by date for activity calendar
   const progressByDate = allProgress.reduce((acc: Record<string, number>, p) => {
@@ -41,24 +46,15 @@ export default async function ProgressionPage() {
     return acc
   }, {})
 
+  const totalLessons = levels.reduce((sum, level) => sum + level.totalLessons, 0)
+
   return (
     <ProgressionClient
       stats={stats}
       levelProgress={levelProgress}
       practiceStats={practiceStats}
       progressByDate={progressByDate}
-      totalLessons={42} // 5+7+8+10+12
+      totalLessons={totalLessons}
     />
   )
-}
-
-function getLevelColor(levelNumber: number): string {
-  const colors: Record<number, string> = {
-    1: 'from-green-500 to-emerald-600',
-    2: 'from-blue-500 to-cyan-600',
-    3: 'from-purple-500 to-violet-600',
-    4: 'from-orange-500 to-amber-600',
-    5: 'from-pink-500 to-rose-600'
-  }
-  return colors[levelNumber] || 'from-gray-500 to-gray-600'
 }
