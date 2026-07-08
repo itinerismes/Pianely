@@ -116,9 +116,6 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
           <ScrollArea className="flex-1 px-3 py-4">
             {/* Main Navigation */}
             <div className="space-y-1">
-              <h3 className="px-3 text-[11px] font-bold text-faint uppercase tracking-widest mb-3">
-                Principal
-              </h3>
               {mainNavItems.map((item) => (
                 <button
                   key={item.id}

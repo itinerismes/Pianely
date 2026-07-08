@@ -73,16 +73,13 @@ export function DailySession({ recentActivity, nextLessonHref, nextLessonLabel }
                 : `Encore ${steps.length - doneCount} étape${steps.length - doneCount > 1 ? 's' : ''} — tu y es presque.`}
           </h2>
         </div>
-        <span className={`font-display shrink-0 text-2xl tabular-nums md:text-3xl ${doneCount === steps.length ? 'accent-green' : 'text-faint'}`}>
-          {doneCount}<span className="text-faint">/{steps.length}</span>
+        <span className={`font-display shrink-0 text-xl tabular-nums ${doneCount === steps.length ? 'accent-green' : 'accent-brass'}`}>
+          {doneCount}<span className="text-faint"> / {steps.length}</span>
         </span>
       </div>
 
       {/* Timeline horizontale */}
       <div className="relative flex flex-col gap-8 md:flex-row md:gap-0">
-        {/* Ligne de connexion (desktop) */}
-        <div aria-hidden className="absolute left-0 right-0 top-6 hidden h-px bg-white/[0.08] md:block" />
-
         {steps.map((step, index) => {
           const isCurrent = index === currentIndex
           return (
@@ -91,6 +88,13 @@ export function DailySession({ recentActivity, nextLessonHref, nextLessonLabel }
               href={step.href}
               className="group relative flex flex-1 items-start gap-4 md:flex-col md:gap-5 md:pr-8"
             >
+              {/* Connecteur vers l'étape suivante (desktop) */}
+              {index < steps.length - 1 && (
+                <div
+                  aria-hidden
+                  className="absolute left-16 right-4 top-6 hidden h-px bg-white/[0.08] md:block"
+                />
+              )}
               <div
                 className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 ${
                   step.done
