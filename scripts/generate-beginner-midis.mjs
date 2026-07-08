@@ -1,8 +1,8 @@
 /**
  * Génère les fichiers MIDI des morceaux débutants dans public/midi/.
  *
- * Mélodies simplifiées, écrites en [note, durée en noires] à 80 BPM
- * (1 noire = 0,75 s) — tempo pensé pour les grands débutants, encore
+ * Mélodies simplifiées, écrites en [note, durée en noires] à 60 BPM
+ * (1 noire = 1 s) — le tempo de travail recommandé pour débuter, encore
  * ralentissable à 40 % dans le mode Practice. Les morceaux de niveau 2
  * ont une main gauche simple (basses tenues) pour les mains séparées.
  *
@@ -18,7 +18,7 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUT_DIR = join(__dirname, '..', 'public', 'midi')
 
-const QUARTER = 0.75 // secondes par noire à 80 BPM
+const QUARTER = 1.0 // secondes par noire à 60 BPM
 
 /** [note, durée en noires][] → notes MIDI avec temps cumulés */
 function seq(notes) {
@@ -165,7 +165,7 @@ mkdirSync(OUT_DIR, { recursive: true })
 
 for (const piece of PIECES) {
   const midi = new Midi()
-  midi.header.setTempo(80)
+  midi.header.setTempo(60)
 
   const melodyTrack = midi.addTrack()
   melodyTrack.name = 'Main droite'
