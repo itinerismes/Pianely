@@ -49,15 +49,10 @@ export default async function ParcoursPage() {
         5: '3h 30min'
       }
 
-      // Level 1 is always unlocked, others unlock when previous level is completed
-      let unlocked = level.level_number === 1
-      if (level.level_number > 1) {
-        const previousLevel = levels.find(l => l.level_number === level.level_number - 1)
-        if (previousLevel) {
-          const previousCompletion = await getLevelCompletion(user.id, previousLevel.id)
-          unlocked = previousCompletion === 100
-        }
-      }
+      // Tous les niveaux sont accessibles : quelqu'un qui a déjà des bases
+      // peut commencer directement au niveau 3. La progression guidée reste
+      // à l'intérieur de chaque niveau (leçon N débloquée après N-1).
+      const unlocked = true
 
       return {
         niveau: level.level_number,

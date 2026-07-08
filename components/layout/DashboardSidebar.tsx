@@ -1,7 +1,6 @@
 "use client";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -31,7 +30,6 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [selectedNiveau, setSelectedNiveau] = useState<number | null>(null);
 
   const mainNavItems: SidebarItem[] = [
     {
@@ -45,7 +43,6 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
       id: "parcours",
       icon: <BookOpen className="w-5 h-5" />,
       label: "Parcours",
-      badge: "5",
       href: "/parcours",
       active: pathname.startsWith("/parcours")
     },
@@ -65,26 +62,8 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
     },
   ];
 
-  const niveaux = [
-    { id: 1, name: "Niveau 1", color: "from-emerald-400 to-teal-500", href: "/parcours/niveau-1", count: 5 },
-    { id: 2, name: "Niveau 2", color: "from-sky-400 to-cyan-400", href: "/parcours/niveau-2", count: 7 },
-    { id: 3, name: "Niveau 3", color: "from-violet-400 to-purple-500", href: "/parcours/niveau-3", count: 8 },
-    { id: 4, name: "Niveau 4", color: "from-amber-400 to-yellow-500", href: "/parcours/niveau-4", count: 10 },
-    { id: 5, name: "Niveau 5", color: "from-pink-400 to-rose-400", href: "/parcours/niveau-5", count: 12 },
-  ];
-
   const handleNavClick = (item: SidebarItem) => {
     router.push(item.href);
-
-    // Close sidebar on mobile after selection
-    if (window.innerWidth < 768) {
-      onClose?.();
-    }
-  };
-
-  const handleNiveauClick = (niveau: typeof niveaux[0]) => {
-    setSelectedNiveau(selectedNiveau === niveau.id ? null : niveau.id);
-    router.push(niveau.href);
 
     // Close sidebar on mobile after selection
     if (window.innerWidth < 768) {
@@ -165,32 +144,6 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
               ))}
             </div>
 
-            {/* Niveaux */}
-            <div className="mt-8 space-y-1">
-              <h3 className="px-3 text-[11px] font-bold text-faint uppercase tracking-widest mb-3">
-                Niveaux
-              </h3>
-              {niveaux.map((niveau) => {
-                const isSelected = selectedNiveau === niveau.id || pathname.includes(`/niveau-${niveau.id}`);
-                return (
-                  <button
-                    key={niveau.id}
-                    onClick={() => handleNiveauClick(niveau)}
-                    className={`w-full flex items-center gap-3 h-9 px-3 rounded-xl text-sm transition-all duration-200 border ${
-                      isSelected
-                        ? 'bg-white/[0.06] border-white/[0.12] text-[#f2efe8] font-semibold'
-                        : 'border-transparent text-dim hover:bg-white/[0.04] hover:text-[#f2efe8]'
-                    }`}
-                  >
-                    <div className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${niveau.color} transition-all duration-200 ${
-                      isSelected ? 'scale-125 shadow-[0_0_8px_rgba(255,255,255,0.3)]' : ''
-                    }`} />
-                    <span className="flex-1 text-left">{niveau.name}</span>
-                    <span className="text-xs text-faint tabular-nums">{niveau.count}</span>
-                  </button>
-                );
-              })}
-            </div>
           </ScrollArea>
 
           {/* Bottom Navigation */}
