@@ -30,7 +30,7 @@ export function ProtectedLayoutClient({
           onClose={() => setSidebarOpen(false)}
         />
 
-        <main className="flex-1 p-4 md:p-6 md:ml-0">
+        <main className="min-w-0 flex-1 px-5 py-8 md:px-10 md:py-10">
           {children}
         </main>
       </div>

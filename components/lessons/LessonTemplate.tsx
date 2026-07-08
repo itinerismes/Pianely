@@ -15,6 +15,7 @@ import {
 import { PianoDemo } from '@/components/interactive/PianoDemo'
 import { Quiz } from '@/components/interactive/Quiz'
 import { completeLessonAction } from '@/app/actions/progress'
+import { celebrateLessonComplete } from '@/lib/celebrate'
 import type { ContentBlock } from '@/types/lesson'
 
 interface LessonTemplateProps {
@@ -77,6 +78,7 @@ export function LessonTemplate({
     }
     setCompleted(true)
     setShowCompletion(true)
+    celebrateLessonComplete()
     onComplete?.()
   }
 

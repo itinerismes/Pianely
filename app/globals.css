@@ -9,7 +9,7 @@
      (lumière en haut, teinte laiton en bas) + reflet spéculaire
    • signature : l'octave — les progressions se lisent comme des touches
      de piano qui s'illuminent
-   • typographie : Fraunces (affiche de concert) + Manrope (lecture)      */
+   • typographie : Space Grotesk (display) + Manrope (lecture)            */
 
 :root {
   --font-size: 16px;
@@ -222,8 +222,12 @@
   }
 
   .font-display {
-    font-family: var(--font-fraunces), Georgia, serif;
-    letter-spacing: -0.01em;
+    font-family: var(--font-display), var(--font-manrope), system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  .font-display em {
+    font-style: normal; /* Space Grotesk n'a pas d'italique : l'accent passe par la couleur */
   }
 
   /* ── Panneau glass : bordure dégradée via double background ── */
@@ -400,6 +404,41 @@
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: none; }
+}
+
+/* Séquence d'entrée orchestrée (landing, pages) — chaque .rise-seq > *
+   apparaît l'un après l'autre. Respecte prefers-reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .rise-seq > * {
+    opacity: 0;
+    animation: rise-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .rise-seq > *:nth-child(1) { animation-delay: 0.05s; }
+  .rise-seq > *:nth-child(2) { animation-delay: 0.18s; }
+  .rise-seq > *:nth-child(3) { animation-delay: 0.32s; }
+  .rise-seq > *:nth-child(4) { animation-delay: 0.46s; }
+  .rise-seq > *:nth-child(5) { animation-delay: 0.60s; }
+  .rise-seq > *:nth-child(6) { animation-delay: 0.74s; }
+
+  /* Lever de rideau : les touches du clavier hero s'allument en séquence */
+  .stage-key-lit {
+    animation: key-glow-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes key-glow-in {
+    from {
+      background: linear-gradient(180deg, rgba(242,239,232,0.92) 0%, rgba(214,209,198,0.88) 100%);
+      box-shadow: inset 0 -4px 8px rgba(0,0,0,0.18), 0 6px 18px rgba(0,0,0,0.5);
+    }
+  }
+}
+
+/* Eyebrow — étiquette de section discrète (remplace l'uppercase criard) */
+.eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass-bright);
 }
 
 @keyframes fadeIn {

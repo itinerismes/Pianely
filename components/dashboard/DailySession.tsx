@@ -1,22 +1,20 @@
 'use client'
 
 /**
- * Ta séance du jour — le plan guidé du débutant.
+ * Ta séance du jour — bloc héros du dashboard (bento).
  *
- * Trois étapes courtes et dans le bon ordre : échauffer les doigts,
- * avancer d'une leçon, jouer un vrai morceau. L'échauffement se coche
- * automatiquement (localStorage posé par /echauffement), le morceau se
- * coche dès qu'une pratique est enregistrée aujourd'hui.
+ * Timeline horizontale en 3 temps : échauffer, apprendre, jouer.
+ * L'échauffement se coche automatiquement (localStorage posé par
+ * /echauffement), le morceau dès qu'une pratique est enregistrée
+ * aujourd'hui.
  */
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Flame, BookOpen, Music, CheckCircle2, CalendarCheck } from 'lucide-react'
+import { Flame, BookOpen, Music, Check, ArrowRight } from 'lucide-react'
 
 interface DailySessionProps {
-  /** Activité récente (stats.recentActivity) pour détecter la pratique du jour */
   recentActivity: { date: string; duration: number; sessions: number }[]
-  /** Lien vers la prochaine leçon à faire */
   nextLessonHref: string
   nextLessonLabel: string
 }
@@ -34,7 +32,7 @@ export function DailySession({ recentActivity, nextLessonHref, nextLessonLabel }
   const steps = [
     {
       id: 'warmup',
-      icon: <Flame className="h-4 w-4" />,
+      icon: <Flame className="h-5 w-5" />,
       title: 'Échauffement',
       description: '5 min pour réveiller tes doigts',
       href: '/echauffement',
@@ -42,7 +40,7 @@ export function DailySession({ recentActivity, nextLessonHref, nextLessonLabel }
     },
     {
       id: 'lesson',
-      icon: <BookOpen className="h-4 w-4" />,
+      icon: <BookOpen className="h-5 w-5" />,
       title: 'Ta leçon',
       description: nextLessonLabel,
       href: nextLessonHref,
@@ -50,7 +48,7 @@ export function DailySession({ recentActivity, nextLessonHref, nextLessonLabel }
     },
     {
       id: 'piece',
-      icon: <Music className="h-4 w-4" />,
+      icon: <Music className="h-5 w-5" />,
       title: 'Un morceau',
       description: '10 min en mode Practice',
       href: '/morceaux',
@@ -59,48 +57,68 @@ export function DailySession({ recentActivity, nextLessonHref, nextLessonLabel }
   ]
 
   const doneCount = steps.filter((s) => s.done).length
+  // La prochaine étape à faire = la première non cochée
+  const currentIndex = steps.findIndex((s) => !s.done)
 
   return (
-    <div className="panel rounded-2xl p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-dim">
-          <CalendarCheck className="h-3.5 w-3.5" />
-          Ta séance du jour
-        </h2>
-        <span className={`text-xs font-bold tabular-nums ${doneCount === steps.length ? 'accent-green' : 'text-faint'}`}>
-          {doneCount}/{steps.length}
+    <div className="panel rounded-3xl p-8 md:p-10">
+      <div className="mb-10 flex items-start justify-between gap-4">
+        <div>
+          <p className="eyebrow mb-2">Ta séance du jour</p>
+          <h2 className="font-display text-2xl text-[#f2efe8] md:text-3xl">
+            {doneCount === steps.length
+              ? 'Séance complète — à demain 🎉'
+              : doneCount === 0
+                ? 'Trois temps, trente minutes.'
+                : `Encore ${steps.length - doneCount} étape${steps.length - doneCount > 1 ? 's' : ''} — tu y es presque.`}
+          </h2>
+        </div>
+        <span className={`font-display shrink-0 text-2xl tabular-nums md:text-3xl ${doneCount === steps.length ? 'accent-green' : 'text-faint'}`}>
+          {doneCount}<span className="text-faint">/{steps.length}</span>
         </span>
       </div>
 
-      <div className="space-y-2.5">
-        {steps.map((step, index) => (
-          <Link
-            key={step.id}
-            href={step.href}
-            className={`glass flex items-center gap-3 rounded-xl p-3 transition-all hover:border-[#e0a83c]/40 hover:bg-white/[0.07] ${
-              step.done ? 'opacity-70' : ''
-            }`}
-          >
-            <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${
-              step.done ? 'badge-stage' : 'badge-brass'
-            }`}>
-              {step.done ? <CheckCircle2 className="h-4 w-4" /> : step.icon}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className={`text-sm font-semibold ${step.done ? 'text-dim line-through' : 'text-[#f2efe8]'}`}>
-                {index + 1}. {step.title}
-              </p>
-              <p className="text-faint truncate text-xs">{step.description}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {/* Timeline horizontale */}
+      <div className="relative flex flex-col gap-8 md:flex-row md:gap-0">
+        {/* Ligne de connexion (desktop) */}
+        <div aria-hidden className="absolute left-0 right-0 top-6 hidden h-px bg-white/[0.08] md:block" />
 
-      {doneCount === steps.length && (
-        <p className="accent-green mt-3 text-center text-sm font-semibold">
-          Séance complète — à demain ! 🎉
-        </p>
-      )}
+        {steps.map((step, index) => {
+          const isCurrent = index === currentIndex
+          return (
+            <Link
+              key={step.id}
+              href={step.href}
+              className="group relative flex flex-1 items-start gap-4 md:flex-col md:gap-5 md:pr-8"
+            >
+              <div
+                className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 ${
+                  step.done
+                    ? 'badge-stage'
+                    : isCurrent
+                      ? 'btn-accent shadow-[0_0_24px_rgba(224,168,60,0.35)]'
+                      : 'border border-white/[0.09] bg-[#141318] text-faint group-hover:border-[#e0a83c]/40 group-hover:text-dim'
+                }`}
+              >
+                {step.done ? <Check className="h-5 w-5" /> : step.icon}
+              </div>
+              <div className="min-w-0">
+                <p className={`font-display text-lg transition-colors ${
+                  step.done ? 'text-faint line-through' : isCurrent ? 'text-[#f2efe8]' : 'text-dim group-hover:text-[#f2efe8]'
+                }`}>
+                  {step.title}
+                </p>
+                <p className="text-faint mt-1 text-sm leading-relaxed">{step.description}</p>
+                {isCurrent && (
+                  <span className="accent-brass mt-3 inline-flex items-center gap-1.5 text-sm font-bold">
+                    Commencer <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                )}
+              </div>
+            </Link>
+          )
+        })}
+      </div>
     </div>
   )
 }

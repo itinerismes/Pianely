@@ -20,6 +20,7 @@ import { Slider } from '@/components/ui/slider'
 import { useMidiInput, useMidiNotes } from '@/hooks/useMidiInput'
 import { midiNoteToName } from '@/lib/midi/midiEngine'
 import { toFrenchNote } from '@/lib/music/noteNames'
+import { celebratePieceComplete } from '@/lib/celebrate'
 import { createClient } from '@/lib/supabase/client'
 import * as Tone from 'tone'
 
@@ -233,6 +234,7 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
         runningRef.current = false
         setIsRunning(false)
         setFinished(true)
+        celebratePieceComplete()
       }
     }
 
