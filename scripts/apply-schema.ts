@@ -2,13 +2,17 @@ import { createClient } from '@supabase/supabase-js'
 import * as fs from 'fs'
 import * as path from 'path'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('Missing Supabase credentials: set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local')
-  process.exit(1)
+function requireEnv(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    console.error(`Missing ${name}: set it in .env.local`)
+    process.exit(1)
+  }
+  return value
 }
+
+const supabaseUrl = requireEnv('NEXT_PUBLIC_SUPABASE_URL')
+const supabaseServiceKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY')
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
