@@ -334,6 +334,44 @@ export async function updateLessonStatus(
 }
 
 /**
+ * Niveaux + complétion en 3 requêtes parallèles (au lieu de 2 par niveau).
+ * Évite les allers-retours DB en cascade qui plombaient /parcours et
+ * /dashboard.
+ */
+export interface LevelWithCompletion extends Level {
+  totalLessons: number
+  completedLessons: number
+  completion: number
+}
+
+export async function getLevelsWithCompletion(userId: string): Promise<LevelWithCompletion[]> {
+  const supabase = await createClient()
+
+  const [levelsRes, lessonsRes, progressRes] = await Promise.all([
+    supabase.from('levels').select('*').eq('is_published', true).order('level_number'),
+    supabase.from('lessons').select('id, level_id').eq('is_published', true),
+    supabase.from('user_progress').select('lesson_id').eq('user_id', userId).eq('status', 'completed'),
+  ])
+
+  if (levelsRes.error) throw levelsRes.error
+
+  const lessons = lessonsRes.data || []
+  const completedIds = new Set((progressRes.data || []).map((p) => p.lesson_id))
+
+  return (levelsRes.data || []).map((level) => {
+    const levelLessons = lessons.filter((l) => l.level_id === level.id)
+    const completedLessons = levelLessons.filter((l) => completedIds.has(l.id)).length
+    const totalLessons = levelLessons.length
+    return {
+      ...level,
+      totalLessons,
+      completedLessons,
+      completion: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0,
+    }
+  })
+}
+
+/**
  * Get level completion percentage
  */
 export async function getLevelCompletion(userId: string, levelId: string): Promise<number> {
@@ -817,9 +855,8 @@ export interface DashboardStats {
 }
 
 export async function getDashboardStats(userId: string): Promise<DashboardStats> {
-  const levels = await getLevels()
-
-  // Run all queries in parallel for better performance
+  // Tout en parallèle ; les complétions par niveau sont groupées en
+  // 3 requêtes (getLevelsWithCompletion) au lieu de 2 par niveau
   const [
     totalLessonsCompleted,
     totalPracticeTimeMinutes,
@@ -827,7 +864,7 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
     recentActivity,
     userAchievements,
     allAchievements,
-    ...levelCompletions
+    levelsWithCompletion,
   ] = await Promise.all([
     getCompletedLessonsCount(userId),
     getTotalPracticeTime(userId),
@@ -835,12 +872,12 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
     getPracticeStatsByDate(userId, 7),
     getUserAchievements(userId),
     getAchievements(),
-    ...levels.map(level => getLevelCompletion(userId, level.id))
+    getLevelsWithCompletion(userId),
   ])
 
   const levelsCompletionMap: Record<number, number> = {}
-  levels.forEach((level, index) => {
-    levelsCompletionMap[level.level_number] = levelCompletions[index]
+  levelsWithCompletion.forEach((level) => {
+    levelsCompletionMap[level.level_number] = level.completion
   })
 
   return {

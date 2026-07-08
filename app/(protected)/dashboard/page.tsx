@@ -1,7 +1,23 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getDashboardStats, getLevels, getLevelCompletion, getAchievements, getUserAchievements } from '@/lib/supabase/progress'
+import { getDashboardStats, getLevelsWithCompletion, getAchievements, getUserAchievements } from '@/lib/supabase/progress'
 import { DashboardClient } from '@/components/dashboard/DashboardClient'
+
+const GRADIENTS: Record<number, string> = {
+  1: 'from-emerald-400 to-teal-500',
+  2: 'from-sky-400 to-cyan-400',
+  3: 'from-violet-400 to-purple-500',
+  4: 'from-amber-400 to-yellow-500',
+  5: 'from-pink-400 to-rose-400'
+}
+
+const DURATIONS: Record<number, string> = {
+  1: '57 min',
+  2: '1h 45min',
+  3: '2h 10min',
+  4: '2h 45min',
+  5: '3h 30min'
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -11,67 +27,27 @@ export default async function DashboardPage() {
     redirect('/connexion')
   }
 
-  // Get all data from Supabase in parallel
+  // Tout en parallèle — les complétions par niveau sont groupées
   const [stats, levels, allAchievements, userAchievements] = await Promise.all([
     getDashboardStats(user.id),
-    getLevels(),
+    getLevelsWithCompletion(user.id),
     getAchievements(),
     getUserAchievements(user.id)
   ])
 
-  // Calculate completion for each level
-  const levelsWithCompletion = await Promise.all(
-    levels.map(async (level) => {
-      const completion = await getLevelCompletion(user.id, level.id)
-
-      // Get total lessons count from level (since we don't have lessons yet, hardcode for now)
-      const totalLessonsMap: Record<number, number> = {
-        1: 5,
-        2: 7,
-        3: 8,
-        4: 10,
-        5: 12
-      }
-
-      const totalLessons = totalLessonsMap[level.level_number] || 5
-      const completedLessons = Math.round((completion / 100) * totalLessons)
-
-      // Gradient mapping for each level
-      const gradientMap: Record<number, string> = {
-        1: 'from-green-500 to-emerald-600',
-        2: 'from-blue-500 to-cyan-600',
-        3: 'from-purple-500 to-violet-600',
-        4: 'from-orange-500 to-amber-600',
-        5: 'from-pink-500 to-rose-600'
-      }
-
-      // Duration mapping (estimated)
-      const durationMap: Record<number, string> = {
-        1: '57 min',
-        2: '1h 45min',
-        3: '2h 10min',
-        4: '2h 45min',
-        5: '3h 30min'
-      }
-
-      // Tous les niveaux sont accessibles (cohérent avec /parcours) :
-      // la progression guidée reste à l'intérieur de chaque niveau
-      const unlocked = true
-
-      return {
-        niveau: level.level_number,
-        name: `Niveau ${level.level_number} - ${level.title}`,
-        description: level.description || 'Description du niveau',
-        totalLessons,
-        completedLessons,
-        duration: durationMap[level.level_number] || '1h',
-        unlocked,
-        gradient: gradientMap[level.level_number] || 'from-gray-500 to-gray-600',
-        href: `/parcours/niveau-${level.level_number}`,
-        completion
-      }
-    })
-  )
+  const niveaux = levels.map((level) => ({
+    niveau: level.level_number,
+    name: `Niveau ${level.level_number} - ${level.title}`,
+    description: level.description || 'Description du niveau',
+    totalLessons: level.totalLessons,
+    completedLessons: level.completedLessons,
+    duration: DURATIONS[level.level_number] || '1h',
+    // Tous les niveaux sont accessibles (cohérent avec /parcours)
+    unlocked: true,
+    gradient: GRADIENTS[level.level_number] || 'from-gray-500 to-gray-600',
+    href: `/parcours/niveau-${level.level_number}`,
+    completion: level.completion
+  }))
 
   // Combine achievements with user unlock status
   const userAchievementIds = new Set(userAchievements.map(ua => ua.achievement_id))
@@ -86,7 +62,7 @@ export default async function DashboardPage() {
     <DashboardClient
       userName={userName}
       stats={stats}
-      niveaux={levelsWithCompletion}
+      niveaux={niveaux}
       achievements={achievementsWithStatus}
       totalAchievements={allAchievements.length}
       unlockedAchievementsCount={userAchievements.length}
