@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { PianoDemo } from '@/components/interactive/PianoDemo'
 import { Quiz } from '@/components/interactive/Quiz'
+import { completeLessonAction } from '@/app/actions/progress'
 import type { ContentBlock } from '@/types/lesson'
 
 interface LessonTemplateProps {
@@ -63,7 +64,17 @@ export function LessonTemplate({
     setPlayedBlocks((prev) => new Set(prev).add(blockId))
   }
 
-  const handleComplete = () => {
+  const [saving, setSaving] = useState(false)
+
+  const handleComplete = async () => {
+    setSaving(true)
+    // Persister en base : user_progress + practice_logs + achievements
+    const result = await completeLessonAction(levelId, lessonNumber, duration)
+    setSaving(false)
+
+    if (!result.ok) {
+      console.error('Erreur de sauvegarde de la leçon:', result.error)
+    }
     setCompleted(true)
     setShowCompletion(true)
     onComplete?.()
@@ -154,10 +165,10 @@ export function LessonTemplate({
             )}
             <button
               onClick={handleComplete}
-              disabled={!allExercisesPlayed}
+              disabled={!allExercisesPlayed || saving}
               className="btn-accent inline-flex items-center rounded-2xl px-8 py-3.5 font-bold disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Marquer comme terminée
+              {saving ? 'Enregistrement…' : 'Marquer comme terminée'}
             </button>
           </div>
         )}

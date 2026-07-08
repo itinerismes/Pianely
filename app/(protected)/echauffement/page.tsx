@@ -11,11 +11,14 @@
 
 import { useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, CheckCircle2, Flame, RotateCcw } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, Flame, RotateCcw, Compass } from 'lucide-react'
 import { Piano } from '@/components/interactive/Piano'
 import { OctaveProgress } from '@/components/ui/octave-progress'
 import { toFrenchNote } from '@/lib/music/noteNames'
+import { noteNameToMidi } from '@/lib/midi/midiEngine'
 import { createClient } from '@/lib/supabase/client'
+
+const MIDDLE_C = 60 // Do4 — le Do du milieu d'un clavier 88 touches
 
 interface Exercise {
   id: string
@@ -50,6 +53,8 @@ const EXERCISES: Exercise[] = [
 ]
 
 export default function EchauffementPage() {
+  const [locating, setLocating] = useState(true) // étape 0 : trouver Do4
+  const [locateFeedback, setLocateFeedback] = useState<string | null>(null)
   const [exerciseIndex, setExerciseIndex] = useState(0)
   const [round, setRound] = useState(0)
   const [noteIndex, setNoteIndex] = useState(0)
@@ -93,13 +98,37 @@ export default function EchauffementPage() {
     }
   }, [])
 
+  /** Étape 0 : guider vers le Do du milieu, touche par touche */
+  const handleLocateNote = useCallback((note: string) => {
+    const midi = noteNameToMidi(note)
+    if (midi === null) return
+
+    if (midi === MIDDLE_C) {
+      setLocateFeedback(null)
+      setLocating(false)
+      return
+    }
+
+    const distance = MIDDLE_C - midi
+    const whiteKeys = Math.max(1, Math.round(Math.abs(distance) * (7 / 12)))
+    setLocateFeedback(
+      distance > 0
+        ? `Tu as joué ${toFrenchNote(note)} — Do4 est plus à DROITE ➡️ (environ ${whiteKeys} touche${whiteKeys > 1 ? 's' : ''} blanche${whiteKeys > 1 ? 's' : ''})`
+        : `Tu as joué ${toFrenchNote(note)} — Do4 est plus à GAUCHE ⬅️ (environ ${whiteKeys} touche${whiteKeys > 1 ? 's' : ''} blanche${whiteKeys > 1 ? 's' : ''})`
+    )
+  }, [])
+
   const handleNote = useCallback((note: string) => {
+    if (locating) {
+      handleLocateNote(note)
+      return
+    }
     if (finished || !expectedNote) return
 
     if (note !== expectedNote) {
-      // Pas de pénalité : on montre juste ce qui a été joué
+      // Pas de pénalité : on montre juste ce qui a été joué + la direction
       setWrongNote(note)
-      window.setTimeout(() => setWrongNote(null), 900)
+      window.setTimeout(() => setWrongNote(null), 1200)
       return
     }
 
@@ -129,7 +158,7 @@ export default function EchauffementPage() {
 
     setFinished(true)
     void saveSession()
-  }, [finished, expectedNote, noteIndex, exercise, round, exerciseIndex, saveSession])
+  }, [locating, handleLocateNote, finished, expectedNote, noteIndex, exercise, round, exerciseIndex, saveSession])
 
   const restart = () => {
     setExerciseIndex(0)
@@ -171,7 +200,59 @@ export default function EchauffementPage() {
         <OctaveProgress value={(doneSteps / totalSteps) * 100} keys={10} />
       </div>
 
-      {finished ? (
+      {locating && !finished ? (
+        <>
+          {/* Étape 0 : trouver le Do du milieu sur le vrai clavier */}
+          <div className="panel rounded-2xl p-6">
+            <div className="mb-1">
+              <span className="badge-brass inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-widest">
+                <Compass className="h-3.5 w-3.5" /> Repérage
+              </span>
+            </div>
+            <h2 className="font-display text-2xl text-[#f2efe8]">Trouve le Do du milieu (Do4)</h2>
+            <div className="text-dim mt-3 space-y-2 text-sm leading-relaxed">
+              <p>
+                Sur ton clavier, les touches noires vont par <strong className="text-[#f2efe8]">groupes de 2 et de 3</strong>.
+                Un <strong className="accent-brass">Do</strong> est toujours la touche blanche
+                <strong className="text-[#f2efe8]"> juste à gauche d'un groupe de 2 touches noires</strong>.
+              </p>
+              <p>
+                Le <strong className="accent-brass">Do4</strong> (« Do du milieu ») est celui qui se trouve
+                <strong className="text-[#f2efe8]"> au centre de ton clavier</strong>, en général juste sous le logo Yamaha.
+                Sur 88 touches, c'est le <strong className="text-[#f2efe8]">4ᵉ Do en partant de la gauche</strong>.
+              </p>
+              <p className="accent-brass font-semibold">
+                🎹 Appuie sur des touches de ton clavier : je te guide jusqu'à lui.
+              </p>
+            </div>
+
+            {locateFeedback && (
+              <p className="badge-brass mt-4 w-fit rounded-full px-4 py-2 text-sm font-bold">
+                {locateFeedback}
+              </p>
+            )}
+
+            <button
+              onClick={() => setLocating(false)}
+              className="btn-ghost mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-dim"
+            >
+              Je sais déjà où il est — passer
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Piano : Do4 illuminé comme repère */}
+          <div className="panel rounded-2xl p-5">
+            <Piano
+              highlightedKeys={['C4']}
+              startOctave={3}
+              octaves={3}
+              onKeyPress={handleNote}
+              autoScroll={false}
+            />
+          </div>
+        </>
+      ) : finished ? (
         <div className="panel rounded-2xl border-[#4ade80]/30 p-8 text-center shadow-[0_0_32px_rgba(74,222,128,0.15)]">
           <Flame className="accent-brass mx-auto mb-4 h-14 w-14" />
           <h2 className="font-display mb-2 text-2xl text-[#f2efe8]">
@@ -225,9 +306,12 @@ export default function EchauffementPage() {
               ))}
             </div>
 
-            {wrongNote && (
+            {wrongNote && expectedNote && (
               <p className="mt-3 text-sm font-semibold text-[#fcd34d]">
-                Tu as joué {toFrenchNote(wrongNote)} — vise {toFrenchNote(expectedNote!)}, tu y es presque !
+                Tu as joué {toFrenchNote(wrongNote)} — {toFrenchNote(expectedNote)} est{' '}
+                {(noteNameToMidi(expectedNote) ?? 0) > (noteNameToMidi(wrongNote) ?? 0)
+                  ? 'plus à droite ➡️'
+                  : 'plus à gauche ⬅️'}
               </p>
             )}
           </div>
