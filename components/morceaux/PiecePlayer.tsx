@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Play, Pause, SkipBack, Volume2 } from 'lucide-react'
+import { Play, Pause, SkipBack, Volume2, Headphones, Gamepad2 } from 'lucide-react'
 import { FallingNotesVisualizer } from '@/components/sheet-music/FallingNotesVisualizer'
 import { Piano } from '@/components/interactive/Piano'
+import { PracticeMode } from '@/components/morceaux/PracticeMode'
 import * as Tone from 'tone'
 import { Slider } from '@/components/ui/slider'
 import * as Midi from '@tonejs/midi'
@@ -26,22 +25,6 @@ function midiToNoteName(midiNumber: number): string {
   return `${noteNames[noteIndex]}${octave}`
 }
 
-// Normaliser le nom de note (convertir bémols en dièses)
-function normalizeNoteName(name: string): string {
-  // Mapping bémols → dièses
-  const flatToSharp: Record<string, string> = {
-    'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#'
-  }
-
-  // Extraire la note et l'octave
-  const match = name.match(/^([A-G][b#]?)(\d+)$/)
-  if (!match) return name
-
-  const [, notePart, octave] = match
-  const normalizedNote = flatToSharp[notePart] || notePart
-  return `${normalizedNote}${octave}`
-}
-
 interface PiecePlayerProps {
   piece: {
     id: string
@@ -52,7 +35,10 @@ interface PiecePlayerProps {
   }
 }
 
+type PlayerMode = 'listen' | 'practice'
+
 export function PiecePlayer({ piece }: PiecePlayerProps) {
+  const [mode, setMode] = useState<PlayerMode>('listen')
   const [isPlaying, setIsPlaying] = useState(false)
   const [notes, setNotes] = useState<Note[]>([])
   const [highlightedKeys, setHighlightedKeys] = useState<string[]>([])
@@ -79,11 +65,9 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
         const allNotes: Note[] = []
         for (const track of midiData.tracks) {
           for (const note of track.notes) {
-            // Utiliser midiToNoteName pour un format cohérent (C#, pas Db)
-            const normalizedName = midiToNoteName(note.midi)
             allNotes.push({
               midi: note.midi,
-              name: normalizedName,
+              name: midiToNoteName(note.midi),
               time: note.time,
               duration: note.duration,
               velocity: note.velocity
@@ -91,21 +75,14 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
           }
         }
 
-        // Trier par temps
         allNotes.sort((a, b) => a.time - b.time)
 
-        // Calculer la durée totale
         if (allNotes.length > 0) {
           const lastNote = allNotes[allNotes.length - 1]
           totalDuration.current = lastNote.time + lastNote.duration
         }
 
         setNotes(allNotes)
-
-        // Debug: afficher les notes uniques pour vérifier le format
-        const uniqueNotes = [...new Set(allNotes.map(n => n.name))].sort()
-        console.log(`🎹 Loaded ${allNotes.length} notes from MIDI (${Math.round(totalDuration.current)}s)`)
-        console.log(`🎹 Unique notes: ${uniqueNotes.join(', ')}`)
         setLoading(false)
       } catch (error) {
         console.error('Error loading MIDI:', error)
@@ -118,33 +95,28 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
 
   // Initialiser Tone.js Sampler
   useEffect(() => {
-    const initSampler = async () => {
-      const newSampler = new Tone.Sampler({
-        urls: {
-          C4: "C4.mp3",
-          "D#4": "Ds4.mp3",
-          "F#4": "Fs4.mp3",
-          A4: "A4.mp3",
-        },
-        release: 1,
-        baseUrl: "https://tonejs.github.io/audio/salamander/",
-      }).toDestination()
+    const newSampler = new Tone.Sampler({
+      urls: {
+        C4: "C4.mp3",
+        "D#4": "Ds4.mp3",
+        "F#4": "Fs4.mp3",
+        A4: "A4.mp3",
+      },
+      release: 1,
+      baseUrl: "https://tonejs.github.io/audio/salamander/",
+    }).toDestination()
 
-      setSampler(newSampler)
-    }
-
-    initSampler()
+    setSampler(newSampler)
 
     return () => {
-      if (sampler) {
-        sampler.dispose()
-      }
+      newSampler.dispose()
       Tone.Transport.stop()
       Tone.Transport.cancel()
       if (timeUpdateRef.current) {
         cancelAnimationFrame(timeUpdateRef.current)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Mettre à jour le tempo du Transport
@@ -153,7 +125,6 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
   }, [tempo])
 
   // Calculer les touches illuminées basées sur le temps actuel
-  // Utiliser la même logique que FallingNotesVisualizer pour la synchronisation
   useEffect(() => {
     if (!isPlaying || notes.length === 0) {
       return
@@ -163,57 +134,37 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     const hitLineY = 500
     const noteSpeed = 166.67 // pixels par seconde
 
-    // Trouver toutes les notes "actives" (proches de la ligne de frappe)
     const activeNotes = notes.filter(note => {
-      // Calculer la position Y de la note (même formule que FallingNotesVisualizer)
       const timeDiff = note.time - currentTime
       const noteY = hitLineY - (timeDiff * noteSpeed)
-
-      // Une note est active si elle est proche de la ligne de frappe (même seuil que le visualiseur)
       const distanceFromHitLine = Math.abs(noteY - hitLineY)
       return distanceFromHitLine < 50
     })
 
-    const activeNoteNames = [...new Set(activeNotes.map(n => n.name))]
-
-    // Debug logging
-    if (activeNoteNames.length > 0) {
-      console.log(`🎹 Active notes at ${currentTime.toFixed(2)}s:`, activeNoteNames.join(', '))
-    }
-
-    setHighlightedKeys(activeNoteNames)
+    setHighlightedKeys([...new Set(activeNotes.map(n => n.name))])
   }, [currentTime, notes, isPlaying])
 
   const startPlayback = async () => {
-    if (notes.length === 0 || !sampler) {
-      console.warn('No notes to play or sampler not ready')
-      return
-    }
+    if (notes.length === 0 || !sampler) return
 
     await Tone.start()
-
-    // Nettoyer les événements précédents
     Tone.Transport.cancel()
 
-    // Planifier toutes les notes sur le Transport (audio seulement)
     notes.forEach((note) => {
       Tone.Transport.schedule((time) => {
         sampler.triggerAttackRelease(note.name, note.duration, time, note.velocity)
       }, note.time)
     })
 
-    // Planifier l'arrêt automatique à la fin
     Tone.Transport.schedule(() => {
       Tone.Transport.stop()
       setIsPlaying(false)
       resetPlayback()
     }, totalDuration.current)
 
-    // Démarrer le transport
     Tone.Transport.start()
     setIsPlaying(true)
 
-    // Mettre à jour la progression et le temps actuel
     const updateProgress = () => {
       const elapsed = Tone.Transport.seconds
       setCurrentTime(elapsed)
@@ -261,165 +212,186 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     }
   }
 
+  const switchMode = (next: PlayerMode) => {
+    if (next === mode) return
+    resetPlayback()
+    setMode(next)
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center text-white text-xl font-bold">
+      {/* Header morceau + switch de mode */}
+      <div className="panel rounded-2xl p-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="btn-accent flex h-12 w-12 items-center justify-center rounded-xl text-xl font-black">
               {piece.title.charAt(0)}
             </div>
             <div>
-              <div>{piece.title}</div>
-              <div className="text-sm text-muted-foreground font-normal">
-                {piece.composer}
-              </div>
+              <h1 className="font-display text-2xl text-[#f2efe8]">{piece.title}</h1>
+              <p className="text-dim text-sm">{piece.composer}</p>
             </div>
-          </CardTitle>
-        </CardHeader>
-      </Card>
+          </div>
 
-      {/* Visualisation Notes Tombantes */}
-      {notes.length > 0 && (
-        <FallingNotesVisualizer
+          {/* Switch Écoute / Practice */}
+          <div className="glass flex rounded-full p-1">
+            <button
+              onClick={() => switchMode('listen')}
+              className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition-all ${
+                mode === 'listen' ? 'btn-accent' : 'text-dim hover:text-[#f2efe8]'
+              }`}
+            >
+              <Headphones className="h-4 w-4" /> Écoute
+            </button>
+            <button
+              onClick={() => switchMode('practice')}
+              className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition-all ${
+                mode === 'practice' ? 'btn-accent' : 'text-dim hover:text-[#f2efe8]'
+              }`}
+            >
+              <Gamepad2 className="h-4 w-4" /> Practice
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {loading && (
+        <div className="panel rounded-2xl p-6 text-center text-sm text-dim">
+          Chargement du fichier MIDI...
+        </div>
+      )}
+
+      {notes.length === 0 && !loading && (
+        <div className="panel rounded-2xl p-6 text-center text-sm text-dim">
+          Aucun fichier MIDI disponible pour ce morceau
+        </div>
+      )}
+
+      {/* ── Mode Practice : jouer le morceau sur son clavier ── */}
+      {mode === 'practice' && notes.length > 0 && (
+        <PracticeMode
+          pieceId={piece.id}
+          pieceTitle={piece.title}
           notes={notes}
-          isPlaying={isPlaying}
-          currentTime={currentTime}
-          onNoteHit={(note) => {
-            // Note frappée - pourrait être utilisé pour scoring/feedback
-            console.log('Note hit:', note.name)
-          }}
+          totalDuration={totalDuration.current}
         />
       )}
 
-      {/* Contrôles de lecture */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="space-y-4">
-            {loading && (
-              <div className="text-center text-sm text-muted-foreground">
-                Chargement du fichier MIDI...
-              </div>
-            )}
-
-            {notes.length === 0 && !loading && (
-              <div className="text-center text-sm text-muted-foreground">
-                Aucun fichier MIDI disponible pour ce morceau
-              </div>
-            )}
-
-            {notes.length > 0 && (
-              <>
-                {/* Progress bar */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>
-                      {Math.floor(currentTime / 60)}:{String(Math.floor(currentTime % 60)).padStart(2, '0')} / {Math.floor(totalDuration.current / 60)}:{String(Math.floor(totalDuration.current % 60)).padStart(2, '0')}
-                    </span>
-                    <span>{Math.round(progress)}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-600 transition-all"
-                      style={{ width: `${Math.min(progress, 100)}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Boutons de contrôle */}
-                <div className="flex items-center justify-center gap-4">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={resetPlayback}
-                    disabled={isPlaying}
-                  >
-                    <SkipBack className="w-4 h-4" />
-                  </Button>
-
-                  <Button
-                    size="lg"
-                    onClick={handlePlay}
-                    className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700"
-                  >
-                    {isPlaying ? (
-                      <>
-                        <Pause className="w-5 h-5 mr-2" />
-                        Pause
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-5 h-5 mr-2" />
-                        Lecture
-                      </>
-                    )}
-                  </Button>
-                </div>
-
-                {/* Contrôle du tempo */}
-                <div className="flex items-center gap-4">
-                  <Volume2 className="w-4 h-4 text-muted-foreground" />
-                  <div className="flex-1 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Tempo</span>
-                      <span className="font-medium">{tempo} BPM</span>
-                    </div>
-                    <Slider
-                      value={[tempo]}
-                      onValueChange={(value) => setTempo(value[0])}
-                      min={60}
-                      max={180}
-                      step={1}
-                      className="w-full"
-                      disabled={isPlaying}
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Piano interactif */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Piano Virtuel</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Suivez les notes illuminées ou jouez librement
-          </p>
-        </CardHeader>
-        <CardContent>
-          <Piano
-            highlightedKeys={highlightedKeys}
-            startOctave={1}
-            octaves={5}
+      {/* ── Mode Écoute : lecture + visualisation ── */}
+      {mode === 'listen' && notes.length > 0 && (
+        <>
+          <FallingNotesVisualizer
+            notes={notes}
+            isPlaying={isPlaying}
+            currentTime={currentTime}
           />
-        </CardContent>
-      </Card>
 
-      {/* Informations */}
-      {notes.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Informations du morceau</CardTitle>
-          </CardHeader>
-          <CardContent>
+          {/* Contrôles de lecture */}
+          <div className="panel rounded-2xl p-5">
+            <div className="space-y-4">
+              {/* Progress bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm text-dim">
+                  <span className="tabular-nums">
+                    {Math.floor(currentTime / 60)}:{String(Math.floor(currentTime % 60)).padStart(2, '0')} / {Math.floor(totalDuration.current / 60)}:{String(Math.floor(totalDuration.current % 60)).padStart(2, '0')}
+                  </span>
+                  <span className="tabular-nums">{Math.round(progress)}%</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(progress, 100)}%`,
+                      background: 'linear-gradient(90deg, #d99a26, #f0c66a)',
+                      boxShadow: '0 0 8px rgba(224,168,60,0.5)',
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Boutons de contrôle */}
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={resetPlayback}
+                  disabled={isPlaying}
+                  className="btn-ghost rounded-xl p-3 text-dim disabled:opacity-50"
+                  aria-label="Revenir au début"
+                >
+                  <SkipBack className="h-4 w-4" />
+                </button>
+
+                <button
+                  onClick={handlePlay}
+                  className="btn-accent inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 font-bold"
+                >
+                  {isPlaying ? (
+                    <>
+                      <Pause className="h-5 w-5" />
+                      Pause
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-5 w-5" />
+                      Lecture
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Contrôle du tempo */}
+              <div className="flex items-center gap-4">
+                <Volume2 className="h-4 w-4 text-faint" />
+                <div className="flex-1 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-dim">Tempo</span>
+                    <span className="font-bold tabular-nums text-[#f2efe8]">{tempo} BPM</span>
+                  </div>
+                  <Slider
+                    value={[tempo]}
+                    onValueChange={(value) => setTempo(value[0])}
+                    min={60}
+                    max={180}
+                    step={1}
+                    className="w-full"
+                    disabled={isPlaying}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Piano interactif */}
+          <div className="panel rounded-2xl p-5">
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-[#f2efe8]">Piano Virtuel</h2>
+              <p className="text-dim text-sm">
+                Suis les notes illuminées ou joue librement — ton clavier USB fonctionne aussi
+              </p>
+            </div>
+            <Piano
+              highlightedKeys={highlightedKeys}
+              startOctave={1}
+              octaves={5}
+            />
+          </div>
+
+          {/* Informations */}
+          <div className="panel rounded-2xl p-5">
+            <h2 className="mb-3 text-lg font-bold text-[#f2efe8]">Informations du morceau</h2>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-muted-foreground">Notes détectées:</span>
-                <span className="ml-2 font-medium">{notes.length}</span>
+                <span className="text-dim">Notes détectées :</span>
+                <span className="ml-2 font-bold tabular-nums text-[#f2efe8]">{notes.length}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Durée totale:</span>
-                <span className="ml-2 font-medium">
+                <span className="text-dim">Durée totale :</span>
+                <span className="ml-2 font-bold tabular-nums text-[#f2efe8]">
                   {Math.floor(totalDuration.current / 60)}:{String(Math.floor(totalDuration.current % 60)).padStart(2, '0')}
                 </span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </>
       )}
     </div>
   )

@@ -1,7 +1,9 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import * as Tone from 'tone'
+import { useMidiInput, useMidiNotes } from '@/hooks/useMidiInput'
+import { midiNoteToName } from '@/lib/midi/midiEngine'
 
 interface PianoProps {
   highlightedKeys?: string[] // For PiecePlayer usage: ["C4", "E4", "G4"]
@@ -12,6 +14,14 @@ interface PianoProps {
   startOctave?: number
   showLabels?: boolean
   autoScroll?: boolean // Auto-scroll to highlighted keys
+  /** Écouter le clavier MIDI branché en USB (P-145…). Activé par défaut. */
+  midiInput?: boolean
+  /** Relayer les notes MIDI vers onKeyPress/onNotePlay. À désactiver quand
+   *  le parent écoute déjà le MIDI lui-même (évite le double comptage). */
+  midiForwardsCallbacks?: boolean
+  /** Jouer le son des notes MIDI dans le navigateur. Désactivé par défaut :
+   *  le piano numérique produit déjà son propre son. */
+  soundOnMidi?: boolean
 }
 
 interface PianoKey {
@@ -28,13 +38,17 @@ export function Piano({
   octaves = 2,
   startOctave = 4,
   showLabels = true,
-  autoScroll = true
+  autoScroll = true,
+  midiInput = true,
+  midiForwardsCallbacks = true,
+  soundOnMidi = false
 }: PianoProps) {
   const [sampler, setSampler] = useState<Tone.Sampler | null>(null)
   const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set())
   const [isLoaded, setIsLoaded] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const keyRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const { status: midiStatus } = useMidiInput()
 
   const generateKeys = (): PianoKey[] => {
     const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
@@ -57,56 +71,68 @@ export function Piano({
   const keys = generateKeys()
 
   useEffect(() => {
-    const initSampler = async () => {
-      const newSampler = new Tone.Sampler({
-        urls: {
-          C4: "C4.mp3",
-          "D#4": "Ds4.mp3",
-          "F#4": "Fs4.mp3",
-          A4: "A4.mp3",
-        },
-        release: 1,
-        baseUrl: "https://tonejs.github.io/audio/salamander/",
-        onload: () => {
-          setIsLoaded(true)
-          console.log('🎹 Piano samples loaded')
-        }
-      }).toDestination()
+    const newSampler = new Tone.Sampler({
+      urls: {
+        C4: "C4.mp3",
+        "D#4": "Ds4.mp3",
+        "F#4": "Fs4.mp3",
+        A4: "A4.mp3",
+      },
+      release: 1,
+      baseUrl: "https://tonejs.github.io/audio/salamander/",
+      onload: () => setIsLoaded(true)
+    }).toDestination()
 
-      setSampler(newSampler)
-    }
-
-    initSampler()
+    setSampler(newSampler)
 
     return () => {
-      if (sampler) {
-        sampler.dispose()
-      }
+      newSampler.dispose()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const playNote = async (note: string) => {
-    if (!sampler || !isLoaded) {
-      console.warn('Sampler not ready')
-      return
+  const pressKey = useCallback((note: string) => {
+    setActiveKeys(prev => new Set(prev).add(note))
+    onKeyPress?.(note)
+    onNotePlay?.(note)
+  }, [onKeyPress, onNotePlay])
+
+  const releaseKey = useCallback((note: string) => {
+    setActiveKeys(prev => {
+      const newSet = new Set(prev)
+      newSet.delete(note)
+      return newSet
+    })
+  }, [])
+
+  // ── Entrée MIDI live : le vrai clavier illumine le piano virtuel ──
+  useMidiNotes((event) => {
+    if (!midiInput) return
+    const note = midiNoteToName(event.note)
+
+    if (event.type === 'noteon') {
+      if (midiForwardsCallbacks) {
+        pressKey(note)
+      } else {
+        // Affichage seul : le parent écoute déjà le MIDI lui-même
+        setActiveKeys(prev => new Set(prev).add(note))
+      }
+      if (soundOnMidi && sampler && isLoaded) {
+        sampler.triggerAttackRelease(note, '8n', undefined, event.velocity / 127)
+      }
+    } else {
+      releaseKey(note)
     }
+  })
+
+  const playNote = async (note: string) => {
+    if (!sampler || !isLoaded) return
 
     try {
       await Tone.start()
       sampler.triggerAttackRelease(note, '8n')
-
-      setActiveKeys(prev => new Set(prev).add(note))
-
-      setTimeout(() => {
-        setActiveKeys(prev => {
-          const newSet = new Set(prev)
-          newSet.delete(note)
-          return newSet
-        })
-      }, 200)
-
-      onKeyPress?.(note)
-      onNotePlay?.(note)
+      pressKey(note)
+      setTimeout(() => releaseKey(note), 200)
     } catch (error) {
       console.error('Error playing note:', error)
     }
@@ -123,46 +149,23 @@ export function Piano({
     return isHighlighted || isNoteHighlighted
   }
 
-  // Debug: log when highlightedKeys changes
-  useEffect(() => {
-    if (highlightedKeys.length > 0) {
-      console.log('🎹 Piano received highlightedKeys:', highlightedKeys)
-      // Vérifier quelles touches existent dans le piano
-      const pianoKeys = keys.map(k => k.note)
-      const matchingKeys = highlightedKeys.filter(k => pianoKeys.includes(k))
-      const missingKeys = highlightedKeys.filter(k => !pianoKeys.includes(k))
-      if (matchingKeys.length > 0) {
-        console.log('🎹 Matching keys on piano:', matchingKeys)
-      }
-      if (missingKeys.length > 0) {
-        console.log('⚠️ Keys NOT on piano (out of range):', missingKeys)
-      }
-    }
-  }, [highlightedKeys, keys])
-
   // Auto-scroll to show highlighted keys
   useEffect(() => {
     if (!autoScroll || highlightedKeys.length === 0 || !containerRef.current) return
 
-    // Trouver la première touche highlighted qui a une ref
     const firstHighlightedKey = highlightedKeys.find(key => keyRefs.current.has(key))
     if (!firstHighlightedKey) return
 
     const keyElement = keyRefs.current.get(firstHighlightedKey)
     if (!keyElement) return
 
-    // Calculer le scroll pour centrer la touche
     const container = containerRef.current
-    const keyRect = keyElement.getBoundingClientRect()
     const containerRect = container.getBoundingClientRect()
 
-    // Scroll seulement si la touche est hors de la vue
     const keyLeft = keyElement.offsetLeft
     const keyCenter = keyLeft + keyElement.offsetWidth / 2
-    const containerCenter = container.scrollLeft + containerRect.width / 2
+    const distance = Math.abs(keyCenter - containerRect.width / 2 - container.scrollLeft)
 
-    // Scroll smoothly vers la touche si elle est trop loin du centre
-    const distance = Math.abs(keyCenter - containerCenter - container.scrollLeft)
     if (distance > containerRect.width / 3) {
       container.scrollTo({
         left: keyCenter - containerRect.width / 2,
@@ -175,6 +178,9 @@ export function Piano({
     return activeKeys.has(note)
   }
 
+  /* Style « Scène » :
+     — laiton lumineux = note à jouer
+     — vert scène      = note jouée (clic ou clavier MIDI)              */
   const getKeyStyle = (key: PianoKey): React.CSSProperties => {
     const isHighlighted = isKeyHighlighted(key.note)
     const isActive = isKeyActive(key.note)
@@ -183,31 +189,44 @@ export function Piano({
       return {
         width: '30px',
         height: '120px',
-        backgroundColor: isActive ? '#4ade80' : (isHighlighted ? '#8b5cf6' : '#1f2937'),
+        background: isActive
+          ? 'linear-gradient(180deg, #6ee7a0, #22c55e)'
+          : isHighlighted
+            ? 'linear-gradient(180deg, #f0c66a, #d99a26)'
+            : 'linear-gradient(180deg, #26242a 0%, #0c0b0f 90%)',
         zIndex: 10,
         marginLeft: '-15px',
         marginRight: '-15px',
-        border: isHighlighted ? '3px solid #fbbf24' : '1px solid #000', // Yellow border when highlighted
-        borderRadius: '0 0 3px 3px',
+        border: '1px solid rgba(0,0,0,0.8)',
+        borderTop: 'none',
+        borderRadius: '0 0 4px 4px',
         cursor: 'pointer',
         transition: 'all 0.1s ease',
-        boxShadow: isHighlighted
-          ? '0 0 15px 5px rgba(251, 191, 36, 0.6)'  // Glow effect
-          : (isActive ? '0 4px 8px rgba(0,0,0,0.4)' : '0 2px 4px rgba(0,0,0,0.3)'),
+        boxShadow: isActive
+          ? '0 0 16px 4px rgba(74, 222, 128, 0.5), 0 4px 8px rgba(0,0,0,0.4)'
+          : isHighlighted
+            ? '0 0 16px 4px rgba(224, 168, 60, 0.55), 0 4px 8px rgba(0,0,0,0.4)'
+            : '0 4px 10px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.12)',
         transform: isActive ? 'translateY(2px)' : 'translateY(0)',
       }
     } else {
       return {
         width: '45px',
         height: '180px',
-        backgroundColor: isActive ? '#86efac' : (isHighlighted ? '#a78bfa' : '#ffffff'),
-        border: isHighlighted ? '3px solid #8b5cf6' : '1px solid #d1d5db', // Purple border when highlighted
-        borderRadius: '0 0 3px 3px',
+        background: isActive
+          ? 'linear-gradient(180deg, #a7f3c8, #4ade80)'
+          : isHighlighted
+            ? 'linear-gradient(180deg, #f7e3b0 0%, #f0c66a 60%, #d99a26 100%)'
+            : 'linear-gradient(180deg, #f5f2ea 0%, #d8d3c8 100%)',
+        border: '1px solid rgba(0,0,0,0.35)',
+        borderRadius: '0 0 4px 4px',
         cursor: 'pointer',
         transition: 'all 0.1s ease',
-        boxShadow: isHighlighted
-          ? '0 0 15px 5px rgba(139, 92, 246, 0.5)'  // Glow effect
-          : (isActive ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)'),
+        boxShadow: isActive
+          ? '0 0 18px 4px rgba(74, 222, 128, 0.45), inset 0 -4px 8px rgba(0,0,0,0.15)'
+          : isHighlighted
+            ? '0 0 18px 4px rgba(224, 168, 60, 0.45), inset 0 -4px 8px rgba(0,0,0,0.12)'
+            : 'inset 0 -4px 8px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.35)',
         transform: isActive ? 'translateY(2px)' : 'translateY(0)',
       }
     }
@@ -224,13 +243,13 @@ export function Piano({
             }}
             style={getKeyStyle(key)}
             onClick={() => playNote(key.note)}
-            className="relative hover:opacity-80 select-none"
+            className="relative hover:opacity-90 select-none"
           >
             {!key.isBlack && showLabels && (
               <div
-                className="absolute bottom-2 left-0 right-0 text-center text-xs font-medium"
+                className="absolute bottom-2 left-0 right-0 text-center text-xs font-semibold"
                 style={{
-                  color: isKeyActive(key.note) || isKeyHighlighted(key.note) ? '#1f2937' : '#6b7280'
+                  color: isKeyActive(key.note) || isKeyHighlighted(key.note) ? '#1a1408' : '#8a857b'
                 }}
               >
                 {key.note}
@@ -241,20 +260,26 @@ export function Piano({
       </div>
 
       {!isLoaded && (
-        <div className="text-center mt-4 text-sm text-muted-foreground">
+        <div className="text-center mt-4 text-sm text-dim">
           🎵 Chargement des samples de piano...
         </div>
       )}
 
-      <div className="flex items-center justify-center gap-4 mt-4 text-xs text-muted-foreground">
+      <div className="flex items-center justify-center gap-5 mt-4 text-xs text-dim">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-purple-400 rounded" />
+          <div className="w-4 h-4 rounded" style={{ background: 'linear-gradient(180deg, #f0c66a, #d99a26)' }} />
           <span>Note à jouer</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-green-400 rounded" />
+          <div className="w-4 h-4 rounded" style={{ background: 'linear-gradient(180deg, #6ee7a0, #22c55e)' }} />
           <span>Note jouée</span>
         </div>
+        {midiInput && midiStatus === 'connected' && (
+          <div className="badge-stage flex items-center gap-1.5 rounded-full px-2.5 py-1 font-bold">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#4ade80]" />
+            Clavier USB actif
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,6 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Award, Trophy } from "lucide-react";
+import { OctaveProgress } from "@/components/ui/octave-progress";
+import { Trophy } from "lucide-react";
 
 interface Achievement {
   id: string
@@ -41,72 +40,64 @@ export function Achievements({ achievements, totalAchievements, unlockedCount }:
     return iconMap[code] || '🎯'
   }
 
+  const progressPct = totalAchievements > 0
+    ? Math.round((unlockedCount / totalAchievements) * 100)
+    : 0
+
   return (
-    <Card className="bg-gradient-to-br from-white to-amber-50 dark:from-gray-900 dark:to-amber-950/50 border-amber-200 dark:border-amber-800 shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white">
-            <Trophy className="h-4 w-4" />
-          </div>
-          Succès débloqués 🏅
-        </CardTitle>
-        <div className="text-sm text-muted-foreground">
-          {unlockedCount} sur {totalAchievements} succès obtenus
+    <div className="panel rounded-2xl p-5">
+      <h2 className="mb-1 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-dim">
+        <Trophy className="h-3.5 w-3.5" />
+        Succès débloqués
+      </h2>
+      <p className="text-faint mb-4 text-sm">
+        {unlockedCount} sur {totalAchievements} succès obtenus
+      </p>
+
+      {/* Progression */}
+      <div className="space-y-2">
+        <div className="flex justify-between text-xs">
+          <span className="text-faint">Progression</span>
+          <span className="font-bold tabular-nums text-[#f2efe8]">{progressPct}%</span>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {/* Progress bar */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Progression</span>
-            <span className="font-medium">
-              {Math.round((unlockedCount / totalAchievements) * 100)}%
+        <OctaveProgress value={progressPct} />
+      </div>
+
+      {/* Achievements grid */}
+      <div className="mt-4 grid grid-cols-3 gap-3">
+        {achievements.slice(0, 6).map((achievement) => (
+          <div
+            key={achievement.id}
+            className={`flex aspect-square flex-col items-center justify-center rounded-xl border p-2 transition-all duration-300 ${
+              achievement.unlocked
+                ? 'border-[#e0a83c]/35 bg-[#e0a83c]/[0.10] shadow-[0_0_16px_rgba(224,168,60,0.12)] hover:shadow-[0_0_22px_rgba(224,168,60,0.25)]'
+                : 'border-white/[0.07] bg-white/[0.03] opacity-45 grayscale'
+            }`}
+            title={achievement.unlocked ? achievement.title : '???'}
+          >
+            <span className="mb-1 text-3xl">
+              {achievement.unlocked
+                ? getAchievementIcon(achievement.code, achievement.icon_url)
+                : '🔒'
+              }
             </span>
-          </div>
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-500"
-              style={{ width: `${(unlockedCount / totalAchievements) * 100}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Achievements grid */}
-        <div className="grid grid-cols-3 gap-3 pt-2">
-          {achievements.slice(0, 6).map((achievement) => (
-            <div
-              key={achievement.id}
-              className={`aspect-square rounded-xl flex flex-col items-center justify-center p-2 transition-all duration-300 ${
-                achievement.unlocked
-                  ? 'bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/50 dark:to-orange-900/50 border-2 border-amber-300 dark:border-amber-700 shadow-md hover:shadow-lg hover:scale-105'
-                  : 'bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 opacity-40 grayscale'
-              }`}
-              title={achievement.unlocked ? achievement.title : '???'}
-            >
-              <span className="text-3xl mb-1">
-                {achievement.unlocked
-                  ? getAchievementIcon(achievement.code, achievement.icon_url)
-                  : '🔒'
-                }
+            {achievement.unlocked && (
+              <span className="line-clamp-2 text-center text-[9px] font-semibold text-[#f0c66a]">
+                {achievement.title}
               </span>
-              {achievement.unlocked && (
-                <span className="text-[9px] font-medium text-center line-clamp-2 text-amber-800 dark:text-amber-200">
-                  {achievement.title}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* View all link */}
-        {totalAchievements > 6 && (
-          <div className="text-center pt-2">
-            <button className="text-sm text-amber-600 hover:text-amber-700 font-medium hover:underline">
-              Voir tous les succès ({totalAchievements})
-            </button>
+            )}
           </div>
-        )}
-      </CardContent>
-    </Card>
+        ))}
+      </div>
+
+      {/* View all link */}
+      {totalAchievements > 6 && (
+        <div className="pt-3 text-center">
+          <button className="accent-brass text-sm font-semibold hover:underline">
+            Voir tous les succès ({totalAchievements})
+          </button>
+        </div>
+      )}
+    </div>
   )
 }

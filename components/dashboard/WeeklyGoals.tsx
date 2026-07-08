@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { OctaveProgress } from "@/components/ui/octave-progress";
 import { Target, Clock, Music } from "lucide-react";
 
 interface WeeklyGoalsProps {
@@ -28,7 +28,6 @@ export function WeeklyGoals({ stats }: WeeklyGoalsProps) {
       current: lessonGoal.current,
       target: lessonGoal.target,
       icon: <Target className="h-4 w-4" />,
-      color: 'from-blue-400 to-cyan-500'
     },
     {
       title: "Pratiquer 5 heures",
@@ -36,7 +35,6 @@ export function WeeklyGoals({ stats }: WeeklyGoalsProps) {
       current: practiceGoal.current,
       target: practiceGoal.target,
       icon: <Clock className="h-4 w-4" />,
-      color: 'from-green-400 to-emerald-500'
     },
     {
       title: "Streak de 7 jours",
@@ -44,43 +42,33 @@ export function WeeklyGoals({ stats }: WeeklyGoalsProps) {
       current: streakGoal.current,
       target: streakGoal.target,
       icon: <Music className="h-4 w-4" />,
-      color: 'from-purple-400 to-pink-500'
     }
   ];
 
   return (
-    <Card className="bg-gradient-to-br from-white to-indigo-50 dark:from-gray-900 dark:to-indigo-950/50 border-indigo-200 dark:border-indigo-800 shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-            <Target className="h-4 w-4" />
-          </div>
-          Objectifs hebdomadaires 🎯
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="panel rounded-2xl p-5">
+      <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-dim">
+        <Target className="h-3.5 w-3.5" />
+        Objectifs hebdomadaires
+      </h2>
+      <div className="space-y-5">
         {goals.map((goal, index) => (
           <div key={index} className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className={`p-1.5 rounded-lg bg-gradient-to-r ${goal.color} text-white`}>
+                <div className="badge-brass flex h-7 w-7 items-center justify-center rounded-lg">
                   {goal.icon}
                 </div>
-                <span className="font-medium text-sm">{goal.title}</span>
+                <span className="text-sm font-semibold text-[#f2efe8]">{goal.title}</span>
               </div>
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+              <span className="text-dim text-sm font-bold tabular-nums">
                 {goal.current}/{goal.target}
               </span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-              <div
-                className={`h-full rounded-full bg-gradient-to-r ${goal.color} transition-all duration-500`}
-                style={{ width: `${goal.progress}%` }}
-              />
-            </div>
+            <OctaveProgress value={goal.progress} />
           </div>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

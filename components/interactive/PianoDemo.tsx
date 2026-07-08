@@ -2,9 +2,6 @@
 
 import { useState } from 'react'
 import { Piano } from './Piano'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 
 interface PianoDemoProps {
   title?: string
@@ -44,32 +41,34 @@ export function PianoDemo({
   }
 
   return (
-    <Card className="my-6 border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>{title}</span>
+    <div className="panel my-6 rounded-2xl p-6">
+      <div className="mb-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-[#f2efe8]">{title}</h3>
           {completed && (
-            <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-white">
+            <span className="badge-stage inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide">
               ✓ Complété !
-            </Badge>
+            </span>
           )}
-        </CardTitle>
-        <p className="text-sm text-muted-foreground mt-2">{instructions}</p>
-      </CardHeader>
-      <CardContent className="space-y-4">
+        </div>
+        <p className="text-dim mt-1 text-sm">{instructions}</p>
+      </div>
+
+      <div className="space-y-4">
         {targetNotes.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            <span className="text-sm font-medium">Notes à jouer :</span>
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <span className="text-dim text-sm font-semibold">Notes à jouer :</span>
             {targetNotes.map((note) => (
-              <Badge
+              <span
                 key={note}
-                variant={playedNotes.includes(note) ? "default" : "outline"}
-                className={playedNotes.includes(note)
-                  ? "bg-gradient-to-r from-green-400 to-emerald-500 text-white"
-                  : ""}
+                className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${
+                  playedNotes.includes(note)
+                    ? 'badge-stage'
+                    : 'badge-brass'
+                }`}
               >
                 {note}
-              </Badge>
+              </span>
             ))}
           </div>
         )}
@@ -86,17 +85,16 @@ export function PianoDemo({
 
         {targetNotes.length > 0 && (
           <div className="flex justify-center">
-            <Button
-              variant="outline"
-              size="sm"
+            <button
               onClick={resetProgress}
               disabled={playedNotes.length === 0}
+              className="btn-ghost rounded-xl px-4 py-2 text-sm font-semibold text-dim disabled:opacity-50"
             >
               Recommencer
-            </Button>
+            </button>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

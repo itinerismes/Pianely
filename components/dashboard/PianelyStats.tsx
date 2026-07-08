@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { OctaveProgress } from "@/components/ui/octave-progress";
 import {
   BookOpen,
   Clock,
@@ -17,63 +17,34 @@ interface StatCardProps {
 }
 
 function StatCard({ title, value, change, changeType, icon, progress, progressLabel }: StatCardProps) {
-  const getCardGradient = (title: string) => {
-    const gradients = {
-      'Niveaux complétés': 'bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-900/50 border-blue-200 dark:border-blue-800',
-      'Heures de pratique': 'bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950/50 dark:to-emerald-900/50 border-green-200 dark:border-green-800',
-      'Leçons terminées': 'bg-gradient-to-br from-yellow-50 to-orange-100 dark:from-yellow-950/50 dark:to-orange-900/50 border-yellow-200 dark:border-yellow-800',
-      'Progression moyenne': 'bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-950/50 dark:to-pink-900/50 border-purple-200 dark:border-purple-800'
-    };
-    return gradients[title as keyof typeof gradients] || 'bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 border-gray-200 dark:border-gray-700';
-  };
-
-  const getIconGradient = (title: string) => {
-    const gradients = {
-      'Niveaux complétés': 'bg-gradient-to-r from-blue-500 to-indigo-600',
-      'Heures de pratique': 'bg-gradient-to-r from-green-500 to-emerald-600',
-      'Leçons terminées': 'bg-gradient-to-r from-yellow-500 to-orange-600',
-      'Progression moyenne': 'bg-gradient-to-r from-purple-500 to-pink-600'
-    };
-    return gradients[title as keyof typeof gradients] || 'bg-gradient-to-r from-gray-500 to-gray-600';
-  };
-
   return (
-    <Card className={`${getCardGradient(title)} border-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
-        <div className={`p-2 rounded-lg ${getIconGradient(title)} text-white shadow-md`}>
+    <div className="panel panel-hover rounded-2xl p-5">
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-dim">{title}</p>
+        <div className="badge-brass flex h-9 w-9 items-center justify-center rounded-xl">
           {icon}
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold mb-1">{value}</div>
-        {change && (
-          <p className={`text-xs ${
-            changeType === 'positive' ? 'text-green-600' :
-            changeType === 'negative' ? 'text-red-600' :
-            'text-muted-foreground'
-          }`}>
-            {change}
-          </p>
-        )}
-        {progress !== undefined && (
-          <div className="mt-3 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">{progressLabel}</span>
-              <span className="font-medium">{progress}%</span>
-            </div>
-            <div className="w-full bg-white/50 dark:bg-gray-800/50 rounded-full h-2 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+      </div>
+      <p className="mt-2 text-3xl font-black tabular-nums text-[#f2efe8]">{value}</p>
+      {change && (
+        <p className={`mt-1 text-xs ${
+          changeType === 'positive' ? 'accent-green' :
+          changeType === 'negative' ? 'text-red-300' :
+          'text-faint'
+        }`}>
+          {change}
+        </p>
+      )}
+      {progress !== undefined && (
+        <div className="mt-4 space-y-2">
+          <div className="flex justify-between text-xs">
+            <span className="text-faint">{progressLabel}</span>
+            <span className="font-bold tabular-nums text-[#f2efe8]">{progress}%</span>
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <OctaveProgress value={progress} />
+        </div>
+      )}
+    </div>
   );
 }
 

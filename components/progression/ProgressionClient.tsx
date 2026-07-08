@@ -1,7 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { OctaveProgress } from '@/components/ui/octave-progress'
 import {
   TrendingUp,
   Clock,
@@ -9,7 +8,6 @@ import {
   Target,
   Calendar,
   BarChart3,
-  CheckCircle2,
   Flame
 } from 'lucide-react'
 import type { DashboardStats } from '@/lib/supabase/progress'
@@ -35,6 +33,28 @@ interface ProgressionClientProps {
   totalLessons: number
 }
 
+function StatCard({
+  title,
+  icon,
+  children
+}: {
+  title: string
+  icon: React.ReactNode
+  children: React.ReactNode
+}) {
+  return (
+    <div className="panel panel-hover rounded-2xl p-5">
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-dim">{title}</p>
+        <div className="badge-brass flex h-9 w-9 items-center justify-center rounded-xl">
+          {icon}
+        </div>
+      </div>
+      {children}
+    </div>
+  )
+}
+
 export function ProgressionClient({
   stats,
   levelProgress,
@@ -57,262 +77,178 @@ export function ProgressionClient({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="space-y-2 relative">
-        <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-10 blur-xl" />
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent relative z-10">
-          Ma Progression 📊
+      <div>
+        <h1 className="font-display text-3xl text-[#f2efe8]">
+          Ma <span className="accent-brass">progression</span>
         </h1>
-        <p className="text-muted-foreground relative z-10">
+        <p className="text-dim mt-1">
           Suis ton évolution et tes statistiques d'apprentissage
         </p>
       </div>
 
       {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-gradient-to-br from-white to-purple-50 dark:from-gray-900 dark:to-purple-950/50 border-purple-200 dark:border-purple-800 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Progression globale
-            </CardTitle>
-            <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-md">
-              <TrendingUp className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{overallCompletion}%</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {stats.totalLessonsCompleted}/{totalLessons} leçons
-            </p>
-            <div className="mt-3">
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-purple-500 to-blue-600 transition-all"
-                  style={{ width: `${overallCompletion}%` }}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard title="Progression globale" icon={<TrendingUp className="h-4 w-4" />}>
+          <p className="mt-2 text-3xl font-black tabular-nums text-[#f2efe8]">{overallCompletion}%</p>
+          <p className="text-faint mt-1 text-xs tabular-nums">
+            {stats.totalLessonsCompleted}/{totalLessons} leçons
+          </p>
+          <div className="mt-3">
+            <OctaveProgress value={overallCompletion} />
+          </div>
+        </StatCard>
 
-        <Card className="bg-gradient-to-br from-white to-green-50 dark:from-gray-900 dark:to-green-950/50 border-green-200 dark:border-green-800 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Temps de pratique
-            </CardTitle>
-            <div className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md">
-              <Clock className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{stats.totalPracticeTimeHours}h</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {stats.totalPracticeTimeMinutes} minutes au total
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard title="Temps de pratique" icon={<Clock className="h-4 w-4" />}>
+          <p className="mt-2 text-3xl font-black tabular-nums text-[#f2efe8]">{stats.totalPracticeTimeHours}h</p>
+          <p className="text-faint mt-1 text-xs tabular-nums">
+            {stats.totalPracticeTimeMinutes} minutes au total
+          </p>
+        </StatCard>
 
-        <Card className="bg-gradient-to-br from-white to-orange-50 dark:from-gray-900 dark:to-orange-950/50 border-orange-200 dark:border-orange-800 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Streak actuel
-            </CardTitle>
-            <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-md">
-              <Flame className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold flex items-center gap-2">
-              {stats.currentStreak > 0 && '🔥'} {stats.currentStreak}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {stats.currentStreak > 0 ? 'Jours consécutifs' : 'Commence une série !'}
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard title="Streak actuel" icon={<Flame className="h-4 w-4" />}>
+          <p className="mt-2 flex items-center gap-2 text-3xl font-black tabular-nums text-[#f2efe8]">
+            {stats.currentStreak > 0 && '🔥'} {stats.currentStreak}
+          </p>
+          <p className="text-faint mt-1 text-xs">
+            {stats.currentStreak > 0 ? 'Jours consécutifs' : 'Commence une série !'}
+          </p>
+        </StatCard>
 
-        <Card className="bg-gradient-to-br from-white to-amber-50 dark:from-gray-900 dark:to-amber-950/50 border-amber-200 dark:border-amber-800 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Succès débloqués
-            </CardTitle>
-            <div className="p-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md">
-              <Award className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">
-              {stats.unlockedAchievements}/{stats.totalAchievements}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {Math.round((stats.unlockedAchievements / stats.totalAchievements) * 100)}% complétés
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard title="Succès débloqués" icon={<Award className="h-4 w-4" />}>
+          <p className="mt-2 text-3xl font-black tabular-nums text-[#f2efe8]">
+            {stats.unlockedAchievements}/{stats.totalAchievements}
+          </p>
+          <p className="text-faint mt-1 text-xs tabular-nums">
+            {Math.round((stats.unlockedAchievements / stats.totalAchievements) * 100)}% complétés
+          </p>
+        </StatCard>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left Column - 2 sections */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* Left Column */}
+        <div className="space-y-6 lg:col-span-2">
           {/* Level Progress */}
-          <Card className="shadow-lg border-2 dark:border-gray-700 dark:bg-gray-900/50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-600 text-white">
-                  <BarChart3 className="h-4 w-4" />
-                </div>
-                Progression par niveau
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="panel rounded-2xl p-5">
+            <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-dim">
+              <BarChart3 className="h-3.5 w-3.5" />
+              Progression par niveau
+            </h2>
+            <div className="space-y-5">
               {levelProgress.map((level) => (
                 <div key={level.levelNumber} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Badge className={`bg-gradient-to-r ${level.color} text-white border-0`}>
+                      <span className={`inline-flex items-center rounded-full bg-gradient-to-r px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#0a0a0e] ${level.color}`}>
                         Niveau {level.levelNumber}
-                      </Badge>
-                      <span className="text-sm font-medium">{level.title}</span>
+                      </span>
+                      <span className="text-sm font-semibold text-[#f2efe8]">{level.title}</span>
                     </div>
-                    <span className="text-sm font-bold">{level.completion}%</span>
+                    <span className="text-sm font-bold tabular-nums text-[#f2efe8]">{level.completion}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full bg-gradient-to-r ${level.color} transition-all duration-500`}
-                      style={{ width: `${level.completion}%` }}
-                    />
-                  </div>
+                  <OctaveProgress value={level.completion} />
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Practice History */}
-          <Card className="shadow-lg border-2 dark:border-gray-700 dark:bg-gray-900/50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-600 text-white">
-                  <Calendar className="h-4 w-4" />
-                </div>
-                Historique de pratique (30 derniers jours)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {practiceStats.length > 0 ? (
-                <div className="space-y-3">
-                  {practiceStats.slice(0, 10).map((stat, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-200 dark:border-blue-800"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white font-semibold text-sm">
-                          {new Date(stat.date).getDate()}
-                        </div>
-                        <div>
-                          <p className="font-medium text-sm">
-                            {new Date(stat.date).toLocaleDateString('fr-FR', {
-                              weekday: 'long',
-                              day: 'numeric',
-                              month: 'long'
-                            })}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {stat.sessions} session{stat.sessions > 1 ? 's' : ''}
-                          </p>
-                        </div>
+          <div className="panel rounded-2xl p-5">
+            <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-dim">
+              <Calendar className="h-3.5 w-3.5" />
+              Historique de pratique (30 derniers jours)
+            </h2>
+            {practiceStats.length > 0 ? (
+              <div className="space-y-3">
+                {practiceStats.slice(0, 10).map((stat, index) => (
+                  <div
+                    key={index}
+                    className="glass flex items-center justify-between rounded-xl p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="badge-brass flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold tabular-nums">
+                        {new Date(stat.date).getDate()}
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-blue-600 dark:text-blue-400">{stat.duration} min</p>
+                      <div>
+                        <p className="text-sm font-semibold text-[#f2efe8]">
+                          {new Date(stat.date).toLocaleDateString('fr-FR', {
+                            weekday: 'long',
+                            day: 'numeric',
+                            month: 'long'
+                          })}
+                        </p>
+                        <p className="text-faint text-xs">
+                          {stat.sessions} session{stat.sessions > 1 ? 's' : ''}
+                        </p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Clock className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    Aucune pratique enregistrée encore
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    <p className="accent-brass font-bold tabular-nums">{stat.duration} min</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-12 text-center">
+                <Clock className="text-faint mx-auto mb-4 h-16 w-16" />
+                <p className="text-dim">
+                  Aucune pratique enregistrée encore
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Column - Sidebar */}
         <div className="space-y-6">
           {/* Streak Calendar */}
-          <Card className="shadow-lg border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-br from-white to-orange-50 dark:from-gray-900 dark:to-orange-950/50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-600 text-white">
-                  <Flame className="h-4 w-4" />
-                </div>
-                7 derniers jours
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-7 gap-2">
-                {last7Days.map((date) => {
-                  const hasActivity = progressByDate[date] || 0
-                  const dayName = new Date(date).toLocaleDateString('fr-FR', { weekday: 'short' })
+          <div className="panel rounded-2xl p-5">
+            <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-dim">
+              <Flame className="h-3.5 w-3.5" />
+              7 derniers jours
+            </h2>
+            <div className="grid grid-cols-7 gap-2">
+              {last7Days.map((date) => {
+                const hasActivity = progressByDate[date] || 0
+                const dayName = new Date(date).toLocaleDateString('fr-FR', { weekday: 'short' })
 
-                  return (
-                    <div key={date} className="flex flex-col items-center gap-1">
-                      <span className="text-xs font-medium text-muted-foreground">
-                        {dayName}
-                      </span>
-                      <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${
-                          hasActivity > 0
-                            ? 'bg-gradient-to-br from-orange-400 to-amber-500 text-white shadow-md'
-                            : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'
-                        }`}
-                      >
-                        {hasActivity > 0 ? '✓' : '-'}
-                      </div>
+                return (
+                  <div key={date} className="flex flex-col items-center gap-1">
+                    <span className="text-faint text-xs font-semibold">
+                      {dayName}
+                    </span>
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold transition-all ${
+                        hasActivity > 0
+                          ? 'bg-gradient-to-br from-[#f0c66a] to-[#d99a26] text-[#1a1408] shadow-[0_0_12px_rgba(224,168,60,0.4)]'
+                          : 'text-faint border border-white/[0.07] bg-white/[0.03]'
+                      }`}
+                    >
+                      {hasActivity > 0 ? '✓' : '·'}
                     </div>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
 
           {/* Quick Stats */}
-          <Card className="shadow-lg border-2 border-green-200 dark:border-green-800 bg-gradient-to-br from-white to-green-50 dark:from-gray-900 dark:to-green-950/50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white">
-                  <Target className="h-4 w-4" />
+          <div className="panel rounded-2xl p-5">
+            <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-dim">
+              <Target className="h-3.5 w-3.5" />
+              Statistiques rapides
+            </h2>
+            <div className="space-y-2.5">
+              {[
+                { label: 'Leçons complétées', value: String(stats.totalLessonsCompleted) },
+                { label: 'Niveaux terminés', value: `${Object.values(stats.levelsCompletion).filter(c => c === 100).length}/5` },
+                { label: 'Moyenne par niveau', value: `${Math.round(Object.values(stats.levelsCompletion).reduce((a, b) => a + b, 0) / 5)}%` },
+                { label: 'Sessions cette semaine', value: String(stats.recentActivity.reduce((sum, a) => sum + a.sessions, 0)) },
+              ].map((item) => (
+                <div key={item.label} className="glass flex items-center justify-between rounded-xl px-3 py-2">
+                  <span className="text-dim text-sm">{item.label}</span>
+                  <span className="font-bold tabular-nums text-[#f2efe8]">{item.value}</span>
                 </div>
-                Statistiques rapides
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80 dark:bg-gray-800/80">
-                <span className="text-sm text-muted-foreground">Leçons complétées</span>
-                <span className="font-bold">{stats.totalLessonsCompleted}</span>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80 dark:bg-gray-800/80">
-                <span className="text-sm text-muted-foreground">Niveaux terminés</span>
-                <span className="font-bold">
-                  {Object.values(stats.levelsCompletion).filter(c => c === 100).length}/5
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80 dark:bg-gray-800/80">
-                <span className="text-sm text-muted-foreground">Moyenne par niveau</span>
-                <span className="font-bold">
-                  {Math.round(Object.values(stats.levelsCompletion).reduce((a, b) => a + b, 0) / 5)}%
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-white/80 dark:bg-gray-800/80">
-                <span className="text-sm text-muted-foreground">Sessions cette semaine</span>
-                <span className="font-bold">
-                  {stats.recentActivity.reduce((sum, a) => sum + a.sessions, 0)}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

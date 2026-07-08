@@ -1,9 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { CheckCircle2, XCircle, AlertCircle, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -50,19 +47,18 @@ export function Quiz({
   const isCorrect = selectedAnswer === correctAnswer
 
   return (
-    <Card className="my-6 border-2 border-blue-200 bg-gradient-to-br from-white to-blue-50">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-600 text-white">
-            <AlertCircle className="w-5 h-5" />
-          </div>
-          <span>Quiz - Teste tes connaissances</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="panel my-6 rounded-2xl border-[#38bdf8]/25 p-6 shadow-[0_0_24px_rgba(56,189,248,0.08)]">
+      <div className="mb-4 flex items-center gap-2">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#38bdf8]/30 bg-[#38bdf8]/10 text-[#7dd3fc]">
+          <AlertCircle className="h-5 w-5" />
+        </div>
+        <h3 className="text-lg font-bold text-[#f2efe8]">Quiz - Teste tes connaissances</h3>
+      </div>
+
+      <div className="space-y-4">
         {/* Question */}
-        <div className="bg-white rounded-lg p-4 border-2 border-blue-200">
-          <h3 className="font-semibold text-lg mb-4">{question}</h3>
+        <div className="glass rounded-xl p-4">
+          <h4 className="mb-4 text-lg font-semibold text-[#f2efe8]">{question}</h4>
 
           {/* Options */}
           <div className="space-y-3">
@@ -78,31 +74,31 @@ export function Quiz({
                   onClick={() => handleAnswer(index)}
                   disabled={hasAnswered}
                   className={cn(
-                    'w-full text-left p-4 rounded-lg border-2 transition-all duration-200',
-                    'hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400',
-                    !hasAnswered && 'hover:border-blue-400 hover:bg-blue-50',
-                    isSelected && !showResult && 'border-blue-500 bg-blue-100',
-                    showCorrect && 'border-green-500 bg-green-100',
-                    showIncorrect && 'border-red-500 bg-red-100',
-                    !isSelected && !showResult && 'border-gray-300 bg-white',
-                    hasAnswered && !isSelected && !showCorrect && 'opacity-50'
+                    'w-full rounded-xl border p-4 text-left transition-all duration-200',
+                    'focus:outline-none focus:ring-2 focus:ring-[#e0a83c]/50',
+                    !hasAnswered && 'hover:border-[#e0a83c]/40 hover:bg-white/[0.06]',
+                    isSelected && !showResult && 'border-[#e0a83c]/50 bg-[#e0a83c]/[0.10]',
+                    showCorrect && 'border-[#4ade80]/50 bg-[#4ade80]/[0.10]',
+                    showIncorrect && 'border-red-400/50 bg-red-400/[0.10]',
+                    !isSelected && !showResult && 'border-white/[0.09] bg-white/[0.03]',
+                    hasAnswered && !isSelected && !showCorrect && 'opacity-40'
                   )}
                 >
                   <div className="flex items-center justify-between">
                     <span className="flex items-center gap-3">
                       <span className={cn(
-                        'w-8 h-8 rounded-full border-2 flex items-center justify-center font-semibold text-sm',
-                        isSelected && !showResult && 'border-blue-500 bg-blue-500 text-white',
-                        showCorrect && 'border-green-500 bg-green-500 text-white',
-                        showIncorrect && 'border-red-500 bg-red-500 text-white',
-                        !isSelected && !showResult && 'border-gray-400 text-gray-600'
+                        'flex h-8 w-8 items-center justify-center rounded-full border text-sm font-bold',
+                        isSelected && !showResult && 'border-[#e0a83c] bg-[#e0a83c] text-[#1a1408]',
+                        showCorrect && 'border-[#4ade80] bg-[#4ade80] text-[#0a0a0e]',
+                        showIncorrect && 'border-red-400 bg-red-400 text-[#0a0a0e]',
+                        !isSelected && !showResult && 'border-white/20 text-dim'
                       )}>
                         {String.fromCharCode(65 + index)}
                       </span>
-                      <span className="font-medium">{option}</span>
+                      <span className="font-semibold text-[#f2efe8]">{option}</span>
                     </span>
-                    {showCorrect && <CheckCircle2 className="w-6 h-6 text-green-600" />}
-                    {showIncorrect && <XCircle className="w-6 h-6 text-red-600" />}
+                    {showCorrect && <CheckCircle2 className="accent-green h-6 w-6" />}
+                    {showIncorrect && <XCircle className="h-6 w-6 text-red-300" />}
                   </div>
                 </button>
               )
@@ -112,39 +108,38 @@ export function Quiz({
 
         {/* Submit/Retry Button */}
         {!showResult ? (
-          <Button
+          <button
             onClick={handleSubmit}
             disabled={selectedAnswer === null}
-            className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white"
-            size="lg"
+            className="btn-accent inline-flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 font-bold disabled:opacity-50"
           >
             Valider ma réponse
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
+            <ArrowRight className="h-5 w-5" />
+          </button>
         ) : (
           <div className="space-y-4">
             {/* Result Message */}
             <div className={cn(
-              'rounded-lg p-4 border-2',
+              'rounded-xl border p-4',
               isCorrect
-                ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-300'
-                : 'bg-gradient-to-br from-orange-50 to-amber-50 border-orange-300'
+                ? 'border-[#4ade80]/35 bg-[#4ade80]/[0.08]'
+                : 'border-[#fbbf24]/35 bg-[#fbbf24]/[0.08]'
             )}>
               <div className="flex items-start gap-3">
                 {isCorrect ? (
-                  <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="accent-green mt-0.5 h-6 w-6 flex-shrink-0" />
                 ) : (
-                  <XCircle className="w-6 h-6 text-orange-600 flex-shrink-0 mt-0.5" />
+                  <XCircle className="mt-0.5 h-6 w-6 flex-shrink-0 text-[#fcd34d]" />
                 )}
                 <div className="flex-1">
                   <h4 className={cn(
-                    'font-bold mb-1',
-                    isCorrect ? 'text-green-900' : 'text-orange-900'
+                    'mb-1 font-bold',
+                    isCorrect ? 'text-[#86efac]' : 'text-[#fcd34d]'
                   )}>
                     {isCorrect ? 'Bravo ! Bonne réponse ! 🎉' : 'Pas tout à fait...'}
                   </h4>
                   {explanation && (
-                    <p className="text-sm text-gray-700 leading-relaxed">
+                    <p className="text-dim text-sm leading-relaxed">
                       {explanation}
                     </p>
                   )}
@@ -154,14 +149,12 @@ export function Quiz({
 
             {/* Retry Button */}
             {!isCorrect && (
-              <Button
+              <button
                 onClick={handleRetry}
-                variant="outline"
-                className="w-full border-2"
-                size="lg"
+                className="btn-ghost w-full rounded-2xl py-3 font-semibold text-[#f2efe8]"
               >
                 Réessayer
-              </Button>
+              </button>
             )}
           </div>
         )}
@@ -169,12 +162,12 @@ export function Quiz({
         {/* Score Badge */}
         {showResult && isCorrect && (
           <div className="flex justify-center">
-            <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-white text-sm px-4 py-2">
+            <span className="badge-stage inline-flex items-center rounded-full px-4 py-2 text-sm font-bold">
               ✓ Quiz réussi !
-            </Badge>
+            </span>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

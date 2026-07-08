@@ -1,6 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Clock, CheckCircle2, Lock, Play, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -34,77 +31,77 @@ export function LeconCard({
   };
 
   return (
-    <Card
-      className={`group transition-all duration-300 hover:shadow-xl border-0 shadow-md ${
-        unlocked ? 'cursor-pointer hover:-translate-y-1' : 'opacity-75'
+    <div
+      className={`panel rounded-2xl transition-all duration-300 ${
+        unlocked ? 'panel-hover cursor-pointer' : 'opacity-55'
       }`}
       onClick={handleClick}
     >
-      <CardContent className="p-4">
+      <div className="p-4">
         <div className="flex items-start gap-4">
           {/* Icon status */}
           <div
-            className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+            className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl transition-all duration-200 ${
               completed
-                ? 'bg-gradient-to-r from-green-400 to-emerald-500'
+                ? 'badge-stage'
                 : unlocked
-                ? `bg-gradient-to-r ${gradient}`
-                : 'bg-gray-200'
+                ? `bg-gradient-to-r ${gradient} text-[#0a0a0e] shadow-[0_0_16px_rgba(255,255,255,0.12)]`
+                : 'border border-white/[0.08] bg-white/[0.04] text-faint'
             }`}
           >
             {completed ? (
-              <CheckCircle2 className="w-6 h-6 text-white" />
+              <CheckCircle2 className="h-6 w-6" />
             ) : unlocked ? (
-              <Play className="w-6 h-6 text-white" />
+              <Play className="h-6 w-6" />
             ) : (
-              <Lock className="w-6 h-6 text-gray-400" />
+              <Lock className="h-5 w-5" />
             )}
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="text-sm font-bold text-muted-foreground">
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              <span className="text-faint text-[11px] font-bold uppercase tracking-widest">
                 Leçon {id}
               </span>
-              <Badge variant="secondary" className="text-xs">
+              <span className="text-faint inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[10px] font-bold">
+                <Clock className="h-3 w-3" />
                 {duration} min
-              </Badge>
+              </span>
               {completed && (
-                <Badge className="text-xs bg-gradient-to-r from-green-400 to-emerald-500 text-white border-0">
+                <span className="badge-stage inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
                   Complété
-                </Badge>
+                </span>
               )}
             </div>
-            <h3 className="font-medium mb-1 line-clamp-1">{title}</h3>
-            <p className="text-sm text-muted-foreground line-clamp-2">
+            <h3 className="mb-1 line-clamp-1 font-bold text-[#f2efe8]">{title}</h3>
+            <p className="text-dim line-clamp-2 text-sm">
               {description}
             </p>
 
             {/* CTA */}
             <div className="mt-3">
               {unlocked ? (
-                <Button
-                  size="sm"
-                  className={`bg-gradient-to-r ${gradient} hover:opacity-90 text-white border-0 transition-all duration-200`}
+                <button
+                  className="btn-accent inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleClick();
                   }}
                 >
                   {completed ? 'Revoir' : 'Commencer'}
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               ) : (
-                <Button size="sm" variant="ghost" disabled className="text-muted-foreground">
-                  <Lock className="w-4 h-4 mr-2" />
+                <span className="text-faint inline-flex items-center gap-1.5 px-1 py-2 text-sm font-semibold">
+                  <Lock className="h-4 w-4" />
                   Verrouillé
-                </Button>
+                </span>
               )}
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

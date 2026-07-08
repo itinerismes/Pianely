@@ -5,10 +5,6 @@ import { PianelyStats } from '@/components/dashboard/PianelyStats'
 import { WeeklyGoals } from '@/components/dashboard/WeeklyGoals'
 import { Achievements } from '@/components/dashboard/Achievements'
 import { NiveauCard } from '@/components/parcours/NiveauCard'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { ArrowRight, Music, Trophy } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { DashboardStats } from '@/lib/supabase/progress'
@@ -45,6 +41,8 @@ interface DashboardClientProps {
   unlockedAchievementsCount: number
 }
 
+type NiveauFilter = 'all' | 'in-progress' | 'completed'
+
 export function DashboardClient({
   userName,
   stats,
@@ -54,25 +52,33 @@ export function DashboardClient({
   unlockedAchievementsCount
 }: DashboardClientProps) {
   const router = useRouter()
-  const [selectedTab, setSelectedTab] = useState('all')
+  const [filter, setFilter] = useState<NiveauFilter>('all')
 
   const inProgressNiveaux = niveaux.filter(
     (n) => n.unlocked && n.completedLessons > 0 && n.completedLessons < n.totalLessons
   )
   const completedNiveaux = niveaux.filter((n) => n.completedLessons === n.totalLessons)
 
+  const filtered =
+    filter === 'in-progress' ? inProgressNiveaux :
+    filter === 'completed' ? completedNiveaux :
+    niveaux
+
+  const filters: { id: NiveauFilter; label: string; count?: number }[] = [
+    { id: 'all', label: 'Tous' },
+    { id: 'in-progress', label: 'En cours', count: inProgressNiveaux.length },
+    { id: 'completed', label: 'Complétés', count: completedNiveaux.length },
+  ]
+
   return (
     <div className="space-y-6">
-      {/* Welcome Section with decorative blobs */}
-      <div className="space-y-2 relative">
-        <div className="absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-10 blur-xl decorative-blob" />
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-10 blur-xl decorative-blob" />
-
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent relative z-10">
-          Bienvenue, {userName} ! 🎹
+      {/* Welcome */}
+      <div>
+        <h1 className="font-display text-3xl text-[#f2efe8]">
+          Bienvenue, <span className="accent-brass">{userName}</span>
         </h1>
-        <p className="text-muted-foreground relative z-10">
-          Continue ton apprentissage du piano. Tu progresses bien ! ✨
+        <p className="text-dim mt-1">
+          Continue ton apprentissage du piano. Tu progresses bien !
         </p>
       </div>
 
@@ -82,73 +88,55 @@ export function DashboardClient({
       {/* Grid Layout */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Section */}
-        <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-xl font-semibold">Mes Niveaux</h2>
+        <div className="space-y-4 lg:col-span-2">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-[11px] font-bold uppercase tracking-widest text-dim">Mes Niveaux</h2>
 
-          <Tabs defaultValue="all" value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="grid w-full grid-cols-3 bg-muted/50">
-              <TabsTrigger value="all">Tous</TabsTrigger>
-              <TabsTrigger value="in-progress">
-                En cours
-                {inProgressNiveaux.length > 0 && (
-                  <Badge className="ml-2 bg-gradient-to-r from-blue-400 to-cyan-500 text-white border-0">
-                    {inProgressNiveaux.length}
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="completed">
-                Complétés
-                {completedNiveaux.length > 0 && (
-                  <Badge className="ml-2 bg-gradient-to-r from-green-400 to-emerald-500 text-white border-0">
-                    {completedNiveaux.length}
-                  </Badge>
-                )}
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="all" className="grid gap-4 sm:grid-cols-2 mt-4">
-              {niveaux.map((niveau) => (
-                <NiveauCard key={niveau.niveau} {...niveau} />
+            {/* Filtres */}
+            <div className="glass flex rounded-full p-1">
+              {filters.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => setFilter(f.id)}
+                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                    filter === f.id ? 'btn-accent' : 'text-dim hover:text-[#f2efe8]'
+                  }`}
+                >
+                  {f.label}
+                  {f.count !== undefined && f.count > 0 && (
+                    <span className="tabular-nums opacity-80">{f.count}</span>
+                  )}
+                </button>
               ))}
-            </TabsContent>
+            </div>
+          </div>
 
-            <TabsContent value="in-progress" className="grid gap-4 sm:grid-cols-2 mt-4">
-              {inProgressNiveaux.length > 0 ? (
-                inProgressNiveaux.map((niveau) => (
-                  <NiveauCard key={niveau.niveau} {...niveau} />
-                ))
-              ) : (
-                <div className="col-span-2 text-center py-12">
-                  <Music className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    Aucun niveau en cours. Commence un niveau pour le voir ici !
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="completed" className="grid gap-4 sm:grid-cols-2 mt-4">
-              {completedNiveaux.length > 0 ? (
-                completedNiveaux.map((niveau) => (
-                  <NiveauCard key={niveau.niveau} {...niveau} />
-                ))
-              ) : (
-                <div className="col-span-2 text-center py-12">
-                  <Trophy className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    Aucun niveau complété encore. Continue ton apprentissage !
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {filtered.length > 0 ? (
+              filtered.map((niveau) => (
+                <NiveauCard key={niveau.niveau} {...niveau} />
+              ))
+            ) : (
+              <div className="panel col-span-2 rounded-2xl py-12 text-center">
+                {filter === 'completed' ? (
+                  <Trophy className="text-faint mx-auto mb-4 h-16 w-16" />
+                ) : (
+                  <Music className="text-faint mx-auto mb-4 h-16 w-16" />
+                )}
+                <p className="text-dim">
+                  {filter === 'completed'
+                    ? 'Aucun niveau complété encore. Continue ton apprentissage !'
+                    : 'Aucun niveau en cours. Commence un niveau pour le voir ici !'}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
           <WeeklyGoals stats={stats} />
 
-          {/* Achievements */}
           <Achievements
             achievements={achievements}
             totalAchievements={totalAchievements}
@@ -156,79 +144,71 @@ export function DashboardClient({
           />
 
           {/* Continue Learning */}
-          <Card className="bg-gradient-to-br from-white to-orange-50 dark:from-gray-900 dark:to-orange-950/50 border-orange-200 dark:border-orange-800 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-600 text-white">
-                  <ArrowRight className="h-4 w-4" />
-                </div>
-                Continuer l'apprentissage 🎬
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="p-3 rounded-lg bg-white/80 dark:bg-gray-800/80 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-sm">Niveau 1 - Leçon 1</span>
-                  <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-white border-0">
-                    Nouveau
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Position des mains et premières notes
-                </p>
+          <div className="panel rounded-2xl p-5">
+            <h2 className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-dim">
+              <ArrowRight className="h-3.5 w-3.5" />
+              Continuer l'apprentissage
+            </h2>
+            <div className="glass mb-3 space-y-1.5 rounded-xl p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-[#f2efe8]">Niveau 1 - Leçon 1</span>
+                <span className="badge-stage inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
+                  Nouveau
+                </span>
               </div>
-              <Button
-                className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0"
-                onClick={() => router.push('/parcours/niveau-1/lecon-1')}
-              >
-                Commencer
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </CardContent>
-          </Card>
+              <p className="text-faint text-xs">
+                Position des mains et premières notes
+              </p>
+            </div>
+            <button
+              className="btn-accent inline-flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold"
+              onClick={() => router.push('/parcours/niveau-1/lecon-1')}
+            >
+              Commencer
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
 
           {/* Recent Activity */}
-          <Card className="bg-gradient-to-br from-white to-green-50 dark:from-gray-900 dark:to-green-950/50 border-green-200 dark:border-green-800 shadow-lg">
-            <CardHeader>
-              <CardTitle>Activité récente 📈</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {stats.recentActivity.length > 0 ? (
-                <div className="text-sm text-muted-foreground space-y-2">
-                  {stats.recentActivity.slice(0, 5).map((activity, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 mt-1.5" />
-                      <div>
-                        <p className="font-medium text-foreground">
-                          {activity.sessions} session{activity.sessions > 1 ? 's' : ''} de pratique
-                        </p>
-                        <p className="text-xs">
-                          {activity.duration} min - {new Date(activity.date).toLocaleDateString('fr-FR')}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-sm text-muted-foreground space-y-2">
-                  <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 mt-1.5" />
+          <div className="panel rounded-2xl p-5">
+            <h2 className="mb-4 text-[11px] font-bold uppercase tracking-widest text-dim">
+              Activité récente
+            </h2>
+            {stats.recentActivity.length > 0 ? (
+              <div className="space-y-3 text-sm">
+                {stats.recentActivity.slice(0, 5).map((activity, index) => (
+                  <div key={index} className="flex items-start gap-2.5">
+                    <div className="mt-1.5 h-2 w-2 rounded-full bg-[#4ade80] shadow-[0_0_6px_rgba(74,222,128,0.6)]" />
                     <div>
-                      <p className="font-medium text-foreground">Compte créé</p>
-                      <p className="text-xs">Aujourd'hui</p>
+                      <p className="font-semibold text-[#f2efe8]">
+                        {activity.sessions} session{activity.sessions > 1 ? 's' : ''} de pratique
+                      </p>
+                      <p className="text-faint text-xs tabular-nums">
+                        {activity.duration} min - {new Date(activity.date).toLocaleDateString('fr-FR')}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500 mt-1.5" />
-                    <div>
-                      <p className="font-medium text-foreground">Niveau 1 débloqué</p>
-                      <p className="text-xs">Aujourd'hui</p>
-                    </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3 text-sm">
+                <div className="flex items-start gap-2.5">
+                  <div className="mt-1.5 h-2 w-2 rounded-full bg-[#4ade80] shadow-[0_0_6px_rgba(74,222,128,0.6)]" />
+                  <div>
+                    <p className="font-semibold text-[#f2efe8]">Compte créé</p>
+                    <p className="text-faint text-xs">Aujourd'hui</p>
                   </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+                <div className="flex items-start gap-2.5">
+                  <div className="mt-1.5 h-2 w-2 rounded-full bg-[#f0c66a] shadow-[0_0_6px_rgba(224,168,60,0.6)]" />
+                  <div>
+                    <p className="font-semibold text-[#f2efe8]">Niveau 1 débloqué</p>
+                    <p className="text-faint text-xs">Aujourd'hui</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

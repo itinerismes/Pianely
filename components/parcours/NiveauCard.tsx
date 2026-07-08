@@ -1,7 +1,5 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Clock, BookOpen, Lock, CheckCircle2, ArrowRight } from "lucide-react";
+import { OctaveProgress } from "@/components/ui/octave-progress";
+import { Clock, BookOpen, Lock, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface NiveauCardProps {
@@ -32,15 +30,8 @@ export function NiveauCard({
   onClick
 }: NiveauCardProps) {
   const router = useRouter();
-  // Use completion from database instead of calculating locally
   const progress = completion;
-
-  const getProgressColor = (progress: number) => {
-    if (progress >= 80) return 'from-green-400 to-emerald-500';
-    if (progress >= 50) return 'from-blue-400 to-cyan-500';
-    if (progress >= 20) return 'from-yellow-400 to-orange-500';
-    return 'from-gray-400 to-gray-500';
-  };
+  const complete = completedLessons === totalLessons;
 
   const handleClick = () => {
     if (unlocked) {
@@ -53,103 +44,92 @@ export function NiveauCard({
   };
 
   return (
-    <Card
-      className={`group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 ${
-        !unlocked ? 'opacity-75' : ''
+    <div
+      className={`panel rounded-2xl overflow-hidden transition-all ${
+        unlocked ? 'panel-hover cursor-pointer' : 'opacity-60'
       }`}
       onClick={handleClick}
     >
-      <CardHeader className="p-0">
-        <div className="relative overflow-hidden rounded-t-lg">
-          {/* Background gradient */}
-          <div className={`w-full h-48 bg-gradient-to-br ${gradient} transition-transform duration-200 group-hover:scale-105`}>
-            {/* Decorative elements */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+      {/* Bandeau : numéro sous projecteur, teinté par niveau */}
+      <div className="relative h-32 overflow-hidden">
+        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-[0.16]`} />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(320px 130px at 50% 0%, rgba(255,255,255,0.10), transparent 70%)',
+          }}
+        />
 
-            {/* Niveau number */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                <span className="text-5xl font-bold text-white drop-shadow-lg">
-                  {niveau}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Badge */}
-          <div className="absolute top-3 left-3">
-            <Badge className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-gray-700 dark:text-gray-200 border-0 shadow-lg">
-              Niveau {niveau}
-            </Badge>
-          </div>
-
-          {/* Completion/Lock badge */}
-          {!unlocked ? (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <div className="flex flex-col items-center gap-2">
-                <Lock className="w-12 h-12 text-white drop-shadow-lg" />
-                <span className="text-white font-medium drop-shadow-lg">Verrouillé</span>
-              </div>
-            </div>
-          ) : completedLessons === totalLessons ? (
-            <div className="absolute top-3 right-3">
-              <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white border-0 shadow-lg">
-                ✅ Complété
-              </Badge>
-            </div>
-          ) : null}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <span className={`font-display text-6xl bg-gradient-to-br ${gradient} bg-clip-text text-transparent drop-shadow`}>
+            {niveau}
+          </span>
         </div>
-      </CardHeader>
 
-      <CardContent className="p-4 space-y-3">
+        <span className="absolute top-3 left-3 inline-flex items-center rounded-full border border-white/12 bg-white/[0.06] px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-dim backdrop-blur-sm">
+          Niveau {niveau}
+        </span>
+
+        {!unlocked ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/55 backdrop-blur-[2px]">
+            <div className="flex flex-col items-center gap-1.5">
+              <Lock className="h-8 w-8 text-dim" />
+              <span className="text-sm font-semibold text-dim">Verrouillé</span>
+            </div>
+          </div>
+        ) : complete ? (
+          <span className="badge-stage absolute top-3 right-3 inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide">
+            ✓ Complété
+          </span>
+        ) : null}
+      </div>
+
+      <div className="space-y-3 p-4">
         <div>
-          <h3 className="font-medium text-lg mb-1">
+          <h3 className="mb-1 text-lg font-bold text-[#f2efe8]">
             {name}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2">
+          <p className="text-dim line-clamp-2 text-sm">
             {description}
           </p>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="text-faint flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1">
-            <BookOpen className="w-4 h-4" />
+            <BookOpen className="h-4 w-4" />
             {totalLessons} leçons
           </div>
           <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
+            <Clock className="h-4 w-4" />
             ~{duration}
           </div>
         </div>
 
-        {/* Progress bar */}
+        {/* Progression en octave */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Progression</span>
-            <span className="text-sm font-medium">{progress}%</span>
+          <div className="flex items-center justify-between">
+            <span className="text-faint text-sm">Progression</span>
+            <span className="text-sm font-bold tabular-nums text-[#f2efe8]">{progress}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 bg-gradient-to-r ${getProgressColor(progress)}`}
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+          <OctaveProgress value={progress} />
         </div>
 
-        {/* CTA Button */}
+        {/* CTA */}
         {unlocked && (
-          <Button
-            className={`w-full bg-gradient-to-r ${gradient} hover:opacity-90 text-white border-0 transition-all duration-200`}
+          <button
+            className={`w-full inline-flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-all ${
+              complete ? 'btn-ghost text-[#f2efe8]' : 'btn-accent'
+            }`}
             onClick={(e) => {
               e.stopPropagation();
               handleClick();
             }}
           >
-            {completedLessons === totalLessons ? 'Revoir' : completedLessons > 0 ? 'Continuer' : 'Commencer'}
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+            {complete ? 'Revoir' : completedLessons > 0 ? 'Continuer' : 'Commencer'}
+            <ArrowRight className="h-4 w-4" />
+          </button>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

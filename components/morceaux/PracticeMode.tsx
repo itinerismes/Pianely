@@ -1,0 +1,402 @@
+'use client'
+
+/**
+ * Mode Practice « Rocksmith » — apprendre un morceau en le jouant vraiment.
+ *
+ * Les notes tombent vers la ligne de frappe ; quand une note l'atteint,
+ * le temps se fige jusqu'à ce que la bonne touche soit jouée sur le clavier
+ * MIDI (ou cliquée sur le piano virtuel). Si tu joues en rythme, la lecture
+ * ne s'arrête jamais : les notes jouées un peu en avance comptent.
+ *
+ * Scoring : notes justes / erreurs / précision, streak de notes sans faute.
+ * En fin de session : practice_logs + piece_progress sont mis à jour.
+ */
+
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { RotateCcw, Play, Pause, Trophy, Target, Flame } from 'lucide-react'
+import { FallingNotesVisualizer } from '@/components/sheet-music/FallingNotesVisualizer'
+import { Piano } from '@/components/interactive/Piano'
+import { Slider } from '@/components/ui/slider'
+import { useMidiInput, useMidiNotes } from '@/hooks/useMidiInput'
+import { midiNoteToName } from '@/lib/midi/midiEngine'
+import { createClient } from '@/lib/supabase/client'
+
+interface Note {
+  midi: number
+  name: string
+  time: number
+  duration: number
+  velocity: number
+}
+
+/** Notes simultanées (accord) regroupées en une « porte » à franchir */
+interface Gate {
+  time: number
+  notes: string[]
+}
+
+// Fenêtre pendant laquelle une note jouée en avance compte (secondes)
+const EARLY_WINDOW = 0.35
+// Deux notes séparées de moins de 50 ms = un accord
+const CHORD_EPSILON = 0.05
+
+interface PracticeModeProps {
+  pieceId: string
+  pieceTitle: string
+  notes: Note[]
+  totalDuration: number
+}
+
+export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: PracticeModeProps) {
+  const { status: midiStatus } = useMidiInput()
+
+  const [isRunning, setIsRunning] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [speed, setSpeed] = useState(100) // % du tempo original
+  const [waitingNotes, setWaitingNotes] = useState<string[]>([])
+  const [stats, setStats] = useState({ hits: 0, errors: 0, streak: 0, bestStreak: 0 })
+  const [finished, setFinished] = useState(false)
+  const [flash, setFlash] = useState<'good' | 'bad' | null>(null)
+
+  // Horloge practice (refs : lues dans la boucle rAF sans re-render)
+  const timeRef = useRef(0)
+  const rafRef = useRef<number | null>(null)
+  const lastFrameRef = useRef<number | null>(null)
+  const gateIndexRef = useRef(0)
+  const remainingRef = useRef<Set<string>>(new Set())
+  const waitingRef = useRef(false)
+  const runningRef = useRef(false)
+  const speedRef = useRef(1)
+  const startedAtRef = useRef<number | null>(null)
+  const savedRef = useRef(false)
+
+  // Regrouper les notes simultanées en portes
+  const gates = useMemo<Gate[]>(() => {
+    const sorted = [...notes].sort((a, b) => a.time - b.time)
+    const result: Gate[] = []
+    for (const note of sorted) {
+      const last = result[result.length - 1]
+      if (last && note.time - last.time < CHORD_EPSILON) {
+        if (!last.notes.includes(note.name)) last.notes.push(note.name)
+      } else {
+        result.push({ time: note.time, notes: [note.name] })
+      }
+    }
+    return result
+  }, [notes])
+
+  const showFlash = useCallback((kind: 'good' | 'bad') => {
+    setFlash(kind)
+    window.setTimeout(() => setFlash(null), 180)
+  }, [])
+
+  const registerHit = useCallback((count = 1) => {
+    setStats(prev => {
+      const streak = prev.streak + count
+      return {
+        ...prev,
+        hits: prev.hits + count,
+        streak,
+        bestStreak: Math.max(prev.bestStreak, streak),
+      }
+    })
+    showFlash('good')
+  }, [showFlash])
+
+  const registerError = useCallback(() => {
+    setStats(prev => ({ ...prev, errors: prev.errors + 1, streak: 0 }))
+    showFlash('bad')
+  }, [showFlash])
+
+  /** Une note arrive du clavier MIDI ou du piano virtuel */
+  const handlePlayedNote = useCallback((noteName: string) => {
+    if (!runningRef.current || finished) return
+
+    const gate = gates[gateIndexRef.current]
+    if (!gate) return
+
+    if (waitingRef.current) {
+      // Le temps est figé sur la porte : la note doit en faire partie
+      if (remainingRef.current.has(noteName)) {
+        remainingRef.current.delete(noteName)
+        registerHit()
+        if (remainingRef.current.size === 0) {
+          gateIndexRef.current += 1
+          waitingRef.current = false
+          setWaitingNotes([])
+        } else {
+          setWaitingNotes([...remainingRef.current])
+        }
+      } else {
+        registerError()
+      }
+      return
+    }
+
+    // Pas encore en attente : accepter les notes jouées en rythme (en avance)
+    if (gate.time - timeRef.current <= EARLY_WINDOW) {
+      if (remainingRef.current.size === 0) {
+        remainingRef.current = new Set(gate.notes)
+      }
+      if (remainingRef.current.has(noteName)) {
+        remainingRef.current.delete(noteName)
+        registerHit()
+        if (remainingRef.current.size === 0) {
+          gateIndexRef.current += 1
+        }
+        return
+      }
+    }
+    registerError()
+  }, [gates, finished, registerHit, registerError])
+
+  useMidiNotes((event) => {
+    if (event.type === 'noteon') {
+      handlePlayedNote(midiNoteToName(event.note))
+    }
+  })
+
+  // ── Boucle d'horloge : avance le temps, fige sur les portes ──
+  const tick = useCallback((timestamp: number) => {
+    if (!runningRef.current) return
+
+    if (lastFrameRef.current !== null && !waitingRef.current) {
+      const dt = ((timestamp - lastFrameRef.current) / 1000) * speedRef.current
+      timeRef.current += dt
+
+      const gate = gates[gateIndexRef.current]
+      if (gate && timeRef.current >= gate.time) {
+        // La porte est atteinte sans avoir été jouée : on fige et on attend
+        timeRef.current = gate.time
+        waitingRef.current = true
+        if (remainingRef.current.size === 0) {
+          remainingRef.current = new Set(gate.notes)
+        }
+        setWaitingNotes([...remainingRef.current])
+      }
+
+      if (timeRef.current >= totalDuration) {
+        timeRef.current = totalDuration
+        runningRef.current = false
+        setIsRunning(false)
+        setFinished(true)
+      }
+    }
+
+    lastFrameRef.current = timestamp
+    setCurrentTime(timeRef.current)
+
+    if (runningRef.current) {
+      rafRef.current = requestAnimationFrame(tick)
+    }
+  }, [gates, totalDuration])
+
+  const start = useCallback(() => {
+    if (finished) return
+    runningRef.current = true
+    lastFrameRef.current = null
+    if (startedAtRef.current === null) startedAtRef.current = Date.now()
+    setIsRunning(true)
+    rafRef.current = requestAnimationFrame(tick)
+  }, [finished, tick])
+
+  const pause = useCallback(() => {
+    runningRef.current = false
+    setIsRunning(false)
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+  }, [])
+
+  const restart = useCallback(() => {
+    pause()
+    timeRef.current = 0
+    gateIndexRef.current = 0
+    remainingRef.current = new Set()
+    waitingRef.current = false
+    startedAtRef.current = null
+    savedRef.current = false
+    setCurrentTime(0)
+    setWaitingNotes([])
+    setStats({ hits: 0, errors: 0, streak: 0, bestStreak: 0 })
+    setFinished(false)
+  }, [pause])
+
+  useEffect(() => {
+    speedRef.current = speed / 100
+  }, [speed])
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  const total = stats.hits + stats.errors
+  const accuracy = total > 0 ? Math.round((stats.hits / total) * 100) : 100
+
+  // ── Sauvegarde de la session en fin de morceau ──
+  useEffect(() => {
+    if (!finished || savedRef.current || startedAtRef.current === null) return
+    savedRef.current = true
+
+    const save = async () => {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const elapsedMinutes = Math.max(1, Math.round((Date.now() - startedAtRef.current!) / 60000))
+
+        await supabase.from('practice_logs').insert({
+          user_id: user.id,
+          lesson_id: null,
+          duration_minutes: elapsedMinutes,
+          date: new Date().toISOString().split('T')[0],
+          notes: `Practice « ${pieceTitle} » — précision ${accuracy}%`,
+        })
+
+        const { data: existing } = await supabase
+          .from('piece_progress')
+          .select('id, time_spent_minutes, progress')
+          .eq('user_id', user.id)
+          .eq('piece_id', pieceId)
+          .maybeSingle()
+
+        if (existing) {
+          await supabase
+            .from('piece_progress')
+            .update({
+              progress: Math.max(existing.progress ?? 0, accuracy),
+              time_spent_minutes: (existing.time_spent_minutes ?? 0) + elapsedMinutes,
+              last_practiced_at: new Date().toISOString(),
+            })
+            .eq('id', existing.id)
+        } else {
+          await supabase.from('piece_progress').insert({
+            user_id: user.id,
+            piece_id: pieceId,
+            progress: accuracy,
+            time_spent_minutes: elapsedMinutes,
+            last_practiced_at: new Date().toISOString(),
+          })
+        }
+      } catch (error) {
+        console.error('Error saving practice session:', error)
+      }
+    }
+
+    void save()
+  }, [finished, accuracy, pieceId, pieceTitle])
+
+  return (
+    <div className="space-y-6">
+      {/* HUD : stats temps réel */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className={`panel rounded-2xl p-4 text-center transition-shadow ${flash === 'good' ? 'shadow-[0_0_24px_rgba(74,222,128,0.35)]' : ''}`}>
+          <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-dim">
+            <Target className="h-3.5 w-3.5" /> Précision
+          </div>
+          <p className="accent-green mt-1 text-3xl font-black tabular-nums">{accuracy}%</p>
+          <p className="text-faint text-xs tabular-nums">{stats.hits} justes · {stats.errors} erreurs</p>
+        </div>
+        <div className="panel rounded-2xl p-4 text-center">
+          <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-dim">
+            <Flame className="h-3.5 w-3.5" /> Streak
+          </div>
+          <p className="accent-brass mt-1 text-3xl font-black tabular-nums">{stats.streak}</p>
+          <p className="text-faint text-xs tabular-nums">record : {stats.bestStreak}</p>
+        </div>
+        <div className="panel rounded-2xl p-4 text-center">
+          <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-dim">
+            <Trophy className="h-3.5 w-3.5" /> Avancement
+          </div>
+          <p className="mt-1 text-3xl font-black tabular-nums text-[#f2efe8]">
+            {gates.length > 0 ? Math.round((gateIndexRef.current / gates.length) * 100) : 0}%
+          </p>
+          <p className="text-faint text-xs tabular-nums">{gateIndexRef.current}/{gates.length} notes</p>
+        </div>
+      </div>
+
+      {/* Alerte clavier non branché */}
+      {midiStatus !== 'connected' && (
+        <div className="badge-brass rounded-2xl px-4 py-3 text-sm font-semibold">
+          🎹 Branche ton piano numérique en USB pour jouer pour de vrai — en
+          attendant, tu peux cliquer sur le piano virtuel.
+        </div>
+      )}
+
+      {/* Notes tombantes */}
+      <FallingNotesVisualizer
+        notes={notes}
+        isPlaying={isRunning}
+        currentTime={currentTime}
+      />
+
+      {/* Contrôles */}
+      <div className="panel rounded-2xl p-5">
+        {finished ? (
+          <div className="space-y-4 text-center">
+            <p className="font-display text-2xl text-[#f2efe8]">
+              Morceau terminé — précision <span className="accent-brass">{accuracy}%</span>
+            </p>
+            <p className="text-dim text-sm">
+              {stats.hits} notes justes, meilleur streak de {stats.bestStreak}. Session enregistrée.
+            </p>
+            <button onClick={restart} className="btn-accent inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-bold">
+              <RotateCcw className="h-4 w-4" /> Rejouer
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center justify-center gap-3">
+              <button
+                onClick={restart}
+                className="btn-ghost rounded-xl p-3 text-dim"
+                aria-label="Recommencer"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </button>
+              <button
+                onClick={isRunning ? pause : start}
+                className="btn-accent inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 font-bold"
+              >
+                {isRunning ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+                {isRunning ? 'Pause' : currentTime > 0 ? 'Reprendre' : 'Démarrer'}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <span className="text-dim w-24 text-sm">Vitesse</span>
+              <Slider
+                value={[speed]}
+                onValueChange={(value) => setSpeed(value[0])}
+                min={40}
+                max={100}
+                step={5}
+                className="flex-1"
+              />
+              <span className="w-12 text-right text-sm font-bold tabular-nums text-[#f2efe8]">{speed}%</span>
+            </div>
+
+            {waitingNotes.length > 0 && (
+              <p className="badge-brass mx-auto w-fit rounded-full px-4 py-1.5 text-center text-sm font-bold">
+                Joue : {waitingNotes.join(' + ')}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Piano — les touches attendues s'illuminent en laiton */}
+      <div className="panel rounded-2xl p-5">
+        <Piano
+          highlightedKeys={waitingNotes}
+          startOctave={2}
+          octaves={5}
+          onKeyPress={handlePlayedNote}
+          midiForwardsCallbacks={false}
+          soundOnMidi={false}
+        />
+      </div>
+    </div>
+  )
+}

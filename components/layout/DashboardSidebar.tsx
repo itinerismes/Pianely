@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -68,11 +66,11 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
   ];
 
   const niveaux = [
-    { id: 1, name: "Niveau 1", color: "from-green-400 to-emerald-500", href: "/parcours/niveau-1", count: 5 },
-    { id: 2, name: "Niveau 2", color: "from-blue-400 to-cyan-500", href: "/parcours/niveau-2", count: 7 },
-    { id: 3, name: "Niveau 3", color: "from-purple-400 to-violet-500", href: "/parcours/niveau-3", count: 8 },
-    { id: 4, name: "Niveau 4", color: "from-orange-400 to-amber-500", href: "/parcours/niveau-4", count: 10 },
-    { id: 5, name: "Niveau 5", color: "from-pink-400 to-rose-500", href: "/parcours/niveau-5", count: 12 },
+    { id: 1, name: "Niveau 1", color: "from-emerald-400 to-teal-500", href: "/parcours/niveau-1", count: 5 },
+    { id: 2, name: "Niveau 2", color: "from-sky-400 to-cyan-400", href: "/parcours/niveau-2", count: 7 },
+    { id: 3, name: "Niveau 3", color: "from-violet-400 to-purple-500", href: "/parcours/niveau-3", count: 8 },
+    { id: 4, name: "Niveau 4", color: "from-amber-400 to-yellow-500", href: "/parcours/niveau-4", count: 10 },
+    { id: 5, name: "Niveau 5", color: "from-pink-400 to-rose-400", href: "/parcours/niveau-5", count: 12 },
   ];
 
   const handleNavClick = (item: SidebarItem) => {
@@ -112,109 +110,109 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <aside className={`
-        fixed left-0 top-0 z-50 h-full w-72 bg-gradient-to-b from-white to-indigo-50 dark:from-gray-950 dark:to-gray-900 border-r border-indigo-100 dark:border-gray-800 transform transition-transform duration-300 ease-in-out shadow-xl
-        md:relative md:transform-none
+        fixed left-0 top-0 z-50 h-full w-72 bg-[#0e0d12]/95 border-r border-white/[0.08] backdrop-blur-xl transform transition-transform duration-300 ease-in-out
+        md:relative md:transform-none md:bg-transparent md:backdrop-blur-none
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
           {/* Mobile Close Button */}
-          <div className="flex items-center justify-between p-4 border-b dark:border-gray-800 md:hidden">
-            <h2 className="font-semibold">Navigation</h2>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+          <div className="flex items-center justify-between p-4 border-b border-white/[0.08] md:hidden">
+            <h2 className="font-semibold text-[#f2efe8]">Navigation</h2>
+            <button
+              onClick={onClose}
+              className="btn-ghost rounded-lg p-2 text-dim"
+              aria-label="Fermer la navigation"
+            >
               <ChevronLeft className="w-5 h-5" />
-            </Button>
+            </button>
           </div>
 
           <ScrollArea className="flex-1 px-3 py-4">
             {/* Main Navigation */}
-            <div className="space-y-2">
-              <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            <div className="space-y-1">
+              <h3 className="px-3 text-[11px] font-bold text-faint uppercase tracking-widest mb-3">
                 Principal
               </h3>
               {mainNavItems.map((item) => (
-                <Button
+                <button
                   key={item.id}
-                  variant={item.active ? "secondary" : "ghost"}
                   onClick={() => handleNavClick(item)}
-                  className={`w-full justify-start gap-3 h-10 transition-all duration-200 ${
+                  className={`w-full flex items-center gap-3 h-10 px-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     item.active
-                      ? 'bg-gradient-to-r from-purple-500 to-blue-600 text-white hover:from-purple-600 hover:to-blue-700 transform scale-105 shadow-lg'
-                      : 'hover:bg-indigo-50 dark:hover:bg-gray-800/50 hover:transform hover:scale-105 hover:shadow-md'
+                      ? 'bg-[#e0a83c]/[0.13] text-[#f0c66a] border border-[#e0a83c]/30 shadow-[0_0_18px_rgba(224,168,60,0.12)]'
+                      : 'text-dim border border-transparent hover:bg-white/[0.05] hover:text-[#f2efe8]'
                   }`}
                 >
                   {item.icon}
                   <span className="flex-1 text-left">{item.label}</span>
                   {item.badge && (
-                    <Badge className={`ml-auto border-0 text-xs transition-all duration-200 ${
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold border ${
                       item.active
-                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white animate-pulse'
-                        : 'bg-gradient-to-r from-orange-400 to-pink-500 text-white'
+                        ? 'badge-brass'
+                        : 'bg-white/[0.05] text-faint border-white/10'
                     }`}>
                       {item.badge}
-                    </Badge>
+                    </span>
                   )}
-                </Button>
+                </button>
               ))}
             </div>
 
             {/* Niveaux */}
-            <div className="mt-8 space-y-2">
-              <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            <div className="mt-8 space-y-1">
+              <h3 className="px-3 text-[11px] font-bold text-faint uppercase tracking-widest mb-3">
                 Niveaux
               </h3>
               {niveaux.map((niveau) => {
                 const isSelected = selectedNiveau === niveau.id || pathname.includes(`/niveau-${niveau.id}`);
                 return (
-                  <Button
+                  <button
                     key={niveau.id}
-                    variant="ghost"
                     onClick={() => handleNiveauClick(niveau)}
-                    className={`w-full justify-start gap-3 h-9 text-sm transition-all duration-200 ${
+                    className={`w-full flex items-center gap-3 h-9 px-3 rounded-xl text-sm transition-all duration-200 border ${
                       isSelected
-                        ? 'bg-indigo-100 dark:bg-gray-800/50 border-l-4 border-indigo-500 dark:border-indigo-400 transform scale-105 shadow-md'
-                        : 'hover:bg-indigo-50 dark:hover:bg-gray-800/30 hover:transform hover:scale-102'
+                        ? 'bg-white/[0.06] border-white/[0.12] text-[#f2efe8] font-semibold'
+                        : 'border-transparent text-dim hover:bg-white/[0.04] hover:text-[#f2efe8]'
                     }`}
                   >
-                    <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${niveau.color} shadow-sm transition-all duration-200 ${
-                      isSelected ? 'scale-125 shadow-lg' : ''
+                    <div className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${niveau.color} transition-all duration-200 ${
+                      isSelected ? 'scale-125 shadow-[0_0_8px_rgba(255,255,255,0.3)]' : ''
                     }`} />
-                    <span className={`flex-1 text-left ${isSelected ? 'font-medium' : ''}`}>{niveau.name}</span>
-                    <span className="text-xs text-muted-foreground">{niveau.count}</span>
-                  </Button>
+                    <span className="flex-1 text-left">{niveau.name}</span>
+                    <span className="text-xs text-faint tabular-nums">{niveau.count}</span>
+                  </button>
                 );
               })}
             </div>
           </ScrollArea>
 
           {/* Bottom Navigation */}
-          <div className="border-t border-indigo-100 dark:border-gray-800 p-3 space-y-1">
-            <Button
-              variant="ghost"
+          <div className="border-t border-white/[0.08] p-3 space-y-1">
+            <button
               onClick={handleSettings}
-              className={`w-full justify-start gap-3 h-10 transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 h-10 px-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                 pathname === '/settings'
-                  ? 'bg-indigo-100 dark:bg-gray-800/50 text-indigo-700 dark:text-indigo-400 font-medium'
-                  : 'hover:bg-indigo-50 dark:hover:bg-gray-800/30 hover:text-indigo-600 dark:hover:text-indigo-400'
+                  ? 'bg-white/[0.06] text-[#f2efe8]'
+                  : 'text-dim hover:bg-white/[0.05] hover:text-[#f2efe8]'
               }`}
             >
               <Settings className="w-5 h-5" />
               Paramètres
-            </Button>
-            <Button
-              variant="ghost"
+            </button>
+            <button
               onClick={handleLogout}
-              className="w-full justify-start gap-3 h-10 transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
+              className="w-full flex items-center gap-3 h-10 px-3 rounded-xl text-sm font-semibold text-dim transition-all duration-200 hover:bg-red-400/10 hover:text-red-300"
             >
               <LogOut className="w-5 h-5" />
               Déconnexion
-            </Button>
+            </button>
           </div>
         </div>
       </aside>

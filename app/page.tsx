@@ -1,123 +1,167 @@
 import Link from 'next/link'
-import { Sparkles, Music2, Award, TrendingUp, ArrowRight } from 'lucide-react'
+import { Usb, Music2, Award, ArrowRight } from 'lucide-react'
+
+/**
+ * Landing « Scène » — un piano de concert sur une scène de nuit.
+ * Signature : le clavier lumineux en pied de hero, dont certaines touches
+ * s'illuminent en laiton comme sous un projecteur.
+ */
+
+// Un accord de Do majeur illuminé sur 3 octaves (indices de touches blanches)
+const LIT_WHITE_KEYS = new Set([7, 9, 11]) // C, E, G de l'octave centrale
+const WHITE_KEY_COUNT = 21
+// Position des touches noires dans une octave (après quelle touche blanche)
+const BLACK_AFTER = new Set([0, 1, 3, 4, 5]) // C#, D#, F#, G#, A#
+
+function HeroKeyboard() {
+  return (
+    <div
+      aria-hidden
+      className="relative mx-auto max-w-3xl select-none"
+      style={{
+        maskImage: 'linear-gradient(90deg, transparent, black 15%, black 85%, transparent)',
+        WebkitMaskImage: 'linear-gradient(90deg, transparent, black 15%, black 85%, transparent)',
+      }}
+    >
+      {/* Touches blanches */}
+      <div className="flex gap-[3px]">
+        {Array.from({ length: WHITE_KEY_COUNT }, (_, i) => {
+          const lit = LIT_WHITE_KEYS.has(i)
+          return (
+            <div
+              key={i}
+              className="h-28 flex-1 rounded-b-md transition-shadow"
+              style={
+                lit
+                  ? {
+                      background: 'linear-gradient(180deg, #f7e3b0 0%, #f0c66a 60%, #d99a26 100%)',
+                      boxShadow: '0 0 24px rgba(224, 168, 60, 0.55), 0 6px 18px rgba(0,0,0,0.5)',
+                    }
+                  : {
+                      background: 'linear-gradient(180deg, rgba(242,239,232,0.92) 0%, rgba(214,209,198,0.88) 100%)',
+                      boxShadow: 'inset 0 -4px 8px rgba(0,0,0,0.18), 0 6px 18px rgba(0,0,0,0.5)',
+                    }
+              }
+            />
+          )
+        })}
+      </div>
+      {/* Touches noires */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex">
+        {Array.from({ length: WHITE_KEY_COUNT - 1 }, (_, i) => (
+          <div key={i} className="relative flex-1">
+            {BLACK_AFTER.has(i % 7) && (
+              <div
+                className="absolute -right-[30%] top-0 z-10 h-[68px] w-[60%] rounded-b-[4px]"
+                style={{
+                  background: 'linear-gradient(180deg, #26242a 0%, #0c0b0f 90%)',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.12)',
+                }}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+      {/* Reflet sur la laque de la scène */}
+      <div
+        className="mx-[2%] h-16"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(224,168,60,0.10) 0%, rgba(242,239,232,0.04) 30%, transparent 100%)',
+          maskImage: 'linear-gradient(180deg, black, transparent 80%)',
+          WebkitMaskImage: 'linear-gradient(180deg, black, transparent 80%)',
+          transform: 'scaleY(-0.6)',
+          transformOrigin: 'top',
+          filter: 'blur(2px)',
+        }}
+      />
+    </div>
+  )
+}
+
+const FEATURES = [
+  {
+    icon: Usb,
+    title: 'Branche ton clavier',
+    description:
+      'Yamaha, Casio, Roland… un simple câble USB et Pianely entend chaque note que tu joues.',
+  },
+  {
+    icon: Music2,
+    title: 'Sans solfège au départ',
+    description:
+      'Les notes tombent vers le clavier, tu joues quand elles touchent la ligne. Le solfège vient après, en douceur.',
+  },
+  {
+    icon: Award,
+    title: 'Progression visible',
+    description:
+      'Chaque leçon complétée illumine une touche. Streaks, badges et statistiques de pratique en temps réel.',
+  },
+]
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      {/* Animated Background Shapes */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Large gradient blob top-right */}
-        <div
-          className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-20 blur-3xl animate-pulse"
-          style={{
-            background: 'radial-gradient(circle, rgba(124, 58, 237, 0.4) 0%, transparent 70%)',
-            animationDuration: '8s'
-          }}
-        />
-        {/* Medium gradient blob bottom-left */}
-        <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full opacity-20 blur-3xl animate-pulse"
-          style={{
-            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%)',
-            animationDuration: '6s',
-            animationDelay: '1s'
-          }}
-        />
-      </div>
-
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 py-20">
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          {/* Glass Badge */}
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 backdrop-blur-xl border transition-all duration-300 hover:scale-105 bg-white/80 shadow-lg"
-          >
-            <Sparkles className="w-4 h-4 text-purple-600" />
-            <span className="text-xs font-bold tracking-wider uppercase text-gray-900">
-              Apprends le piano autrement
-            </span>
+    <main className="relative min-h-screen overflow-hidden">
+      {/* Hero */}
+      <section className="relative flex min-h-screen flex-col items-center justify-center px-6 py-20">
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
+          {/* Badge */}
+          <div className="badge-brass mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#f0c66a]" />
+            Compatible piano numérique USB
           </div>
 
-          {/* Main Title */}
-          <div className="relative mb-6">
-            <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent"
-              style={{
-                backgroundSize: '200% 200%',
-                animation: 'gradient 8s ease infinite',
-                letterSpacing: '-0.025em'
-              }}
-            >
-              Tes premiers morceaux, simplement
-            </h1>
-          </div>
+          {/* Titre */}
+          <h1 className="font-display mb-6 text-5xl leading-[1.08] md:text-6xl lg:text-7xl">
+            Tes premiers morceaux,
+            <br />
+            <em className="accent-brass">simplement</em>.
+          </h1>
 
-          {/* Subtitle */}
-          <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            Apprends le piano facilement, sans lire la musique au départ. Méthode progressive pour grands débutants.
+          {/* Sous-titre */}
+          <p className="text-dim mx-auto mb-12 max-w-2xl text-lg md:text-xl">
+            Branche ton piano, suis les notes qui tombent, joue pour de vrai.
+            Méthode progressive pensée pour les grands débutants — sans lire la
+            musique au départ.
           </p>
 
-          {/* CTA Button */}
-          <div className="mb-16">
+          {/* CTA */}
+          <div className="mb-20 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/inscription"
+              className="btn-accent group inline-flex items-center gap-2 rounded-2xl px-8 py-4 text-base font-bold"
+            >
+              Commencer à jouer
+              <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
             <Link
               href="/parcours"
-              className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-white text-base font-semibold transition-all duration-300 hover:scale-105 overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-xl hover:shadow-2xl"
+              className="btn-ghost inline-flex items-center rounded-2xl px-8 py-4 text-base font-semibold text-[#f2efe8]"
             >
-              <span className="relative z-10">Découvrir les leçons</span>
-              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 relative z-10" />
-              {/* Shine effect */}
-              <div
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"
-                style={{
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)'
-                }}
-              />
+              Voir le parcours
             </Link>
           </div>
+        </div>
 
-          {/* Features Cards */}
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {[
-              {
-                icon: Music2,
-                title: 'Sans solfège',
-                description: 'Joue dès le premier jour',
-                gradient: 'from-purple-500 to-purple-600',
-                bgColor: 'from-purple-50 to-purple-100'
-              },
-              {
-                icon: TrendingUp,
-                title: 'Progression',
-                description: 'Statistiques en temps réel',
-                gradient: 'from-green-500 to-emerald-600',
-                bgColor: 'from-green-50 to-emerald-100'
-              },
-              {
-                icon: Award,
-                title: 'Gamification',
-                description: 'Badges et récompenses',
-                gradient: 'from-yellow-500 to-orange-600',
-                bgColor: 'from-yellow-50 to-orange-100'
-              }
-            ].map((feature, i) => (
-              <div
-                key={i}
-                className="group relative bg-white border border-gray-200 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl"
-              >
-                <div
-                  className={`w-16 h-16 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-gradient-to-br ${feature.gradient} shadow-lg`}
-                >
-                  <feature.icon className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-lg font-bold mb-2 text-gray-900">
-                  {feature.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-gray-600">
-                  {feature.description}
-                </p>
+        {/* Signature : le clavier sous le projecteur */}
+        <div className="relative z-10 w-full">
+          <HeroKeyboard />
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="relative px-6 pb-28">
+        <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-3">
+          {FEATURES.map((feature) => (
+            <div key={feature.title} className="panel panel-hover rounded-2xl p-6 text-left">
+              <div className="badge-brass mb-4 flex h-12 w-12 items-center justify-center rounded-xl">
+                <feature.icon className="h-6 w-6" />
               </div>
-            ))}
-          </div>
+              <h3 className="mb-2 text-lg font-bold text-[#f2efe8]">{feature.title}</h3>
+              <p className="text-dim text-sm leading-relaxed">{feature.description}</p>
+            </div>
+          ))}
         </div>
       </section>
     </main>
