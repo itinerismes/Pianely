@@ -71,14 +71,15 @@ export function AchievementsClient({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-6xl space-y-8 py-4 md:space-y-10 md:py-8">
       {/* Header */}
       <div>
-        <h1 className="font-display text-3xl text-[#f2efe8]">
-          Succès & <span className="accent-brass">achievements</span>
+        <p className="eyebrow mb-2">Succès</p>
+        <h1 className="font-display text-4xl tracking-tight text-[#f2efe8] md:text-5xl">
+          Tes <span className="accent-brass">victoires</span>.
         </h1>
-        <p className="text-dim mt-1">
-          Débloque des succès en progressant dans ton apprentissage
+        <p className="text-dim mt-3">
+          Chaque étape franchie laisse une trace
         </p>
       </div>
 

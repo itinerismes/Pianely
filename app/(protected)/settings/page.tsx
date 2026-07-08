@@ -13,12 +13,13 @@ export default async function SettingsPage() {
                    'Utilisateur'
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-3xl space-y-8 py-4 md:space-y-10 md:py-8">
       <div>
-        <h1 className="font-display text-3xl text-[#f2efe8]">
+        <p className="eyebrow mb-2">Compte</p>
+        <h1 className="font-display text-4xl tracking-tight text-[#f2efe8] md:text-5xl">
           Paramètres
         </h1>
-        <p className="text-dim mt-1">
+        <p className="text-dim mt-3">
           Gère ton compte et tes préférences
         </p>
       </div>

@@ -44,7 +44,7 @@ export function NiveauPageClient({
   const progress = Math.round((completedCount / lessons.length) * 100);
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-5xl space-y-8 py-4 md:py-8">
       {/* Back button */}
       <button
         onClick={() => router.back()}
@@ -61,7 +61,7 @@ export function NiveauPageClient({
             <span className="font-display text-4xl text-[#0a0a0e]">{niveau}</span>
           </div>
           <div className="flex-1">
-            <h1 className="font-display mb-1 text-2xl text-[#f2efe8]">
+            <h1 className="font-display mb-1 text-2xl tracking-tight text-[#f2efe8] md:text-3xl">
               {title}
             </h1>
             <p className="text-dim mb-4">

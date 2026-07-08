@@ -82,15 +82,16 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-6xl space-y-8 py-4 md:space-y-10 md:py-8">
       {/* Header avec bouton Ajouter */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl text-[#f2efe8]">
-            Bibliothèque de <span className="accent-brass">morceaux</span>
+          <p className="eyebrow mb-2">Morceaux</p>
+          <h1 className="font-display text-4xl tracking-tight text-[#f2efe8] md:text-5xl">
+            Ta <span className="accent-brass">bibliothèque</span>.
           </h1>
-          <p className="text-dim mt-1">
-            Découvre et pratique des morceaux adaptés à ton niveau
+          <p className="text-dim mt-3">
+            Des morceaux adaptés à ton niveau, jouables en mode Practice
           </p>
         </div>
 

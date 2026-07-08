@@ -75,14 +75,15 @@ export function ProgressionClient({
   })
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-6xl space-y-8 py-4 md:space-y-10 md:py-8">
       {/* Header */}
       <div>
-        <h1 className="font-display text-3xl text-[#f2efe8]">
-          Ma <span className="accent-brass">progression</span>
+        <p className="eyebrow mb-2">Progression</p>
+        <h1 className="font-display text-4xl tracking-tight text-[#f2efe8] md:text-5xl">
+          Chaque note <span className="accent-brass">compte</span>.
         </h1>
-        <p className="text-dim mt-1">
-          Suis ton évolution et tes statistiques d'apprentissage
+        <p className="text-dim mt-3">
+          Ton évolution et tes statistiques d'apprentissage
         </p>
       </div>
 

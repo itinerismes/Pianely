@@ -21,14 +21,15 @@ interface ParcoursClientProps {
 
 export function ParcoursClient({ niveaux }: ParcoursClientProps) {
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-6xl space-y-8 py-4 md:space-y-10 md:py-8">
       {/* Header */}
       <div>
-        <h1 className="font-display text-3xl text-[#f2efe8]">
-          Ton parcours <span className="accent-brass">d'apprentissage</span>
+        <p className="eyebrow mb-2">Parcours</p>
+        <h1 className="font-display text-4xl tracking-tight text-[#f2efe8] md:text-5xl">
+          Cinq niveaux, <span className="accent-brass">un piano</span>.
         </h1>
-        <p className="text-dim mt-1">
-          5 niveaux pour passer de débutant à virtuose
+        <p className="text-dim mt-3">
+          Commence où tu veux — chaque niveau te guide leçon par leçon
         </p>
       </div>
 

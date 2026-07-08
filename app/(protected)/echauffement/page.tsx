@@ -171,7 +171,7 @@ export default function EchauffementPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-3xl space-y-8 py-4 md:py-8">
       <Link
         href="/dashboard"
         className="btn-ghost inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-dim"
@@ -181,11 +181,12 @@ export default function EchauffementPage() {
       </Link>
 
       <div>
-        <h1 className="font-display text-3xl text-[#f2efe8]">
-          Échauffement <span className="accent-brass">du jour</span>
+        <p className="eyebrow mb-2">Échauffement</p>
+        <h1 className="font-display text-4xl tracking-tight text-[#f2efe8] md:text-5xl">
+          Réveille <span className="accent-brass">tes doigts</span>.
         </h1>
-        <p className="text-dim mt-1">
-          5 minutes pour réveiller tes doigts avant de jouer
+        <p className="text-dim mt-3">
+          5 minutes avant de jouer — ton clavier te guide
         </p>
       </div>
 
