@@ -391,7 +391,7 @@ pianely/
 
 **Production**: https://pianely-itinerismes-projects.vercel.app
 **GitHub**: https://github.com/itinerismes/Pianely
-**Supabase**: https://supabase.com/dashboard/project/lyaybmlzjxgdzzaaxfcc
+**Supabase**: https://supabase.com/dashboard/project/tberafusnxjhywetfdpx
 **Documentation complète**: Voir `claude.md`
 
 ---

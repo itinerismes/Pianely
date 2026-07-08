@@ -5,7 +5,7 @@
 ### Option 1: Via Supabase Dashboard (Recommandé)
 
 1. **Ouvrir le SQL Editor**
-   - Va sur https://supabase.com/dashboard/project/lyaybmlzjxgdzzaaxfcc
+   - Va sur https://supabase.com/dashboard/project/tberafusnxjhywetfdpx
    - Clique sur "SQL Editor" dans la sidebar gauche
 
 2. **Nouvelle requête**
@@ -37,7 +37,7 @@ Si tu veux installer le CLI Supabase :
 npm install -g supabase
 
 # Se connecter à ton projet
-supabase link --project-ref lyaybmlzjxgdzzaaxfcc
+supabase link --project-ref tberafusnxjhywetfdpx
 
 # Appliquer les migrations
 supabase db push

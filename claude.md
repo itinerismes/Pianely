@@ -744,8 +744,8 @@ Voir section "🚀 PROCHAINES ÉTAPES" ci-dessous
 ## 🔧 CONFIGURATIONS
 
 ### Supabase
-- [x] **Project URL**: `https://lyaybmlzjxgdzzaaxfcc.supabase.co`
-- [x] **Dashboard**: https://supabase.com/dashboard/project/lyaybmlzjxgdzzaaxfcc
+- [x] **Project URL**: `https://tberafusnxjhywetfdpx.supabase.co`
+- [x] **Dashboard**: https://supabase.com/dashboard/project/tberafusnxjhywetfdpx
 - [x] **Anon key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5YXlibWx6anhnZHp6YWF4ZmNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc3OTIyMDcsImV4cCI6MjA4MzM2ODIwN30.OmxVrXA80nzRh3wgFg3lyIxgXSGhKyqbal6hpov2j4g`
 - [x] **Service role key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5YXlibWx6anhnZHp6YWF4ZmNjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2Nzc5MjIwNywiZXhwIjoyMDgzMzY4MjA3fQ.ebvftkQnAcbB6Xw9NJLqukg4W5GxB29yCL7q7hEHY9o`
 - [x] **Secret API key**: `sb_secret_7iT5L6wfEjJcJYfWuOA9-g_ro3SkM8q`

@@ -4,7 +4,7 @@
 
 Pour créer les tables nécessaires dans ta base de données Supabase :
 
-1. Va sur https://supabase.com/dashboard/project/lyaybmlzjxgdzzaaxfcc
+1. Va sur https://supabase.com/dashboard/project/tberafusnxjhywetfdpx
 2. Clique sur l'onglet "SQL Editor" dans le menu de gauche
 3. Clique sur "New query"
 4. Copie tout le contenu du fichier `supabase-schema.sql`

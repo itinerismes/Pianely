@@ -43,7 +43,7 @@ async function applyMigration() {
         // If RPC doesn't work, we'll need to use the REST API differently
         console.log('⚠️  RPC method not available, migration needs to be applied manually')
         console.log('📋 Please copy the migration SQL and run it in Supabase Dashboard:')
-        console.log('   1. Go to https://supabase.com/dashboard/project/lyaybmlzjxgdzzaaxfcc/sql/new')
+        console.log('   1. Go to https://supabase.com/dashboard/project/tberafusnxjhywetfdpx/sql/new')
         console.log('   2. Copy the contents of: supabase/migrations/003_pieces_system.sql')
         console.log('   3. Paste and run the SQL')
         process.exit(1)
@@ -55,7 +55,7 @@ async function applyMigration() {
   } catch (error) {
     console.error('❌ Error applying migration:', error.message)
     console.log('\n📋 Manual migration required:')
-    console.log('   1. Go to https://supabase.com/dashboard/project/lyaybmlzjxgdzzaaxfcc/sql/new')
+    console.log('   1. Go to https://supabase.com/dashboard/project/tberafusnxjhywetfdpx/sql/new')
     console.log('   2. Copy the contents of: supabase/migrations/003_pieces_system.sql')
     console.log('   3. Paste and run the SQL')
     process.exit(1)
