@@ -342,6 +342,15 @@ export interface LevelWithCompletion extends Level {
   totalLessons: number
   completedLessons: number
   completion: number
+  /** Durée totale du niveau, formatée depuis la base ("57 min", "1h 45min") */
+  duration: string
+}
+
+function formatMinutes(minutes: number): string {
+  if (minutes < 60) return `${minutes} min`
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return m > 0 ? `${h}h ${String(m).padStart(2, '0')}min` : `${h}h`
 }
 
 export async function getLevelsWithCompletion(userId: string): Promise<LevelWithCompletion[]> {
@@ -349,7 +358,7 @@ export async function getLevelsWithCompletion(userId: string): Promise<LevelWith
 
   const [levelsRes, lessonsRes, progressRes] = await Promise.all([
     supabase.from('levels').select('*').eq('is_published', true).order('level_number'),
-    supabase.from('lessons').select('id, level_id').eq('is_published', true),
+    supabase.from('lessons').select('id, level_id, duration_minutes').eq('is_published', true),
     supabase.from('user_progress').select('lesson_id').eq('user_id', userId).eq('status', 'completed'),
   ])
 
@@ -362,11 +371,13 @@ export async function getLevelsWithCompletion(userId: string): Promise<LevelWith
     const levelLessons = lessons.filter((l) => l.level_id === level.id)
     const completedLessons = levelLessons.filter((l) => completedIds.has(l.id)).length
     const totalLessons = levelLessons.length
+    const totalMinutes = levelLessons.reduce((sum, l) => sum + (l.duration_minutes || 0), 0)
     return {
       ...level,
       totalLessons,
       completedLessons,
       completion: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0,
+      duration: formatMinutes(totalMinutes),
     }
   })
 }

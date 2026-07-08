@@ -17,9 +17,11 @@ interface DailySessionProps {
   recentActivity: { date: string; duration: number; sessions: number }[]
   nextLessonHref: string
   nextLessonLabel: string
+  /** Une leçon a été complétée aujourd'hui (calculé côté serveur) */
+  lessonDoneToday?: boolean
 }
 
-export function DailySession({ recentActivity, nextLessonHref, nextLessonLabel }: DailySessionProps) {
+export function DailySession({ recentActivity, nextLessonHref, nextLessonLabel, lessonDoneToday = false }: DailySessionProps) {
   const [warmupDone, setWarmupDone] = useState(false)
 
   const today = new Date().toISOString().split('T')[0]
@@ -44,7 +46,7 @@ export function DailySession({ recentActivity, nextLessonHref, nextLessonLabel }
       title: 'Ta leçon',
       description: nextLessonLabel,
       href: nextLessonHref,
-      done: false,
+      done: lessonDoneToday,
     },
     {
       id: 'piece',

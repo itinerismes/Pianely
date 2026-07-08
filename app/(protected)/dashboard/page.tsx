@@ -11,14 +11,6 @@ const GRADIENTS: Record<number, string> = {
   5: 'from-pink-400 to-rose-400'
 }
 
-const DURATIONS: Record<number, string> = {
-  1: '57 min',
-  2: '1h 45min',
-  3: '2h 10min',
-  4: '2h 45min',
-  5: '3h 30min'
-}
-
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -27,13 +19,25 @@ export default async function DashboardPage() {
     redirect('/connexion')
   }
 
+  const todayStart = new Date()
+  todayStart.setHours(0, 0, 0, 0)
+
   // Tout en parallèle — les complétions par niveau sont groupées
-  const [stats, levels, allAchievements, userAchievements] = await Promise.all([
+  const [stats, levels, allAchievements, userAchievements, lessonToday] = await Promise.all([
     getDashboardStats(user.id),
     getLevelsWithCompletion(user.id),
     getAchievements(),
-    getUserAchievements(user.id)
+    getUserAchievements(user.id),
+    // Une leçon complétée aujourd'hui ? (étape 2 de la séance du jour)
+    supabase
+      .from('user_progress')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('status', 'completed')
+      .gte('completion_date', todayStart.toISOString())
   ])
+
+  const lessonDoneToday = (lessonToday.count ?? 0) > 0
 
   const niveaux = levels.map((level) => ({
     niveau: level.level_number,
@@ -41,7 +45,7 @@ export default async function DashboardPage() {
     description: level.description || 'Description du niveau',
     totalLessons: level.totalLessons,
     completedLessons: level.completedLessons,
-    duration: DURATIONS[level.level_number] || '1h',
+    duration: level.duration,
     // Tous les niveaux sont accessibles (cohérent avec /parcours)
     unlocked: true,
     gradient: GRADIENTS[level.level_number] || 'from-gray-500 to-gray-600',
@@ -66,6 +70,7 @@ export default async function DashboardPage() {
       achievements={achievementsWithStatus}
       totalAchievements={allAchievements.length}
       unlockedAchievementsCount={userAchievements.length}
+      lessonDoneToday={lessonDoneToday}
     />
   )
 }

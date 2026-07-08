@@ -37,6 +37,7 @@ interface DashboardClientProps {
   achievements: Achievement[]
   totalAchievements: number
   unlockedAchievementsCount: number
+  lessonDoneToday?: boolean
 }
 
 /** Trouve où en est l'utilisateur : premier niveau débloqué non terminé */
@@ -80,6 +81,7 @@ export function DashboardClient({
   userName,
   stats,
   niveaux,
+  lessonDoneToday = false,
 }: DashboardClientProps) {
   const router = useRouter()
   const position = findCurrentPosition(niveaux)
@@ -108,6 +110,7 @@ export function DashboardClient({
         recentActivity={stats.recentActivity}
         nextLessonHref={position.href}
         nextLessonLabel={position.label}
+        lessonDoneToday={lessonDoneToday}
       />
 
       <div className="grid gap-8 md:grid-cols-5 md:gap-10">
