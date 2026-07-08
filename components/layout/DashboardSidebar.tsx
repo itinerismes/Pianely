@@ -113,14 +113,14 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
             </button>
           </div>
 
-          <ScrollArea className="flex-1 px-3 py-4">
-            {/* Main Navigation */}
-            <div className="space-y-1">
+          <ScrollArea className="flex-1 px-4 py-6">
+            {/* Navigation — un seul bloc compact, items à l'échelle du contenu */}
+            <div className="space-y-1.5">
               {mainNavItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item)}
-                  className={`w-full flex items-center gap-3 h-10 px-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  className={`w-full flex items-center gap-3.5 h-12 px-4 rounded-xl text-[15px] font-semibold transition-all duration-200 ${
                     item.active
                       ? 'bg-[#e0a83c]/[0.13] text-[#f0c66a] border border-[#e0a83c]/30 shadow-[0_0_18px_rgba(224,168,60,0.12)]'
                       : 'text-dim border border-transparent hover:bg-white/[0.05] hover:text-[#f2efe8]'
@@ -128,42 +128,32 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
                 >
                   {item.icon}
                   <span className="flex-1 text-left">{item.label}</span>
-                  {item.badge && (
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold border ${
-                      item.active
-                        ? 'badge-brass'
-                        : 'bg-white/[0.05] text-faint border-white/10'
-                    }`}>
-                      {item.badge}
-                    </span>
-                  )}
                 </button>
               ))}
             </div>
 
+            {/* Paramètres & déconnexion — juste sous la navigation */}
+            <div className="mt-6 space-y-1.5 border-t border-white/[0.08] pt-5">
+              <button
+                onClick={handleSettings}
+                className={`w-full flex items-center gap-3.5 h-12 px-4 rounded-xl text-[15px] font-semibold transition-all duration-200 ${
+                  pathname === '/settings'
+                    ? 'bg-white/[0.06] text-[#f2efe8]'
+                    : 'text-dim hover:bg-white/[0.05] hover:text-[#f2efe8]'
+                }`}
+              >
+                <Settings className="w-5 h-5" />
+                Paramètres
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3.5 h-12 px-4 rounded-xl text-[15px] font-semibold text-dim transition-all duration-200 hover:bg-red-400/10 hover:text-red-300"
+              >
+                <LogOut className="w-5 h-5" />
+                Déconnexion
+              </button>
+            </div>
           </ScrollArea>
-
-          {/* Bottom Navigation */}
-          <div className="border-t border-white/[0.08] p-3 space-y-1">
-            <button
-              onClick={handleSettings}
-              className={`w-full flex items-center gap-3 h-10 px-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                pathname === '/settings'
-                  ? 'bg-white/[0.06] text-[#f2efe8]'
-                  : 'text-dim hover:bg-white/[0.05] hover:text-[#f2efe8]'
-              }`}
-            >
-              <Settings className="w-5 h-5" />
-              Paramètres
-            </button>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 h-10 px-3 rounded-xl text-sm font-semibold text-dim transition-all duration-200 hover:bg-red-400/10 hover:text-red-300"
-            >
-              <LogOut className="w-5 h-5" />
-              Déconnexion
-            </button>
-          </div>
         </div>
       </aside>
     </>
