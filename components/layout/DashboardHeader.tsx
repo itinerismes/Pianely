@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BrandMark } from "@/components/BrandMark";
 import { MidiStatus } from "@/components/midi/MidiStatus";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useRouter } from "next/navigation";
 import { Menu, Settings } from "lucide-react";
 
@@ -48,6 +49,9 @@ export function DashboardHeader({
         <div className="flex items-center gap-2.5">
           {/* Statut clavier MIDI */}
           <MidiStatus />
+
+          {/* Notifications réelles (streak, séance, succès) */}
+          <NotificationBell />
 
           {/* Settings */}
           <button

@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { logout } from '@/lib/auth/actions'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
+import { NotificationPrefs } from '@/components/settings/NotificationPrefs'
 import { Mail, LogOut, Bell, Shield } from 'lucide-react'
 
 export default async function SettingsPage() {
@@ -51,18 +50,7 @@ export default async function SettingsPage() {
           <Bell className="h-3.5 w-3.5" />
           Préférences
         </h2>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="notifications" className="text-[#f2efe8]">Notifications</Label>
-              <p className="text-faint text-sm">Recevoir des notifications par email</p>
-            </div>
-            <Switch id="notifications" disabled />
-          </div>
-          <p className="text-faint text-xs italic">
-            Les notifications seront bientôt disponibles
-          </p>
-        </div>
+        <NotificationPrefs />
       </div>
 
       {/* Danger zone */}
