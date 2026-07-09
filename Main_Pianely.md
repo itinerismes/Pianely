@@ -50,6 +50,8 @@ Identité inspirée du cockpit dark-glass de boardyoplan, transposée au piano :
 | **Branchement** | Piano allumé → câble USB entre le port *USB TO HOST* du P-145 et le PC portable → ouvrir Pianely → cliquer « Connecter mon clavier » dans le header → autoriser l'accès MIDI |
 | **Navigateur** | **Chrome ou Edge** (Web MIDI non supporté par Firefox/Safari) |
 | **Pilote** | Aucun : le P-145 est *class compliant*, Windows le reconnaît automatiquement |
+| **Casque** | Prise **PHONES** (jack 6,35 mm) à l'arrière du P-145 : brancher un casque coupe automatiquement les haut-parleurs (adaptateur 3,5→6,35 mm si besoin) |
+| **Tout dans le casque (setup « pro »)** | Le P-145 est une interface audio USB : 1) installer le **Yamaha Steinberg USB Driver** (gratuit, site Yamaha → Support → Downloads) ; 2) brancher le piano en USB, l'allumer ; 3) Windows → Paramètres → Système → Son → **Sortie = Yamaha P-145** (ou juste pour Chrome via le mélangeur de volume) ; 4) casque dans la prise PHONES du piano → ton jeu **et** les sons de Pianely (métronome, mode Écoute, mains séparées) dans le même casque |
 | **Astuce** | Pour entendre le son du piano ET l'app en même temps, garde le volume du P-145 pour ton jeu — l'app ne rejoue pas tes notes (pas de double son) |
 
 ---
