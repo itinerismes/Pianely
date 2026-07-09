@@ -12,7 +12,7 @@
  * - clic sur une touche → `onKeyPress` (jouable à la souris sans clavier)
  */
 
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMidiInput } from '@/hooks/useMidiInput'
 import { noteNameToMidi, midiNoteToName } from '@/lib/midi/midiEngine'
 import { toFrenchNote } from '@/lib/music/noteNames'
@@ -76,8 +76,19 @@ export function PianoRoll({
   const particlesRef = useRef<{ x: number; y: number; vx: number; vy: number; life: number; color: string }[]>([])
   const lastDrawRef = useRef<number>(0)
 
-  // Plage du clavier : celle du morceau, arrondie à l'octave, min 3 octaves
+  // 88 touches (La0→Do8, comme le P-145) ou plage adaptée au morceau
+  const [fullRange, setFullRange] = useState(true)
+  useEffect(() => {
+    const saved = localStorage.getItem('pianely-roll-88')
+    if (saved !== null) setFullRange(saved === '1')
+  }, [])
+  const toggleRange = (full: boolean) => {
+    setFullRange(full)
+    localStorage.setItem('pianely-roll-88', full ? '1' : '0')
+  }
+
   const [minMidi, maxMidi] = useMemo(() => {
+    if (fullRange) return [21, 108] // les 88 touches du P-145
     const pitches = notes.map((n) => n.midi)
     let lo = pitches.length ? Math.min(...pitches) : 48
     let hi = pitches.length ? Math.max(...pitches) : 84
@@ -85,7 +96,7 @@ export function PianoRoll({
     hi = Math.ceil((hi + 1) / 12) * 12 - 1
     while (hi - lo < 35) { if (lo > 21) lo -= 12; if (hi < 108) hi += 12 }
     return [Math.max(21, lo), Math.min(108, hi)]
-  }, [notes])
+  }, [notes, fullRange])
 
   const highlightedMidis = useMemo(
     () => new Set(highlightedKeys.map((k) => noteNameToMidi(k)).filter((m): m is number => m !== null)),
@@ -219,6 +230,10 @@ export function PianoRoll({
       return black ? '#141319' : '#f2efe8'
     }
 
+    // Feutre — la fine bande rouge sombre des vrais pianos
+    ctx.fillStyle = '#7a2c2c'
+    ctx.fillRect(0, kbTop - 3, width, 3)
+
     // Blanches
     for (const m of whites) {
       const k = xOf.get(m)!
@@ -226,7 +241,14 @@ export function PianoRoll({
       ctx.fillRect(k.x + 0.5, kbTop, k.w - 1, KEYBOARD_H)
       ctx.strokeStyle = 'rgba(0,0,0,0.55)'
       ctx.strokeRect(k.x + 0.5, kbTop, k.w - 1, KEYBOARD_H)
-      if (showLabels && m % 12 === 0 && whiteW > 20) {
+      // Repère Do4 : le Do du milieu, point laiton (comme un autocollant)
+      if (m === 60) {
+        ctx.fillStyle = COLOR_BRASS
+        ctx.beginPath()
+        ctx.arc(k.x + k.w / 2, HEIGHT - 26, Math.min(4, k.w * 0.18), 0, Math.PI * 2)
+        ctx.fill()
+      }
+      if (showLabels && m % 12 === 0 && whiteW > 13) {
         ctx.fillStyle = sounding.has(m) || pressed.has(m) || highlightedMidis.has(m) ? '#1a1408' : '#8a857b'
         ctx.font = `600 10px var(--font-manrope), sans-serif`
         ctx.textAlign = 'center'
@@ -268,7 +290,20 @@ export function PianoRoll({
   }
 
   return (
-    <div ref={containerRef} className="panel overflow-hidden rounded-2xl">
+    <div ref={containerRef} className="panel relative overflow-hidden rounded-2xl">
+      <div className="glass absolute right-3 top-3 z-10 flex rounded-full p-0.5">
+        {([[true, '88 touches'], [false, 'Zoom morceau']] as const).map(([full, label]) => (
+          <button
+            key={label}
+            onClick={() => toggleRange(full)}
+            className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all ${
+              fullRange === full ? 'btn-accent' : 'text-dim hover:text-[#f2efe8]'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       <canvas
         ref={canvasRef}
         onPointerDown={handleClick}
