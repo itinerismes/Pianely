@@ -84,6 +84,7 @@ Identité inspirée du cockpit dark-glass de boardyoplan, transposée au piano :
 
 ## 🗂️ Repères techniques
 
+- **Partition PDF → MIDI (local)** : `./scripts/pdf2midi.sh partition.pdf` → OCR Audiveris + music21, sortie dans `~/partitions-midi/`, puis import via « Ajouter un morceau ». Remplace définitivement la dédibox. Testé sur Experience (Einaudi, 10 pages → 1590 notes)
 - **Schéma DB** : `supabase-schema.sql` + migrations `003`, `004` (la `002` est une variante abandonnée — ne jamais l'appliquer)
 - **Design system** : utilities dans `app/globals.css` (`.panel`, `.btn-accent`, `.badge-brass`, `.octave-key`…)
 - **MIDI** : `lib/midi/midiEngine.ts` (singleton) ; le composant `Piano` relaie le MIDI vers `onKeyPress` par défaut — passer `midiForwardsCallbacks={false}` si le parent écoute déjà via `useMidiNotes` (évite le double comptage)
