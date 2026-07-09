@@ -36,6 +36,8 @@ export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
   const [done, setDone] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [query, setQuery] = useState('')
+  const [spotifyResolving, setSpotifyResolving] = useState(false)
+  const [spotifyHint, setSpotifyHint] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const initialAnalyzedRef = useRef(false)
 
@@ -143,6 +145,28 @@ export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
     )
   }
 
+  /** Lien Spotify collé -> on récupère le titre (oEmbed public, sans clé) */
+  const handleQueryChange = async (value: string) => {
+    setQuery(value)
+    setSpotifyHint(null)
+    if (!value.includes('open.spotify.com/')) return
+    setSpotifyResolving(true)
+    try {
+      const res = await fetch(`/api/spotify-meta?url=${encodeURIComponent(value.trim())}`)
+      const data = await res.json()
+      if (data.title) {
+        setQuery(data.title)
+        setSpotifyHint(`Titre récupéré depuis Spotify : « ${data.title} »`)
+      } else {
+        setSpotifyHint('Impossible de lire ce lien Spotify — tape le titre à la main.')
+      }
+    } catch {
+      setSpotifyHint('Impossible de lire ce lien Spotify — tape le titre à la main.')
+    } finally {
+      setSpotifyResolving(false)
+    }
+  }
+
   const openSearch = (site: 'google' | 'bitmidi') => {
     if (!query.trim()) return
     const url =
@@ -165,9 +189,9 @@ export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
               <Search className="text-faint absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
               <input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => void handleQueryChange(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && openSearch('google')}
-                placeholder="Ex. : experience einaudi"
+                placeholder="Titre, artiste… ou colle un lien Spotify"
                 className="h-10 w-full rounded-xl border border-white/10 bg-white/[0.05] pl-9 pr-3 text-sm text-[#f2efe8] caret-[#f0c66a] outline-none placeholder:text-faint focus:border-[#e0a83c]/50"
               />
             </div>
@@ -187,7 +211,9 @@ export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
             </button>
           </div>
           <p className="text-faint mt-2.5 text-xs">
-            Télécharge le fichier .mid, puis reviens ici — étape 2 ⬇️
+            {spotifyResolving
+              ? 'Lecture du lien Spotify…'
+              : spotifyHint ?? 'Astuce : colle un lien Spotify, je récupère le titre — puis télécharge le .mid et reviens ici ⬇️'}
           </p>
         </div>
       )}
