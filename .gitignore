@@ -54,3 +54,6 @@ services/ocr/opt/
 services/ocr/control.tar.*
 services/ocr/data.tar.*
 services/ocr/debian-binary
+
+# Partitions personnelles (droits d'auteur) — jamais dans le repo public
+/Sons/
