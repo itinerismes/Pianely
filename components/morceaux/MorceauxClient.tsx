@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { MidiUpload } from './MidiUpload'
+import { AudioTranscribe } from './AudioTranscribe'
 
 interface Piece {
   id: string
@@ -112,14 +113,25 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
             <DialogTitle className="text-[#f2efe8]">Ajouter un morceau</DialogTitle>
           </DialogHeader>
 
-          <div className="mt-4">
-            <MidiUpload onSuccess={handlePieceAdded} />
-            <p className="text-faint mt-4 text-xs leading-relaxed">
-              💡 Quasi tous les morceaux de piano existent en fichier MIDI gratuit :
-              cherche « nom du morceau + midi » ou explore musescore.com.
-              L'import est fidèle à 100 % — aucune transcription approximative.
-            </p>
-          </div>
+          <Tabs defaultValue="midi" className="mt-4">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="midi">Fichier MIDI (recommandé)</TabsTrigger>
+              <TabsTrigger value="audio">Fichier audio</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="midi" className="mt-4">
+              <MidiUpload onSuccess={handlePieceAdded} />
+              <p className="text-faint mt-4 text-xs leading-relaxed">
+                💡 Quasi tous les morceaux de piano existent en fichier MIDI gratuit :
+                cherche « nom du morceau + midi » ou explore musescore.com.
+                L'import est fidèle à 100 % — aucune transcription approximative.
+              </p>
+            </TabsContent>
+
+            <TabsContent value="audio" className="mt-4">
+              <AudioTranscribe onSuccess={handlePieceAdded} />
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
 

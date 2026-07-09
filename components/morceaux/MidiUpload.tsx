@@ -8,7 +8,7 @@
  * morceau rejoint la bibliothèque, immédiatement jouable en mode Practice.
  */
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import * as MidiPkg from '@tonejs/midi'
 import { FileMusic, Upload, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -22,9 +22,11 @@ interface MidiInfo {
 
 interface MidiUploadProps {
   onSuccess?: () => void
+  /** Fichier MIDI déjà prêt (ex. issu de la transcription audio) */
+  initialFile?: File
 }
 
-export function MidiUpload({ onSuccess }: MidiUploadProps) {
+export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
   const [info, setInfo] = useState<MidiInfo | null>(null)
   const [title, setTitle] = useState('')
   const [composer, setComposer] = useState('')
@@ -34,6 +36,7 @@ export function MidiUpload({ onSuccess }: MidiUploadProps) {
   const [done, setDone] = useState(false)
   const [dragging, setDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const initialAnalyzedRef = useRef(false)
 
   const analyze = useCallback(async (file: File) => {
     setError(null)
@@ -58,6 +61,13 @@ export function MidiUpload({ onSuccess }: MidiUploadProps) {
       setError("Fichier illisible — vérifie que c'est bien un .mid ou .midi valide.")
     }
   }, [])
+
+  useEffect(() => {
+    if (initialFile && !initialAnalyzedRef.current) {
+      initialAnalyzedRef.current = true
+      void analyze(initialFile)
+    }
+  }, [initialFile, analyze])
 
   const handleFile = (file: File | undefined | null) => {
     if (!file) return
