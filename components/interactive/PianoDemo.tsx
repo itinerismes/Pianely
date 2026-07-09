@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Piano } from './Piano'
+import { PianoRoll } from '@/components/sheet-music/PianoRoll'
 
 interface PianoDemoProps {
   title?: string
@@ -73,13 +73,13 @@ export function PianoDemo({
           </div>
         )}
 
-        <div className="flex justify-center overflow-x-auto py-4">
-          <Piano
-            startOctave={3}
-            octaves={2}
-            highlightedNotes={targetNotes.filter(n => !playedNotes.includes(n))}
-            onNotePlay={handleNotePlay}
-            showLabels={true}
+        <div className="py-2">
+          <PianoRoll
+            keyboardOnly
+            clickSound
+            midiToKeyPress
+            highlightedKeys={targetNotes.filter(n => !playedNotes.includes(n)).map(n => `${n}4`)}
+            onKeyPress={handleNotePlay}
           />
         </div>
 

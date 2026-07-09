@@ -12,7 +12,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, CheckCircle2, Flame, RotateCcw, Compass } from 'lucide-react'
-import { Piano } from '@/components/interactive/Piano'
+import { PianoRoll } from '@/components/sheet-music/PianoRoll'
 import { OctaveProgress } from '@/components/ui/octave-progress'
 import { toFrenchNote } from '@/lib/music/noteNames'
 import { noteNameToMidi } from '@/lib/midi/midiEngine'
@@ -301,16 +301,8 @@ export default function EchauffementPage() {
             </button>
           </div>
 
-          {/* Piano : Do4 illuminé comme repère */}
-          <div className="panel rounded-2xl p-5">
-            <Piano
-              highlightedKeys={['C4']}
-              startOctave={3}
-              octaves={3}
-              onKeyPress={handleNote}
-              autoScroll={false}
-            />
-          </div>
+          {/* Clavier 88 touches : Do4 illuminé comme repère */}
+          <PianoRoll keyboardOnly clickSound midiToKeyPress highlightedKeys={['C4']} onKeyPress={handleNote} />
         </>
       ) : finished ? (
         <div className="panel rounded-2xl border-[#4ade80]/30 p-8 text-center shadow-[0_0_32px_rgba(74,222,128,0.15)]">
@@ -376,16 +368,14 @@ export default function EchauffementPage() {
             )}
           </div>
 
-          {/* Piano */}
-          <div className="panel rounded-2xl p-5">
-            <Piano
-              highlightedKeys={expectedNote ? [expectedNote] : []}
-              startOctave={4}
-              octaves={2}
-              onKeyPress={handleNote}
-              autoScroll={false}
-            />
-          </div>
+          {/* Clavier 88 touches */}
+          <PianoRoll
+            keyboardOnly
+            clickSound
+            midiToKeyPress
+            highlightedKeys={expectedNote ? [expectedNote] : []}
+            onKeyPress={handleNote}
+          />
         </>
       )}
     </div>

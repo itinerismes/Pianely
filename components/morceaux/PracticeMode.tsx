@@ -53,9 +53,10 @@ interface PracticeModeProps {
   pieceTitle: string
   notes: Note[]
   totalDuration: number
+  secondsPerMeasure?: number
 }
 
-export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: PracticeModeProps) {
+export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration, secondsPerMeasure }: PracticeModeProps) {
   const { status: midiStatus } = useMidiInput()
 
   const [isRunning, setIsRunning] = useState(false)
@@ -69,6 +70,7 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
   const [lastGrade, setLastGrade] = useState<'perfect' | 'good' | 'late' | null>(null)
   const [lastVelocity, setLastVelocity] = useState<number | null>(null)
   const [finished, setFinished] = useState(false)
+  const [countdown, setCountdown] = useState<number | null>(null)
   const [flash, setFlash] = useState<'good' | 'bad' | null>(null)
 
   // Horloge practice (refs : lues dans la boucle rAF sans re-render)
@@ -256,15 +258,29 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
     }
   }, [gates, totalDuration])
 
-  const start = useCallback(async () => {
-    if (finished) return
+  const begin = useCallback(async () => {
     await Tone.start() // débloquer l'audio (geste utilisateur requis)
     runningRef.current = true
     lastFrameRef.current = null
     if (startedAtRef.current === null) startedAtRef.current = Date.now()
     setIsRunning(true)
     rafRef.current = requestAnimationFrame(tick)
-  }, [finished, tick])
+  }, [tick])
+
+  const start = useCallback(() => {
+    if (finished || countdown !== null) return
+    // Reprise en cours de morceau : pas de compte à rebours
+    if (timeRef.current > 0) { void begin(); return }
+    setCountdown(3)
+    let n = 3
+    const timer = window.setInterval(() => {
+      n -= 1
+      if (n > 0) { setCountdown(n); return }
+      window.clearInterval(timer)
+      setCountdown(null)
+      void begin()
+    }, 800)
+  }, [finished, countdown, begin])
 
   const pause = useCallback(() => {
     runningRef.current = false
@@ -413,6 +429,9 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
         currentTime={currentTime}
         highlightedKeys={waitingNotes}
         onKeyPress={handlePlayedNote}
+        playing={isRunning}
+        secondsPerMeasure={secondsPerMeasure}
+        countdown={countdown}
       />
 
       {/* Contrôles */}

@@ -43,6 +43,8 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [speed, setSpeed] = useState(100) // % de la vitesse originale
+  const [countdown, setCountdown] = useState<number | null>(null)
+  const [secondsPerMeasure, setSecondsPerMeasure] = useState<number | undefined>(undefined)
   const [sampler, setSampler] = useState<Tone.Sampler | null>(null)
   const [loading, setLoading] = useState(false)
   const timeUpdateRef = useRef<number | null>(null)
@@ -79,6 +81,11 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
           const lastNote = allNotes[allNotes.length - 1]
           totalDuration.current = lastNote.time + lastNote.duration
         }
+
+        // Durée d'une mesure depuis le header (tempo + signature)
+        const bpm = midiData.header.tempos?.[0]?.bpm || 60
+        const beats = midiData.header.timeSignatures?.[0]?.timeSignature?.[0] || 4
+        setSecondsPerMeasure((60 / bpm) * beats)
 
         setNotes(allNotes)
         setLoading(false)
@@ -183,9 +190,19 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
   const handlePlay = () => {
     if (isPlaying) {
       pausePlayback()
-    } else {
-      startPlayback()
+      return
     }
+    if (countdown !== null) return
+    // 3-2-1 : le temps de poser les mains
+    setCountdown(3)
+    let n = 3
+    const timer = window.setInterval(() => {
+      n -= 1
+      if (n > 0) { setCountdown(n); return }
+      window.clearInterval(timer)
+      setCountdown(null)
+      void startPlayback()
+    }, 800)
   }
 
   const switchMode = (next: PlayerMode) => {
@@ -250,6 +267,7 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
           pieceTitle={piece.title}
           notes={notes}
           totalDuration={totalDuration.current}
+          secondsPerMeasure={secondsPerMeasure}
         />
       )}
 
@@ -257,7 +275,13 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
       {mode === 'listen' && notes.length > 0 && (
         <>
           {/* Vue unifiée : les notes tombent sur le clavier */}
-          <PianoRoll notes={notes} currentTime={currentTime} />
+          <PianoRoll
+            notes={notes}
+            currentTime={currentTime}
+            playing={isPlaying}
+            secondsPerMeasure={secondsPerMeasure}
+            countdown={countdown}
+          />
 
           {/* Contrôles de lecture */}
           <div className="panel rounded-2xl p-5">

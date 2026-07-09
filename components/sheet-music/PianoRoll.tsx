@@ -13,7 +13,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useMidiInput } from '@/hooks/useMidiInput'
+import { useMidiInput, useMidiNotes } from '@/hooks/useMidiInput'
 import { noteNameToMidi, midiNoteToName } from '@/lib/midi/midiEngine'
 import { toFrenchNote } from '@/lib/music/noteNames'
 
@@ -26,18 +26,30 @@ interface Note {
 }
 
 interface PianoRollProps {
-  notes: Note[]
-  currentTime: number
+  notes?: Note[]
+  currentTime?: number
   /** Touches à jouer maintenant (mode Practice) — illuminées en laiton */
   highlightedKeys?: string[]
   onKeyPress?: (note: string) => void
   showLabels?: boolean
+  /** Clavier seul (leçons, jeu libre, échauffement) : zone de chute réduite */
+  keyboardOnly?: boolean
+  /** Jouer le son des touches cliquées (sampler chargé à la demande) */
+  clickSound?: boolean
+  /** Relayer le clavier MIDI vers onKeyPress (à laisser false si le parent
+   *  écoute déjà le MIDI lui-même, comme le mode Practice) */
+  midiToKeyPress?: boolean
+  /** Lecture en cours : active la traînée lumineuse derrière les notes */
+  playing?: boolean
+  /** Durée d'une mesure (s) : dessine les barres de mesure qui défilent */
+  secondsPerMeasure?: number
+  /** Compte à rebours 3-2-1 affiché en surimpression */
+  countdown?: number | null
 }
 
 const FALL_SPEED = 170 // px par seconde
 const KEYBOARD_H = 110
 const BLACK_H = 68
-const HEIGHT = 520
 const LEFT_SPLIT = 60 // < Do4 = main gauche
 
 const COLOR_LEFT = '#38bdf8'
@@ -63,12 +75,19 @@ function buildLayout(minMidi: number, maxMidi: number, width: number) {
 }
 
 export function PianoRoll({
-  notes,
-  currentTime,
+  notes = [],
+  currentTime = 0,
   highlightedKeys = [],
   onKeyPress,
   showLabels = true,
+  keyboardOnly = false,
+  clickSound = false,
+  midiToKeyPress = false,
+  playing = false,
+  secondsPerMeasure,
+  countdown = null,
 }: PianoRollProps) {
+  const HEIGHT = keyboardOnly ? 190 : 520
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const { activeNotes } = useMidiInput()
@@ -78,10 +97,19 @@ export function PianoRoll({
 
   // 88 touches (La0→Do8, comme le P-145) ou plage adaptée au morceau
   const [fullRange, setFullRange] = useState(true)
+  const [noteNames, setNoteNames] = useState(true)
   useEffect(() => {
     const saved = localStorage.getItem('pianely-roll-88')
     if (saved !== null) setFullRange(saved === '1')
+    const names = localStorage.getItem('pianely-roll-names')
+    if (names !== null) setNoteNames(names === '1')
   }, [])
+  const toggleNames = () => {
+    setNoteNames((v) => {
+      localStorage.setItem('pianely-roll-names', v ? '0' : '1')
+      return !v
+    })
+  }
   const toggleRange = (full: boolean) => {
     setFullRange(full)
     localStorage.setItem('pianely-roll-88', full ? '1' : '0')
@@ -137,6 +165,18 @@ export function PianoRoll({
       }
     }
 
+    // Barres de mesure : lignes horizontales qui défilent avec les notes
+    if (secondsPerMeasure && secondsPerMeasure > 0.5 && !keyboardOnly) {
+      const firstBar = Math.max(0, Math.floor(currentTime / secondsPerMeasure))
+      for (let b = firstBar; ; b++) {
+        const y = kbTop - (b * secondsPerMeasure - currentTime) * FALL_SPEED
+        if (y < 0) break
+        if (y > kbTop) continue
+        ctx.strokeStyle = b % 4 === 0 ? 'rgba(240,198,106,0.14)' : 'rgba(255,255,255,0.06)'
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke()
+      }
+    }
+
     // ── Notes tombantes + touches « sonnantes » ──
     const sounding = new Set<number>()
     for (const note of notes) {
@@ -168,6 +208,24 @@ export function PianoRoll({
       ctx.roundRect(isBlackPc(note.midi) ? key.x : nx, drawTop, nw, drawBottom - drawTop, 4)
       ctx.fill()
       ctx.shadowBlur = 0
+
+      // Traînée lumineuse pendant la lecture (motion blur léger)
+      if (playing && drawTop > 0) {
+        const trail = ctx.createLinearGradient(0, drawTop - 26, 0, drawTop)
+        trail.addColorStop(0, color + '00')
+        trail.addColorStop(1, color + '2e')
+        ctx.fillStyle = trail
+        ctx.fillRect(isBlackPc(note.midi) ? key.x : nx, drawTop - 26, nw, 26)
+      }
+
+      // Nom de la note sur la note (apprentissage)
+      const noteH = drawBottom - drawTop
+      if (noteNames && nw >= 15 && noteH >= 17 && drawBottom <= kbTop) {
+        ctx.fillStyle = '#0a0a0e'
+        ctx.font = '700 9px var(--font-manrope), sans-serif'
+        ctx.textAlign = 'center'
+        ctx.fillText(toFrenchNote(midiNoteToName(note.midi)).replace(/-?\d+$/, ''), (isBlackPc(note.midi) ? key.x : nx) + nw / 2, drawBottom - 5)
+      }
     }
 
     // Halo « impact » + particules (façon Rousseau)
@@ -265,7 +323,34 @@ export function PianoRoll({
       ctx.roundRect(k.x, kbTop, k.w, BLACK_H, [0, 0, 3, 3])
       ctx.fill()
     }
-  }, [notes, currentTime, minMidi, maxMidi, highlightedMidis, activeNotes, showLabels])
+  }, [notes, currentTime, minMidi, maxMidi, highlightedMidis, activeNotes, showLabels, noteNames, playing, secondsPerMeasure, keyboardOnly, HEIGHT])
+
+  // Relais MIDI optionnel vers onKeyPress (échauffement, leçons, jeu libre)
+  const onKeyPressRef = useRef(onKeyPress)
+  onKeyPressRef.current = onKeyPress
+  useMidiNotes((event) => {
+    if (midiToKeyPress && event.type === 'noteon') {
+      onKeyPressRef.current?.(midiNoteToName(event.note))
+    }
+  })
+
+  // Son au clic — Tone.Sampler chargé au premier clic seulement
+  const samplerRef = useRef<import('tone').Sampler | null>(null)
+  const playClick = async (name: string) => {
+    if (!clickSound) return
+    const Tone = await import('tone')
+    if (!samplerRef.current) {
+      samplerRef.current = new Tone.Sampler({
+        urls: { C4: 'C4.mp3', 'D#4': 'Ds4.mp3', 'F#4': 'Fs4.mp3', A4: 'A4.mp3' },
+        release: 1,
+        baseUrl: 'https://tonejs.github.io/audio/salamander/',
+      }).toDestination()
+      await Tone.loaded()
+    }
+    await Tone.start()
+    samplerRef.current.triggerAttackRelease(name, '8n')
+  }
+  useEffect(() => () => { samplerRef.current?.dispose() }, [])
 
   // Clic → touche (jouable à la souris)
   const handleClick = (e: React.MouseEvent) => {
@@ -280,12 +365,18 @@ export function PianoRoll({
       for (let m = minMidi; m <= maxMidi; m++) {
         if (!isBlackPc(m)) continue
         const k = xOf.get(m)
-        if (k && x >= k.x && x <= k.x + k.w) { onKeyPress(midiNoteToName(m)); return }
+        if (k && x >= k.x && x <= k.x + k.w) {
+          const name = midiNoteToName(m)
+          void playClick(name); onKeyPress(name); return
+        }
       }
     }
     for (const m of whites) {
       const k = xOf.get(m)!
-      if (x >= k.x && x <= k.x + k.w) { onKeyPress(midiNoteToName(m)); return }
+      if (x >= k.x && x <= k.x + k.w) {
+        const name = midiNoteToName(m)
+        void playClick(name); onKeyPress(name); return
+      }
     }
   }
 
@@ -303,7 +394,30 @@ export function PianoRoll({
             {label}
           </button>
         ))}
+        {!keyboardOnly && (
+          <button
+            onClick={toggleNames}
+            className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all ${
+              noteNames ? 'btn-accent' : 'text-dim hover:text-[#f2efe8]'
+            }`}
+          >
+            Noms
+          </button>
+        )}
       </div>
+
+      {/* Compte à rebours 3-2-1 : le temps de poser les mains */}
+      {countdown !== null && countdown > 0 && (
+        <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-[#0a0a0e]/40">
+          <span
+            key={countdown}
+            className="font-display accent-brass text-8xl drop-shadow-[0_0_30px_rgba(224,168,60,0.6)]"
+            style={{ animation: 'rise-in 0.3s ease-out' }}
+          >
+            {countdown}
+          </span>
+        </div>
+      )}
       <canvas
         ref={canvasRef}
         onPointerDown={handleClick}

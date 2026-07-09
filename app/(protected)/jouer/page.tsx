@@ -7,7 +7,7 @@
  */
 
 import { useState } from 'react'
-import { Piano } from '@/components/interactive/Piano'
+import { PianoRoll } from '@/components/sheet-music/PianoRoll'
 import { Metronome } from '@/components/tools/Metronome'
 import { useMidiInput, useMidiNotes } from '@/hooks/useMidiInput'
 import { detectChord, velocityToNuance } from '@/lib/music/chords'
@@ -84,10 +84,13 @@ export default function JouerPage() {
         <Metronome compact />
       </div>
 
-      {/* Piano */}
-      <div className="panel rounded-3xl p-6">
-        <Piano startOctave={2} octaves={5} soundOnMidi={false} />
-      </div>
+      {/* Clavier 88 touches — le P-145 à l'écran */}
+      <PianoRoll
+        keyboardOnly
+        clickSound
+        midiToKeyPress
+        onKeyPress={(n) => setLastNote({ name: n, velocity: 80 })}
+      />
     </div>
   )
 }
