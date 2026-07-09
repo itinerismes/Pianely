@@ -9,7 +9,7 @@
  * Pas de pénalité : à ce stade on construit des repères, pas un score.
  */
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, CheckCircle2, Flame, RotateCcw, Compass } from 'lucide-react'
 import { Piano } from '@/components/interactive/Piano'
@@ -28,7 +28,8 @@ interface Exercise {
   rounds: number
 }
 
-const EXERCISES: Exercise[] = [
+// Palier 1 : position de base (débutant)
+const TIER_1: Exercise[] = [
   {
     id: 'montee',
     title: 'La montée',
@@ -52,7 +53,65 @@ const EXERCISES: Exercise[] = [
   },
 ]
 
+// Palier 2 (niveau 1 terminé) : gamme complète + main gauche
+const TIER_2: Exercise[] = [
+  {
+    id: 'gamme-do',
+    title: 'La gamme de Do complète',
+    hint: 'Monte de Do4 à Do5 — passage du pouce sous le majeur après Mi',
+    sequence: ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'B4', 'A4', 'G4', 'F4', 'E4', 'D4', 'C4'],
+    rounds: 2,
+  },
+  {
+    id: 'main-gauche',
+    title: 'La main gauche',
+    hint: 'Auriculaire sur Do3, monte jusqu\'à Sol3 et redescends',
+    sequence: ['C3', 'D3', 'E3', 'F3', 'G3', 'F3', 'E3', 'D3', 'C3'],
+    rounds: 2,
+  },
+]
+
+// Palier 3 (niveau 2 terminé) : arpèges
+const TIER_3: Exercise[] = [
+  {
+    id: 'arpege-do',
+    title: 'L\'arpège de Do majeur',
+    hint: 'Do-Mi-Sol-Do : les notes de l\'accord, une par une, aller-retour',
+    sequence: ['C4', 'E4', 'G4', 'C5', 'G4', 'E4', 'C4'],
+    rounds: 3,
+  },
+  {
+    id: 'arpege-la-mineur',
+    title: 'L\'arpège de La mineur',
+    hint: 'La-Do-Mi-La : même geste, couleur mineure',
+    sequence: ['A3', 'C4', 'E4', 'A4', 'E4', 'C4', 'A3'],
+    rounds: 3,
+  },
+]
+
 export default function EchauffementPage() {
+  // Programme progressif : palier 2 après le niveau 1 (5 leçons),
+  // palier 3 après le niveau 2 (12 leçons)
+  const [exercises, setExercises] = useState<Exercise[]>(TIER_1)
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+        const { count } = await supabase
+          .from('user_progress')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('status', 'completed')
+        const completed = count ?? 0
+        if (completed >= 12) setExercises([...TIER_1, ...TIER_2, ...TIER_3])
+        else if (completed >= 5) setExercises([...TIER_1, ...TIER_2])
+      } catch { /* palier 1 par défaut */ }
+    }
+    void load()
+  }, [])
+
   const [locating, setLocating] = useState(true) // étape 0 : trouver Do4
   const [locateFeedback, setLocateFeedback] = useState<string | null>(null)
   const [exerciseIndex, setExerciseIndex] = useState(0)
@@ -63,12 +122,12 @@ export default function EchauffementPage() {
   const startedAtRef = useRef(Date.now())
   const savedRef = useRef(false)
 
-  const exercise = EXERCISES[exerciseIndex]
+  const exercise = exercises[exerciseIndex]
   const expectedNote = exercise?.sequence[noteIndex]
 
-  const totalSteps = EXERCISES.reduce((sum, ex) => sum + ex.sequence.length * ex.rounds, 0)
+  const totalSteps = exercises.reduce((sum, ex) => sum + ex.sequence.length * ex.rounds, 0)
   const doneSteps =
-    EXERCISES.slice(0, exerciseIndex).reduce((sum, ex) => sum + ex.sequence.length * ex.rounds, 0) +
+    exercises.slice(0, exerciseIndex).reduce((sum, ex) => sum + ex.sequence.length * ex.rounds, 0) +
     round * (exercise?.sequence.length || 0) +
     noteIndex
 
@@ -149,7 +208,7 @@ export default function EchauffementPage() {
     }
 
     const nextExercise = exerciseIndex + 1
-    if (nextExercise < EXERCISES.length) {
+    if (nextExercise < exercises.length) {
       setExerciseIndex(nextExercise)
       setRound(0)
       setNoteIndex(0)
@@ -158,7 +217,7 @@ export default function EchauffementPage() {
 
     setFinished(true)
     void saveSession()
-  }, [locating, handleLocateNote, finished, expectedNote, noteIndex, exercise, round, exerciseIndex, saveSession])
+  }, [locating, handleLocateNote, finished, expectedNote, noteIndex, exercise, round, exerciseIndex, exercises.length, saveSession])
 
   const restart = () => {
     setExerciseIndex(0)
@@ -277,9 +336,9 @@ export default function EchauffementPage() {
           <div className="panel rounded-2xl p-6">
             <div className="mb-1 flex items-center justify-between">
               <span className="badge-brass inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-widest">
-                Exercice {exerciseIndex + 1}/{EXERCISES.length} · Tour {round + 1}/{exercise.rounds}
+                Exercice {exerciseIndex + 1}/{exercises.length} · Tour {round + 1}/{exercise.rounds}
               </span>
-              {EXERCISES.slice(0, exerciseIndex).length > 0 && (
+              {exerciseIndex > 0 && (
                 <span className="accent-green flex items-center gap-1 text-sm font-semibold">
                   <CheckCircle2 className="h-4 w-4" />
                   {exerciseIndex} terminé{exerciseIndex > 1 ? 's' : ''}

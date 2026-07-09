@@ -27,6 +27,7 @@ interface Piece {
   id: string
   title: string
   composer: string
+  category?: string
   level: number
   difficulty: 'easy' | 'medium' | 'hard'
   duration: number // in minutes
@@ -42,6 +43,7 @@ interface MorceauxClientProps {
 export function MorceauxClient({ pieces }: MorceauxClientProps) {
   const [selectedTab, setSelectedTab] = useState('all')
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
 
   // Filter pieces based on tab and level
@@ -49,6 +51,7 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
     if (selectedTab === 'in-progress' && piece.status !== 'in_progress') return false
     if (selectedTab === 'mastered' && piece.status !== 'mastered') return false
     if (selectedLevel && piece.level !== selectedLevel) return false
+    if (selectedCategory && piece.category !== selectedCategory) return false
     return true
   })
 
@@ -170,6 +173,20 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
               }`}
             >
               Niveau {level}
+            </button>
+          ))}
+
+          <span className="mx-2 h-5 w-px bg-white/10" aria-hidden />
+
+          {([['classical', 'Classique'], ['traditional', 'Traditionnel']] as const).map(([id, label]) => (
+            <button
+              key={id}
+              onClick={() => setSelectedCategory(selectedCategory === id ? null : id)}
+              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                selectedCategory === id ? 'btn-accent' : 'btn-ghost text-dim'
+              }`}
+            >
+              {label}
             </button>
           ))}
         </div>
