@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import * as MidiPkg from '@tonejs/midi'
-import { FileMusic, Upload, CheckCircle2 } from 'lucide-react'
+import { FileMusic, Upload, CheckCircle2, Search, ExternalLink } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface MidiInfo {
@@ -35,6 +35,7 @@ export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
   const [dragging, setDragging] = useState(false)
+  const [query, setQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const initialAnalyzedRef = useRef(false)
 
@@ -141,8 +142,55 @@ export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
     )
   }
 
+  const openSearch = (site: 'google' | 'bitmidi') => {
+    if (!query.trim()) return
+    const url =
+      site === 'bitmidi'
+        ? `https://bitmidi.com/search?q=${encodeURIComponent(query.trim())}`
+        : `https://www.google.com/search?q=${encodeURIComponent(`"${query.trim()}" midi file download`)}`
+    window.open(url, '_blank', 'noopener')
+  }
+
   return (
     <div className="space-y-4">
+      {/* Assistant : trouver le MIDI sur le web, puis revenir le déposer */}
+      {!info && (
+        <div className="glass rounded-2xl p-4">
+          <p className="text-dim mb-2.5 text-sm font-semibold">
+            1. Trouve ton morceau <span className="text-faint font-normal">(s'ouvre dans un nouvel onglet)</span>
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <div className="relative min-w-48 flex-1">
+              <Search className="text-faint absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && openSearch('google')}
+                placeholder="Ex. : experience einaudi"
+                className="h-10 w-full rounded-xl border border-white/10 bg-white/[0.05] pl-9 pr-3 text-sm text-[#f2efe8] caret-[#f0c66a] outline-none placeholder:text-faint focus:border-[#e0a83c]/50"
+              />
+            </div>
+            <button
+              onClick={() => openSearch('google')}
+              disabled={!query.trim()}
+              className="btn-accent inline-flex items-center gap-1.5 rounded-xl px-4 text-sm font-bold disabled:opacity-50"
+            >
+              Google <ExternalLink className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => openSearch('bitmidi')}
+              disabled={!query.trim()}
+              className="btn-ghost inline-flex items-center gap-1.5 rounded-xl px-4 text-sm font-semibold text-dim disabled:opacity-50"
+            >
+              BitMidi <ExternalLink className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <p className="text-faint mt-2.5 text-xs">
+            Télécharge le fichier .mid, puis reviens ici — étape 2 ⬇️
+          </p>
+        </div>
+      )}
+
       {/* Zone de dépôt */}
       <div
         onClick={() => inputRef.current?.click()}
@@ -170,7 +218,7 @@ export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
           </div>
         ) : (
           <div>
-            <p className="font-semibold text-[#f2efe8]">Dépose un fichier .mid ici</p>
+            <p className="font-semibold text-[#f2efe8]">2. Dépose le fichier .mid ici</p>
             <p className="text-faint mt-1 text-sm">
               ou clique pour parcourir — sources gratuites : bitmidi.com, piano-midi.de, mutopiaproject.org
             </p>
