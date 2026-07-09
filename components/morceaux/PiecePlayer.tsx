@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Play, Pause, SkipBack, Volume2, Headphones, Gamepad2 } from 'lucide-react'
-import { FallingNotesVisualizer } from '@/components/sheet-music/FallingNotesVisualizer'
-import { Piano } from '@/components/interactive/Piano'
+import { PianoRoll } from '@/components/sheet-music/PianoRoll'
 import { PracticeMode } from '@/components/morceaux/PracticeMode'
 import * as Tone from 'tone'
 import { Slider } from '@/components/ui/slider'
@@ -41,7 +40,6 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
   const [mode, setMode] = useState<PlayerMode>('listen')
   const [isPlaying, setIsPlaying] = useState(false)
   const [notes, setNotes] = useState<Note[]>([])
-  const [highlightedKeys, setHighlightedKeys] = useState<string[]>([])
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [speed, setSpeed] = useState(100) // % de la vitesse originale
@@ -119,26 +117,6 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Calculer les touches illuminées basées sur le temps actuel
-  useEffect(() => {
-    if (!isPlaying || notes.length === 0) {
-      return
-    }
-
-    // Configuration identique au FallingNotesVisualizer
-    const hitLineY = 500
-    const noteSpeed = 166.67 // pixels par seconde
-
-    const activeNotes = notes.filter(note => {
-      const timeDiff = note.time - currentTime
-      const noteY = hitLineY - (timeDiff * noteSpeed)
-      const distanceFromHitLine = Math.abs(noteY - hitLineY)
-      return distanceFromHitLine < 50
-    })
-
-    setHighlightedKeys([...new Set(activeNotes.map(n => n.name))])
-  }, [currentTime, notes, isPlaying])
-
   const startPlayback = async () => {
     if (notes.length === 0 || !sampler) return
 
@@ -196,7 +174,6 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     setIsPlaying(false)
     setProgress(0)
     setCurrentTime(0)
-    setHighlightedKeys([])
     if (timeUpdateRef.current) {
       cancelAnimationFrame(timeUpdateRef.current)
       timeUpdateRef.current = null
@@ -279,11 +256,8 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
       {/* ── Mode Écoute : lecture + visualisation ── */}
       {mode === 'listen' && notes.length > 0 && (
         <>
-          <FallingNotesVisualizer
-            notes={notes}
-            isPlaying={isPlaying}
-            currentTime={currentTime}
-          />
+          {/* Vue unifiée : les notes tombent sur le clavier */}
+          <PianoRoll notes={notes} currentTime={currentTime} />
 
           {/* Contrôles de lecture */}
           <div className="panel rounded-2xl p-5">
@@ -357,21 +331,6 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Piano interactif */}
-          <div className="panel rounded-2xl p-5">
-            <div className="mb-4">
-              <h2 className="text-lg font-bold text-[#f2efe8]">Piano Virtuel</h2>
-              <p className="text-dim text-sm">
-                Suis les notes illuminées ou joue librement — ton clavier USB fonctionne aussi
-              </p>
-            </div>
-            <Piano
-              highlightedKeys={highlightedKeys}
-              startOctave={1}
-              octaves={5}
-            />
           </div>
 
           {/* Informations */}

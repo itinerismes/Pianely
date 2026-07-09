@@ -14,8 +14,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { RotateCcw, Play, Pause, Trophy, Target, Flame } from 'lucide-react'
-import { FallingNotesVisualizer } from '@/components/sheet-music/FallingNotesVisualizer'
-import { Piano } from '@/components/interactive/Piano'
+import { PianoRoll } from '@/components/sheet-music/PianoRoll'
 import { Slider } from '@/components/ui/slider'
 import { useMidiInput, useMidiNotes } from '@/hooks/useMidiInput'
 import { midiNoteToName } from '@/lib/midi/midiEngine'
@@ -407,11 +406,13 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
         </div>
       )}
 
-      {/* Notes tombantes — seulement celles que TU dois jouer */}
-      <FallingNotesVisualizer
+      {/* Vue unifiée : les notes tombent sur le clavier, les touches
+          attendues s'illuminent en laiton, clic possible sans clavier USB */}
+      <PianoRoll
         notes={playerNotes}
-        isPlaying={isRunning}
         currentTime={currentTime}
+        highlightedKeys={waitingNotes}
+        onKeyPress={handlePlayedNote}
       />
 
       {/* Contrôles */}
@@ -501,17 +502,6 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
         )}
       </div>
 
-      {/* Piano — les touches attendues s'illuminent en laiton */}
-      <div className="panel rounded-2xl p-5">
-        <Piano
-          highlightedKeys={waitingNotes}
-          startOctave={2}
-          octaves={5}
-          onKeyPress={handlePlayedNote}
-          midiForwardsCallbacks={false}
-          soundOnMidi={false}
-        />
-      </div>
     </div>
   )
 }
