@@ -122,9 +122,10 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
             <TabsContent value="midi" className="mt-4">
               <MidiUpload onSuccess={handlePieceAdded} />
               <p className="text-faint mt-4 text-xs leading-relaxed">
-                💡 Quasi tous les morceaux de piano existent en fichier MIDI gratuit :
-                cherche « nom du morceau + midi » ou explore musescore.com.
-                L'import est fidèle à 100 % — aucune transcription approximative.
+                💡 Sources 100 % gratuites : bitmidi.com (immense archive),
+                piano-midi.de (classique, belles interprétations), mutopiaproject.org
+                (domaine public), vgmusic.com (musiques de jeux vidéo). Ou cherche
+                « nom du morceau + midi file free ».
               </p>
             </TabsContent>
 

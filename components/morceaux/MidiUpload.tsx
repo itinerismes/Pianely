@@ -172,7 +172,7 @@ export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
           <div>
             <p className="font-semibold text-[#f2efe8]">Dépose un fichier .mid ici</p>
             <p className="text-faint mt-1 text-sm">
-              ou clique pour parcourir — trouve tes morceaux sur musescore.com, freemidi.org…
+              ou clique pour parcourir — sources gratuites : bitmidi.com, piano-midi.de, mutopiaproject.org
             </p>
           </div>
         )}
