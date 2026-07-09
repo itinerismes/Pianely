@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { OctaveProgress } from '@/components/ui/octave-progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -11,7 +12,10 @@ import {
   Clock,
   Star,
   Filter,
-  PlusCircle
+  PlusCircle,
+  Pencil,
+  Check,
+  X
 } from 'lucide-react'
 import {
   Dialog,
@@ -27,6 +31,7 @@ interface Piece {
   title: string
   composer: string
   category?: string
+  created_by?: string | null
   level: number
   difficulty: 'easy' | 'medium' | 'hard'
   duration: number // in minutes
@@ -37,10 +42,24 @@ interface Piece {
 
 interface MorceauxClientProps {
   pieces: Piece[]
+  userId?: string
 }
 
-export function MorceauxClient({ pieces }: MorceauxClientProps) {
+export function MorceauxClient({ pieces: initialPieces, userId }: MorceauxClientProps) {
+  // Copie locale : permet le renommage sans recharger la page
+  const [pieces, setPieces] = useState(initialPieces)
   const [selectedTab, setSelectedTab] = useState('all')
+
+  const renamePiece = async (pieceId: string, title: string): Promise<boolean> => {
+    const supabase = createClient()
+    const { error } = await supabase.from('pieces').update({ title }).eq('id', pieceId)
+    if (error) {
+      console.error('Rename error:', error)
+      return false
+    }
+    setPieces((prev) => prev.map((p) => (p.id === pieceId ? { ...p, title } : p)))
+    return true
+  }
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
@@ -213,7 +232,14 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
             {filteredPieces.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredPieces.map((piece) => (
-                  <PieceCard key={piece.id} piece={piece} getLevelColor={getLevelColor} getDifficultyColor={getDifficultyColor} />
+                  <PieceCard
+                    key={piece.id}
+                    piece={piece}
+                    getLevelColor={getLevelColor}
+                    getDifficultyColor={getDifficultyColor}
+                    canRename={!!userId && piece.created_by === userId}
+                    onRename={renamePiece}
+                  />
                 ))}
               </div>
             ) : (
@@ -229,12 +255,31 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
 function PieceCard({
   piece,
   getLevelColor,
-  getDifficultyColor
+  getDifficultyColor,
+  canRename = false,
+  onRename
 }: {
   piece: any
   getLevelColor: (level: number) => string
   getDifficultyColor: (difficulty: string) => string
+  canRename?: boolean
+  onRename?: (pieceId: string, title: string) => Promise<boolean>
 }) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(piece.title)
+  const [saving, setSaving] = useState(false)
+
+  const save = async () => {
+    if (!onRename || !draft.trim() || draft.trim() === piece.title) {
+      setEditing(false)
+      return
+    }
+    setSaving(true)
+    const ok = await onRename(piece.id, draft.trim())
+    setSaving(false)
+    if (ok) setEditing(false)
+  }
+
   return (
     <div className="panel panel-hover group cursor-pointer overflow-hidden rounded-2xl">
       <div className="relative">
@@ -271,7 +316,37 @@ function PieceCard({
       </div>
       <div className="space-y-3 p-4">
         <div>
-          <h3 className="text-lg font-bold text-[#f2efe8]">{piece.title}</h3>
+          {editing ? (
+            <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+              <input
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') void save(); if (e.key === 'Escape') setEditing(false) }}
+                autoFocus
+                disabled={saving}
+                className="h-9 min-w-0 flex-1 rounded-lg border border-[#e0a83c]/40 bg-white/[0.05] px-2.5 text-sm font-bold text-[#f2efe8] caret-[#f0c66a] outline-none"
+              />
+              <button onClick={() => void save()} disabled={saving} className="badge-stage rounded-lg p-1.5" aria-label="Enregistrer le titre">
+                <Check className="h-4 w-4" />
+              </button>
+              <button onClick={() => { setDraft(piece.title); setEditing(false) }} className="btn-ghost rounded-lg p-1.5 text-dim" aria-label="Annuler">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="group/title flex items-center gap-2">
+              <h3 className="text-lg font-bold text-[#f2efe8]">{piece.title}</h3>
+              {canRename && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setDraft(piece.title); setEditing(true) }}
+                  className="text-faint opacity-0 transition-opacity hover:text-[#f0c66a] group-hover/title:opacity-100 group-hover:opacity-100"
+                  aria-label="Renommer le morceau"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          )}
           <p className="text-dim text-sm">{piece.composer}</p>
         </div>
 

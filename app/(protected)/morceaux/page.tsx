@@ -41,5 +41,5 @@ export default async function MorceauxPage() {
     pieces = []
   }
 
-  return <MorceauxClient pieces={pieces} />
+  return <MorceauxClient pieces={pieces} userId={user.id} />
 }

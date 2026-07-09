@@ -111,6 +111,7 @@ export function MidiUpload({ onSuccess, initialFile }: MidiUploadProps) {
           duration_minutes: Math.max(1, Math.round(info.durationSec / 60)),
           category: 'user_upload',
           source: 'user_upload',
+          created_by: user.id,
           midi_url: publicUrl,
         })
         .select('id')

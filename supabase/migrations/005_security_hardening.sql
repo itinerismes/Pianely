@@ -66,3 +66,17 @@ END $$;
 -- Réglage manuel restant (dashboard, non scriptable) :
 -- Authentication → Passwords → activer « Leaked password protection »
 -- ============================================================
+
+-- ============================================================
+-- Ajout 2026-07-09 (bis) : propriété des morceaux importés
+-- ============================================================
+ALTER TABLE public.pieces ADD COLUMN IF NOT EXISTS created_by uuid REFERENCES auth.users(id) ON DELETE SET NULL;
+CREATE POLICY "Users can update their own pieces" ON public.pieces
+  FOR UPDATE USING ((select auth.uid()) = created_by) WITH CHECK ((select auth.uid()) = created_by);
+CREATE POLICY "Users can delete their own pieces" ON public.pieces
+  FOR DELETE USING ((select auth.uid()) = created_by);
+
+-- Confidentialité des imports : catalogue seed public, uploads privés
+DROP POLICY IF EXISTS "Pieces are viewable by everyone" ON public.pieces;
+CREATE POLICY "Seed catalog public, own uploads private" ON public.pieces
+  FOR SELECT USING (source = 'seed' OR created_by = (select auth.uid()));
