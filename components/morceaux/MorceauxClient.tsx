@@ -19,9 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { IMSLPSearch } from './IMSLPSearch'
-import { PianoSnapSearch } from './PianoSnapSearch'
-import { AudioUpload } from './AudioUpload'
+import { MidiUpload } from './MidiUpload'
 
 interface Piece {
   id: string
@@ -114,38 +112,14 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
             <DialogTitle className="text-[#f2efe8]">Ajouter un morceau</DialogTitle>
           </DialogHeader>
 
-          <Tabs defaultValue="imslp" className="mt-4">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="imslp">IMSLP</TabsTrigger>
-              <TabsTrigger value="pianosnap">PianoSnap</TabsTrigger>
-              <TabsTrigger value="upload">
-                Audio/YouTube
-              </TabsTrigger>
-              <TabsTrigger value="files" disabled>
-                MusicXML/MIDI
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="imslp" className="mt-4">
-              <IMSLPSearch onPieceAdded={handlePieceAdded} />
-            </TabsContent>
-
-            <TabsContent value="pianosnap" className="mt-4">
-              <PianoSnapSearch />
-            </TabsContent>
-
-            <TabsContent value="upload" className="mt-4">
-              <AudioUpload onSuccess={handlePieceAdded} />
-            </TabsContent>
-
-            <TabsContent value="files" className="mt-4">
-              <div className="glass rounded-xl p-6 text-center">
-                <p className="text-dim">
-                  Fonctionnalité à venir... (Phase 3)
-                </p>
-              </div>
-            </TabsContent>
-          </Tabs>
+          <div className="mt-4">
+            <MidiUpload onSuccess={handlePieceAdded} />
+            <p className="text-faint mt-4 text-xs leading-relaxed">
+              💡 Quasi tous les morceaux de piano existent en fichier MIDI gratuit :
+              cherche « nom du morceau + midi » ou explore musescore.com.
+              L'import est fidèle à 100 % — aucune transcription approximative.
+            </p>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -178,7 +152,7 @@ export function MorceauxClient({ pieces }: MorceauxClientProps) {
 
           <span className="mx-2 h-5 w-px bg-white/10" aria-hidden />
 
-          {([['classical', 'Classique'], ['traditional', 'Traditionnel']] as const).map(([id, label]) => (
+          {([['classical', 'Classique'], ['traditional', 'Traditionnel'], ['user_upload', 'Mes imports']] as const).map(([id, label]) => (
             <button
               key={id}
               onClick={() => setSelectedCategory(selectedCategory === id ? null : id)}
