@@ -44,7 +44,7 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
   const [highlightedKeys, setHighlightedKeys] = useState<string[]>([])
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
-  const [tempo, setTempo] = useState(120)
+  const [speed, setSpeed] = useState(100) // % de la vitesse originale
   const [sampler, setSampler] = useState<Tone.Sampler | null>(null)
   const [loading, setLoading] = useState(false)
   const timeUpdateRef = useRef<number | null>(null)
@@ -119,11 +119,6 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Mettre à jour le tempo du Transport
-  useEffect(() => {
-    Tone.Transport.bpm.value = tempo
-  }, [tempo])
-
   // Calculer les touches illuminées basées sur le temps actuel
   useEffect(() => {
     if (!isPlaying || notes.length === 0) {
@@ -150,23 +145,27 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
     await Tone.start()
     Tone.Transport.cancel()
 
+    // Vitesse d'écoute : on étire les temps réels, l'affichage reste
+    // en temps « morceau » (voir updateProgress)
+    const factor = speed / 100
+
     notes.forEach((note) => {
       Tone.Transport.schedule((time) => {
-        sampler.triggerAttackRelease(note.name, note.duration, time, note.velocity)
-      }, note.time)
+        sampler.triggerAttackRelease(note.name, note.duration / factor, time, note.velocity)
+      }, note.time / factor)
     })
 
     Tone.Transport.schedule(() => {
       Tone.Transport.stop()
       setIsPlaying(false)
       resetPlayback()
-    }, totalDuration.current)
+    }, totalDuration.current / factor)
 
     Tone.Transport.start()
     setIsPlaying(true)
 
     const updateProgress = () => {
-      const elapsed = Tone.Transport.seconds
+      const elapsed = Tone.Transport.seconds * factor
       setCurrentTime(elapsed)
 
       if (totalDuration.current > 0) {
@@ -338,20 +337,20 @@ export function PiecePlayer({ piece }: PiecePlayerProps) {
                 </button>
               </div>
 
-              {/* Contrôle du tempo */}
+              {/* Vitesse d'écoute — utile pour décortiquer un passage */}
               <div className="flex items-center gap-4">
                 <Volume2 className="h-4 w-4 text-faint" />
                 <div className="flex-1 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-dim">Tempo</span>
-                    <span className="font-bold tabular-nums text-[#f2efe8]">{tempo} BPM</span>
+                    <span className="text-dim">Vitesse d'écoute</span>
+                    <span className="font-bold tabular-nums text-[#f2efe8]">{speed}%</span>
                   </div>
                   <Slider
-                    value={[tempo]}
-                    onValueChange={(value) => setTempo(value[0])}
-                    min={60}
-                    max={180}
-                    step={1}
+                    value={[speed]}
+                    onValueChange={(value) => setSpeed(value[0])}
+                    min={50}
+                    max={100}
+                    step={5}
                     className="w-full"
                     disabled={isPlaying}
                   />
