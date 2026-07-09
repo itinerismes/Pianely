@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { PianoDemo } from '@/components/interactive/PianoDemo'
 import { Quiz } from '@/components/interactive/Quiz'
+import { Metronome } from '@/components/tools/Metronome'
 import { completeLessonAction } from '@/app/actions/progress'
 import { celebrateLessonComplete } from '@/lib/celebrate'
 import type { ContentBlock } from '@/types/lesson'
@@ -134,6 +135,12 @@ export function LessonTemplate({
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* Métronome — à portée de main pendant les exercices */}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-faint text-sm">Besoin d'un tempo régulier ?</span>
+            <Metronome compact />
           </div>
         </div>
 

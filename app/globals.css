@@ -481,6 +481,16 @@
   border-radius: 4px;
 }
 
+/* ── Autofill : Chrome force fond blanc/texte noir — on impose la Scène ── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f2efe8;
+  -webkit-box-shadow: 0 0 0 1000px #17161c inset;
+  caret-color: #f0c66a;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 /* ── Scrollbar scène ── */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }

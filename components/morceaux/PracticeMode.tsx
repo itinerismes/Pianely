@@ -20,6 +20,8 @@ import { Slider } from '@/components/ui/slider'
 import { useMidiInput, useMidiNotes } from '@/hooks/useMidiInput'
 import { midiNoteToName } from '@/lib/midi/midiEngine'
 import { toFrenchNote } from '@/lib/music/noteNames'
+import { velocityToNuance } from '@/lib/music/chords'
+import { Metronome } from '@/components/tools/Metronome'
 import { celebratePieceComplete } from '@/lib/celebrate'
 import { createClient } from '@/lib/supabase/client'
 import * as Tone from 'tone'
@@ -63,6 +65,10 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
   const [hand, setHand] = useState<HandMode>('both')
   const [waitingNotes, setWaitingNotes] = useState<string[]>([])
   const [stats, setStats] = useState({ hits: 0, errors: 0, streak: 0, bestStreak: 0 })
+  // Timing : parfait (±0,15s), bien (en avance dans la fenêtre), en retard (le temps a dû se figer)
+  const [timing, setTiming] = useState({ perfect: 0, good: 0, late: 0 })
+  const [lastGrade, setLastGrade] = useState<'perfect' | 'good' | 'late' | null>(null)
+  const [lastVelocity, setLastVelocity] = useState<number | null>(null)
   const [finished, setFinished] = useState(false)
   const [flash, setFlash] = useState<'good' | 'bad' | null>(null)
 
@@ -129,16 +135,18 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
     window.setTimeout(() => setFlash(null), 180)
   }, [])
 
-  const registerHit = useCallback((count = 1) => {
+  const registerHit = useCallback((grade: 'perfect' | 'good' | 'late') => {
     setStats(prev => {
-      const streak = prev.streak + count
+      const streak = prev.streak + 1
       return {
         ...prev,
-        hits: prev.hits + count,
+        hits: prev.hits + 1,
         streak,
         bestStreak: Math.max(prev.bestStreak, streak),
       }
     })
+    setTiming(prev => ({ ...prev, [grade]: prev[grade] + 1 }))
+    setLastGrade(grade)
     showFlash('good')
   }, [showFlash])
 
@@ -155,10 +163,10 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
     if (!gate) return
 
     if (waitingRef.current) {
-      // Le temps est figé sur la porte : la note doit en faire partie
+      // Le temps est figé sur la porte : la note arrive en retard
       if (remainingRef.current.has(noteName)) {
         remainingRef.current.delete(noteName)
-        registerHit()
+        registerHit('late')
         if (remainingRef.current.size === 0) {
           gateIndexRef.current += 1
           waitingRef.current = false
@@ -172,14 +180,16 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
       return
     }
 
-    // Pas encore en attente : accepter les notes jouées en rythme (en avance)
-    if (gate.time - timeRef.current <= EARLY_WINDOW) {
+    // Pas encore en attente : notes jouées en rythme (dans la fenêtre)
+    const delta = gate.time - timeRef.current
+    if (delta <= EARLY_WINDOW) {
       if (remainingRef.current.size === 0) {
         remainingRef.current = new Set(gate.notes)
       }
       if (remainingRef.current.has(noteName)) {
         remainingRef.current.delete(noteName)
-        registerHit()
+        // ±0,15 s de la cible = parfait ; sinon bien (en avance)
+        registerHit(delta <= 0.15 ? 'perfect' : 'good')
         if (remainingRef.current.size === 0) {
           gateIndexRef.current += 1
         }
@@ -191,6 +201,7 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
 
   useMidiNotes((event) => {
     if (event.type === 'noteon') {
+      setLastVelocity(event.velocity)
       handlePlayedNote(midiNoteToName(event.note))
     }
   })
@@ -274,6 +285,8 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
     setCurrentTime(0)
     setWaitingNotes([])
     setStats({ hits: 0, errors: 0, streak: 0, bestStreak: 0 })
+    setTiming({ perfect: 0, good: 0, late: 0 })
+    setLastGrade(null)
     setFinished(false)
   }, [pause])
 
@@ -370,12 +383,19 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
         </div>
         <div className="panel rounded-2xl p-4 text-center">
           <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-dim">
-            <Trophy className="h-3.5 w-3.5" /> Avancement
+            <Trophy className="h-3.5 w-3.5" /> Timing
           </div>
-          <p className="mt-1 text-3xl font-black tabular-nums text-[#f2efe8]">
-            {gates.length > 0 ? Math.round((gateIndexRef.current / gates.length) * 100) : 0}%
+          <p className={`mt-1 text-3xl font-black ${
+            lastGrade === 'perfect' ? 'accent-green' : lastGrade === 'good' ? 'accent-brass' : lastGrade === 'late' ? 'text-[#fcd34d]' : 'text-faint'
+          }`}>
+            {lastGrade === 'perfect' ? 'Parfait !' : lastGrade === 'good' ? 'Bien' : lastGrade === 'late' ? 'En retard' : '—'}
           </p>
-          <p className="text-faint text-xs tabular-nums">{gateIndexRef.current}/{gates.length} notes</p>
+          <p className="text-faint text-xs tabular-nums">
+            {timing.perfect} parfait · {timing.good} bien · {timing.late} tard
+            {lastVelocity !== null && (
+              <> · <span className="accent-brass font-bold italic">{velocityToNuance(lastVelocity).symbol}</span></>
+            )}
+          </p>
         </div>
       </div>
 
@@ -402,7 +422,8 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
               Morceau terminé — précision <span className="accent-brass">{accuracy}%</span>
             </p>
             <p className="text-dim text-sm">
-              {stats.hits} notes justes, meilleur streak de {stats.bestStreak}. Session enregistrée.
+              {stats.hits} notes justes ({timing.perfect} parfaites, {timing.good} bien,{' '}
+              {timing.late} en retard), meilleur streak de {stats.bestStreak}. Session enregistrée.
             </p>
             <button onClick={restart} className="btn-accent inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-bold">
               <RotateCcw className="h-4 w-4" /> Rejouer
@@ -451,6 +472,11 @@ export function PracticeMode({ pieceId, pieceTitle, notes, totalDuration }: Prac
                 {isRunning ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
                 {isRunning ? 'Pause' : currentTime > 0 ? 'Reprendre' : 'Démarrer'}
               </button>
+            </div>
+
+            {/* Métronome intégré */}
+            <div className="flex justify-center">
+              <Metronome compact />
             </div>
 
             <div className="flex items-center gap-4">

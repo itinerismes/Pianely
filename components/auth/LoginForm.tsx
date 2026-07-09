@@ -38,7 +38,7 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-gray-700 font-medium">
+        <Label htmlFor="email" className="text-dim font-medium">
           Email
         </Label>
         <Input
@@ -46,7 +46,7 @@ export function LoginForm() {
           id="email"
           type="email"
           placeholder="ton@email.com"
-          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500"
+
         />
         {errors.email && (
           <p className="text-sm text-red-600 font-medium">{errors.email.message}</p>
@@ -54,7 +54,7 @@ export function LoginForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-gray-700 font-medium">
+        <Label htmlFor="password" className="text-dim font-medium">
           Mot de passe
         </Label>
         <Input
@@ -62,7 +62,7 @@ export function LoginForm() {
           id="password"
           type="password"
           placeholder="••••••••"
-          className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500"
+
         />
         {errors.password && (
           <p className="text-sm text-red-600 font-medium">{errors.password.message}</p>
@@ -74,7 +74,7 @@ export function LoginForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold"
+        className="btn-accent w-full rounded-xl py-2.5 font-bold"
       >
         {loading ? (
           <>

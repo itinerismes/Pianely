@@ -8,6 +8,7 @@ import {
   BookOpen,
   TrendingUp,
   Music,
+  Piano,
   Settings,
   LogOut,
   ChevronLeft
@@ -59,6 +60,13 @@ export function DashboardSidebar({ isOpen = true, onClose }: DashboardSidebarPro
       label: "Mes Morceaux",
       href: "/morceaux",
       active: pathname === "/morceaux"
+    },
+    {
+      id: "jouer",
+      icon: <Piano className="w-5 h-5" />,
+      label: "Jeu libre",
+      href: "/jouer",
+      active: pathname === "/jouer"
     },
   ];
 
