@@ -218,6 +218,16 @@ const content: ContentBlock[] = [
 <p><strong>Prochaine étape :</strong> Le Niveau 5 vous attend avec des défis encore plus passionnants. Vous êtes prêt !</p>`,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Échauffe-toi sur la gamme complète. Joue Do, Ré, Mi, Fa, Sol, La, Si sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    }
   }
 ]
 

@@ -12,7 +12,17 @@ const content: ContentBlock[] = [
   {id: '8', type: 'practice', data: {title: 'Exercice : Style baroque', description: 'Applique les conventions', steps: ['Choisis un passage baroque', 'Joue sans pédale', 'Articule clairement chaque note', 'Ajoute les ornements appropriés', 'Utilise des contrastes de nuances (terrasses)', 'Enregistre et compare avec Glenn Gould']}},
   {id: '9', type: 'text', data: {content: `<h2>Autres compositeurs baroques</h2><ul><li><strong>Scarlatti</strong> : Sonates brillantes</li><li><strong>Haendel</strong> : Suites majestueuses</li><li><strong>Couperin</strong> : Pièces françaises élégantes</li><li><strong>Rameau</strong> : Caractère et virtuosité</li></ul>`, variant: 'normal'}},
   {id: '10', type: 'text', data: {content: `<h2>Programme d\'étude Bach</h2><p>Progression recommandée :</p><ul><li>Année 1 : Préludes du Clavier bien tempéré</li><li>Année 2 : Inventions à deux voix</li><li>Année 3 : Sinfonias à trois voix</li><li>Année 4+ : Suites françaises, anglaises, Partitas</li></ul>`, variant: 'tip'}},
-  {id: '11', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Prélude en Do majeur BWV 846</li><li>✅ Inventions à deux voix</li><li>✅ Style d\'interprétation baroque</li><li>✅ Programme d\'étude progressif</li></ul>`, variant: 'highlight'}}
+  {id: '11', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Prélude en Do majeur BWV 846</li><li>✅ Inventions à deux voix</li><li>✅ Style d\'interprétation baroque</li><li>✅ Programme d\'étude progressif</li></ul>`, variant: 'highlight'}},
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Joue le motif façon Bach. Joue Do, Ré, Mi, Fa, Sol, La, Si sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    }
+  }
 ]
 
 export default function Lecon7Page() {

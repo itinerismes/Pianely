@@ -337,6 +337,16 @@ const content: ContentBlock[] = [
       `,
       variant: 'tip'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Tiens l'accord de Do avec la pédale de sustain. Joue Do, Mi, Sol sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'E', 'G']
+    }
   }
 ]
 

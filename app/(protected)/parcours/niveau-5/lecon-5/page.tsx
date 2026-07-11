@@ -14,7 +14,17 @@ const content: ContentBlock[] = [
   {id: '10', type: 'text', data: {content: `<h2>Les octaves rapides</h2><p>Jouer des octaves à grande vitesse demande :</p><ul><li>Rotation du poignet</li><li>Mouvement de "rebond"</li><li>Force venant de l'avant-bras, pas des doigts</li><li>Détente immédiate après chaque octave</li></ul>`, variant: 'highlight'}},
   {id: '11', type: 'practice', data: {title: 'Exercice : Octaves véloces', description: 'Développe la puissance et la vitesse', steps: ['Gamme en octaves main droite lentement', 'Focus sur le rebond du poignet', 'Augmente progressivement le tempo', 'Pratique seulement 5 minutes (très exigeant)']}},
   {id: '12', type: 'text', data: {content: `<h2>Programme d\'entraînement quotidien</h2><ul><li>5 min : Trilles sur toutes les notes</li><li>5 min : Gammes rapides avec métronome</li><li>5 min : Passages difficiles lents puis rapides</li><li>5 min : Repos et étirements</li></ul><p>La vitesse vient avec le temps, la patience et la régularité !</p>`, variant: 'tip'}},
-  {id: '13', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Les trilles et leur technique</li><li>✅ Les ornements baroques</li><li>✅ Les gammes à grande vitesse</li><li>✅ Les glissandos</li><li>✅ Les octaves véloces</li></ul>`, variant: 'highlight'}}
+  {id: '13', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Les trilles et leur technique</li><li>✅ Les ornements baroques</li><li>✅ Les gammes à grande vitesse</li><li>✅ Les glissandos</li><li>✅ Les octaves véloces</li></ul>`, variant: 'highlight'}},
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Monte la gamme le plus fluidement possible. Joue Do, Ré, Mi, Fa, Sol, La, Si sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    }
+  }
 ]
 
 export default function Lecon5Page() {

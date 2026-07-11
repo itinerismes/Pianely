@@ -192,6 +192,16 @@ const content: ContentBlock[] = [
 <p>L'interprétation transforme la technique en art. C'est votre voix unique qui rendra la musique vivante !</p>`,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Fais ressortir l'accord de Do. Joue Do, Mi, Sol sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'E', 'G']
+    }
   }
 ]
 

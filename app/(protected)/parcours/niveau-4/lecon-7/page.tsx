@@ -190,6 +190,16 @@ const content: ContentBlock[] = [
 <p>Maîtriser les arpèges vous ouvre les portes d'un immense répertoire. Pratiquez-les quotidiennement dans toutes les tonalités pour développer une technique solide et fluide !</p>`,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Déroule l'arpège Do, Mi, Sol. Joue Do, Mi, Sol sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'E', 'G']
+    }
   }
 ]
 

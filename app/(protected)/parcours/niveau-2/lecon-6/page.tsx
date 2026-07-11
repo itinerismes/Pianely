@@ -273,6 +273,16 @@ const content: ContentBlock[] = [
       `,
       variant: 'highlight'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Pose les fondamentales des accords Do, Fa et Sol. Joue Do, Fa, Sol sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'F', 'G']
+    }
   }
 ]
 

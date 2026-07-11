@@ -307,6 +307,16 @@ const content: ContentBlock[] = [
       `,
       variant: 'highlight'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Retrouve ta position de base, pouce sur Do. Joue Do, Ré, Mi, Fa, Sol sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D', 'E', 'F', 'G']
+    }
   }
 ]
 

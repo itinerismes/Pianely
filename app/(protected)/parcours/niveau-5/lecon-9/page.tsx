@@ -12,7 +12,17 @@ const content: ContentBlock[] = [
   {id: '8', type: 'practice', data: {title: 'Exercice : Consolation No. 3', description: 'Crée l\'atmosphère', steps: ['Apprends le thème principal', 'Travaille la fluidité de l\'accompagnement', 'Équilibre mélodie et harmonie', 'Pédale pour créer l\'atmosphère', 'Sens la consolation et la paix']}},
   {id: '9', type: 'text', data: {content: `<h2>Style Liszt</h2><ul><li><strong>Virtuosité</strong> : Technique éblouissante</li><li><strong>Orchestral</strong> : Pense orchestre, pas piano</li><li><strong>Dramatique</strong> : Grands gestes, grandes émotions</li><li><strong>Innovation</strong> : Repousse les limites du possible</li></ul>`, variant: 'normal'}},
   {id: '10', type: 'text', data: {content: `<h2>Autres œuvres romantiques</h2><p><strong>Chopin :</strong></p><ul><li>Valse Op. 64 No. 2</li><li>Prélude Op. 28 No. 4 en Mi mineur</li></ul><p><strong>Schumann :</strong></p><ul><li>Rêverie (Kinderszenen)</li><li>Des Abends (Fantasiestücke)</li></ul><p><strong>Brahms :</strong></p><ul><li>Intermezzo Op. 118 No. 2</li></ul>`, variant: 'tip'}},
-  {id: '11', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Préludes de Chopin</li><li>✅ Nocturne Op. 9 No. 2</li><li>✅ Consolation de Liszt</li><li>✅ Style romantique et expression</li><li>✅ Rubato et pédale</li></ul>`, variant: 'highlight'}}
+  {id: '11', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Préludes de Chopin</li><li>✅ Nocturne Op. 9 No. 2</li><li>✅ Consolation de Liszt</li><li>✅ Style romantique et expression</li><li>✅ Rubato et pédale</li></ul>`, variant: 'highlight'}},
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Étire le voicing romantique. Joue Do, Mi, Sol, Si, Ré sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'E', 'G', 'B', 'D']
+    }
+  }
 ]
 
 export default function Lecon9Page() {

@@ -13,7 +13,17 @@ const content: ContentBlock[] = [
   {id: '9', type: 'practice', data: {title: 'Exercice : Arrange "Joyeux anniversaire"', description: 'Transforme une mélodie connue', steps: ['Version 1 : Style classique avec accords simples', 'Version 2 : Style jazz avec accords de 7ème et 9ème', 'Version 3 : Style romantique avec arpèges', 'Version 4 : Style contemporain avec clusters', 'Compare les 4 versions', 'Laquelle préfères-tu ?']}},
   {id: '10', type: 'text', data: {content: `<h2>Techniques de développement</h2><p>Pour développer tes idées :</p><ul><li><strong>Transposition</strong> : Joue dans une autre tonalité</li><li><strong>Inversion</strong> : Retourne les intervalles</li><li><strong>Augmentation</strong> : Notes plus longues</li><li><strong>Diminution</strong> : Notes plus courtes</li><li><strong>Séquence</strong> : Répète en montant ou descendant</li></ul>`, variant: 'normal'}},
   {id: '11', type: 'practice', data: {title: 'Projet final : Compose une pièce complète', description: 'Ton opus 1', steps: ['Choisis un titre et un caractère (joyeux, mélancolique, etc.)', 'Compose le thème A (8 mesures)', 'Compose le thème B contrastant (8 mesures)', 'Crée une introduction (4 mesures)', 'Structure : Intro - A - B - A - Coda', 'Ajoute des nuances et de l\'expression', 'Note ta pièce ou enregistre-la', 'Félicitations : tu es compositeur !']}},
-  {id: '12', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Créer une mélodie</li><li>✅ Harmoniser une mélodie</li><li>✅ Utiliser les formes musicales</li><li>✅ Arranger dans différents styles</li><li>✅ Composer une pièce complète</li></ul><p>La composition est un voyage sans fin. Continue à créer, à expérimenter, et ta voix musicale unique émergera !</p>`, variant: 'highlight'}}
+  {id: '12', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Créer une mélodie</li><li>✅ Harmoniser une mélodie</li><li>✅ Utiliser les formes musicales</li><li>✅ Arranger dans différents styles</li><li>✅ Composer une pièce complète</li></ul><p>La composition est un voyage sans fin. Continue à créer, à expérimenter, et ta voix musicale unique émergera !</p>`, variant: 'highlight'}},
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Pose ton accord de composition. Joue Do, Mi, Sol, Si, Ré sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'E', 'G', 'B', 'D']
+    }
+  }
 ]
 
 export default function Lecon11Page() {

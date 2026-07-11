@@ -209,6 +209,16 @@ const content: ContentBlock[] = [
 <p>Prenez le temps d'approfondir chaque pièce. Une œuvre bien apprise et comprise est plus précieuse qu'une douzaine survolées. Dans la prochaine leçon, nous préparerons votre premier projet de récital !</p>`,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Joue la gamme de ton morceau. Joue Do, Ré, Mi, Fa, Sol, La, Si sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    }
   }
 ]
 

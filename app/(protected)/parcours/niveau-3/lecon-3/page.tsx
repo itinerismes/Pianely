@@ -316,6 +316,16 @@ const content: ContentBlock[] = [
       `,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Forme l'accord Cmaj7 : Do, Mi, Sol, Si. Joue Do, Mi, Sol, Si sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'E', 'G', 'B']
+    }
   }
 ]
 

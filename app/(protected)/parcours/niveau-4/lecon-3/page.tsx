@@ -198,6 +198,16 @@ const content: ContentBlock[] = [
 <p>Dans la prochaine leçon, nous explorerons des rythmes complexes qui donneront encore plus de vie à ces accords !</p>`,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Forme l'accord Sol7 : Sol, Si, Ré, Fa. Joue Sol, Si, Ré, Fa sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['G', 'B', 'D', 'F']
+    }
   }
 ]
 

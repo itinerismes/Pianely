@@ -13,7 +13,17 @@ const content: ContentBlock[] = [
   {id: '9', type: 'practice', data: {title: 'Exercice : Pédale préparée', description: 'Résonance sympathique', steps: ['Enfonce la pédale de sustain AVANT de jouer', 'Joue un Do grave forte', 'Relâche immédiatement les touches', 'Le piano résonne par sympathie', 'Technique utilisée dans la musique contemporaine']}},
   {id: '10', type: 'text', data: {content: `<h2>Notation de la pédale</h2><p>Sur les partitions :</p><ul><li><strong>Ped.</strong> ou <strong>*</strong> : Indique quand pédaler</li><li><strong>∧</strong> : Relâcher la pédale</li><li><strong>Ligne continue</strong> : Maintenir la pédale</li><li>Parfois des indications verbales en italien</li></ul>`, variant: 'highlight'}},
   {id: '11', type: 'text', data: {content: `<h2>Application musicale</h2><p>Le choix de pédale dépend de :</p><ul><li>Le style (romantique = beaucoup, baroque = peu)</li><li>L\'acoustique de la salle</li><li>Le caractère de la pièce</li><li>Ton goût personnel</li></ul><p>Écoute de grands pianistes pour comprendre leur usage de la pédale !</p>`, variant: 'tip'}},
-  {id: '12', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Pédale syncopée et demi-pédale</li><li>✅ Una corda pour les nuances</li><li>✅ Sostenuto pour effets spéciaux</li><li>✅ Techniques avancées</li><li>✅ Notation et interprétation</li></ul>`, variant: 'highlight'}}
+  {id: '12', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Pédale syncopée et demi-pédale</li><li>✅ Una corda pour les nuances</li><li>✅ Sostenuto pour effets spéciaux</li><li>✅ Techniques avancées</li><li>✅ Notation et interprétation</li></ul>`, variant: 'highlight'}},
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Colore l'accord de Do avec la pédale. Joue Do, Mi, Sol sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'E', 'G']
+    }
+  }
 ]
 
 export default function Lecon6Page() {

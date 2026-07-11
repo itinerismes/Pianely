@@ -183,6 +183,16 @@ const content: ContentBlock[] = [
 <p>Pratiquez quotidiennement : nommez les armures que vous rencontrez dans vos partitions !</p>`,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Découvre Sol majeur — attention au Fa#. Joue Sol, La, Si, Do, Ré, Mi, Fa# sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['G', 'A', 'B', 'C', 'D', 'E', 'F#']
+    }
   }
 ]
 

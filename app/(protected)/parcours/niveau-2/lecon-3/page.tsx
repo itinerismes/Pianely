@@ -257,6 +257,16 @@ const content: ContentBlock[] = [
       `,
       variant: 'highlight'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Joue une tierce : Do, puis Mi, puis Sol. Joue Do, Mi, Sol sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'E', 'G']
+    }
   }
 ]
 

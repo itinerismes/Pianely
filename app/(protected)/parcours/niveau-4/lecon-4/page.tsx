@@ -190,6 +190,16 @@ const content: ContentBlock[] = [
 <p>Ces rythmes complexes vous ouvrent les portes de styles musicaux variés et enrichiront considérablement votre expression pianistique !</p>`,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Garde le tempo sur ces notes. Joue Do, Ré, Mi, Fa, Sol sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D', 'E', 'F', 'G']
+    }
   }
 ]
 

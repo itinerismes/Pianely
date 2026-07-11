@@ -193,6 +193,16 @@ const content: ContentBlock[] = [
 <p>La lecture à vue est comme un muscle : elle se développe avec la pratique régulière et patiente. Soyez constant, et les progrès viendront !</p>`,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Déchiffre ces notes à vue. Joue Do, Ré, Mi, Fa, Sol, La, Si sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    }
   }
 ]
 

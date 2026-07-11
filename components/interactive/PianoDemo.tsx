@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { PianoRoll } from '@/components/sheet-music/PianoRoll'
+import { toFrenchNote } from '@/lib/music/noteNames'
 
 interface PianoDemoProps {
   title?: string
@@ -67,7 +68,7 @@ export function PianoDemo({
                     : 'badge-brass'
                 }`}
               >
-                {note}
+                {toFrenchNote(note)}
               </span>
             ))}
           </div>

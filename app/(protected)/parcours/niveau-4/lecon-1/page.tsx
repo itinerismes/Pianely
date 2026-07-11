@@ -190,6 +190,16 @@ const content: ContentBlock[] = [
 <p>Les gammes sont un travail de longue haleine - continuez à les pratiquer quotidiennement !</p>`,
       variant: 'normal'
     }
+  },
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Compare Do majeur et La mineur (mêmes touches blanches). Joue Do, Ré, Mi, Fa, Sol, La, Si sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    }
   }
 ]
 

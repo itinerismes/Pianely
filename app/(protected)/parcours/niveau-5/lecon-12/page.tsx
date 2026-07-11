@@ -13,7 +13,17 @@ const content: ContentBlock[] = [
   {id: '9', type: 'text', data: {content: `<h2>Se construire une présence</h2><p>À l\'ère digitale :</p><ul><li><strong>Réseaux sociaux</strong> : Instagram, TikTok, YouTube</li><li><strong>Site web</strong> : Portfolio professionnel</li><li><strong>Enregistrements</strong> : Audio et vidéo de qualité</li><li><strong>Networking</strong> : Connecte avec d\'autres musiciens</li><li><strong>Concerts réguliers</strong> : Bâtis ton audience</li></ul>`, variant: 'normal'}},
   {id: '10', type: 'practice', data: {title: 'Exercice : Crée ton portfolio', description: 'Lance ta présence', steps: ['Enregistre 3 pièces (audio ou vidéo)', 'Crée une page Facebook/Instagram', 'Publie un enregistrement par semaine', 'Engage avec d\'autres musiciens en ligne', 'Cherche des opportunités de concert locales', 'Demande des témoignages à tes élèves/audience']}},
   {id: '11', type: 'text', data: {content: `<h2>L\'apprentissage continu</h2><p>Un virtuose ne cesse jamais d\'apprendre :</p><ul><li><strong>Masterclasses</strong> : Apprends de grands pianistes</li><li><strong>Concerts</strong> : Écoute des performances live</li><li><strong>Enregistrements</strong> : Étudie différentes interprétations</li><li><strong>Nouveau répertoire</strong> : Toujours explorer</li><li><strong>Autres styles</strong> : Jazz, pop, world music</li></ul><p>Le piano est un voyage sans fin !</p>`, variant: 'tip'}},
-  {id: '12', type: 'text', data: {content: `<h2>Félicitations ! 🎉</h2><p>Tu as terminé le parcours complet des 5 niveaux de Pianely !</p><p>Tu es passé de débutant complet à pianiste accompli. Tu as les connaissances, la technique et la musicalité pour :</p><ul><li>✅ Jouer du répertoire classique, jazz et moderne</li><li>✅ Improviser et composer ta propre musique</li><li>✅ Donner des concerts</li><li>✅ Enseigner à d\'autres</li><li>✅ Continuer à progresser de façon autonome</li></ul><p><strong>Le piano est maintenant une part de toi.</strong></p><p>Continue à jouer, à explorer, à créer. La musique est un don que tu peux partager avec le monde entier.</p><p>Bravo, virtuose ! 🎹✨</p>`, variant: 'highlight'}}
+  {id: '12', type: 'text', data: {content: `<h2>Félicitations ! 🎉</h2><p>Tu as terminé le parcours complet des 5 niveaux de Pianely !</p><p>Tu es passé de débutant complet à pianiste accompli. Tu as les connaissances, la technique et la musicalité pour :</p><ul><li>✅ Jouer du répertoire classique, jazz et moderne</li><li>✅ Improviser et composer ta propre musique</li><li>✅ Donner des concerts</li><li>✅ Enseigner à d\'autres</li><li>✅ Continuer à progresser de façon autonome</li></ul><p><strong>Le piano est maintenant une part de toi.</strong></p><p>Continue à jouer, à explorer, à créer. La musique est un don que tu peux partager avec le monde entier.</p><p>Bravo, virtuose ! 🎹✨</p>`, variant: 'highlight'}},
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Échauffe-toi avant de monter sur scène. Joue Do, Ré, Mi, Fa, Sol, La, Si sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    }
+  }
 ]
 
 export default function Lecon12Page() {

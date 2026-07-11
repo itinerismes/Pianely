@@ -13,7 +13,17 @@ const content: ContentBlock[] = [
   {id: '9', type: 'practice', data: {title: 'Exercice : Développement de motif', description: 'Crée et varie', steps: ['Invente un motif de 3-4 notes', 'Joue-le', 'Monte-le d\'une octave', 'Inverse-le (miroir)', 'Augmente les durées', 'Diminue les durées', 'Combine les variations']}},
   {id: '10', type: 'text', data: {content: `<h2>Le comping (accompagnement jazz)</h2><p>Accompagner un soliste :</p><ul><li>Joue les accords en rythme</li><li>Syncopé, pas sur les temps</li><li>Laisse de l\'espace</li><li>Réagis au soliste</li></ul>`, variant: 'normal'}},
   {id: '11', type: 'practice', data: {title: 'Exercice : Comping', description: 'Accompagne une mélodie enregistrée', steps: ['Trouve une version d\'un standard (YouTube)', 'Joue les accords en comping', 'Syncopé, varié', 'Écoute le soliste, adapte-toi', 'Crée un dialogue musical']}},
-  {id: '12', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Gamme blues et improvisation</li><li>✅ Progression II-V-I</li><li>✅ Standards de jazz</li><li>✅ Techniques d\'improvisation</li><li>✅ Comping jazz</li></ul><p>L\'improvisation est un voyage sans fin. Pratique, écoute, et surtout : amuse-toi !</p>`, variant: 'highlight'}}
+  {id: '12', type: 'text', data: {content: `<h2>Récapitulatif</h2><ul><li>✅ Gamme blues et improvisation</li><li>✅ Progression II-V-I</li><li>✅ Standards de jazz</li><li>✅ Techniques d\'improvisation</li><li>✅ Comping jazz</li></ul><p>L\'improvisation est un voyage sans fin. Pratique, écoute, et surtout : amuse-toi !</p>`, variant: 'highlight'}},
+  {
+    id: 'piano-exercice',
+    type: 'interactive',
+    data: {
+      component: 'piano',
+      title: 'À toi de jouer 🎹',
+      instructions: "Improvise sur la gamme blues de Do. Joue Do, Ré#, Fa, Fa#, Sol, La# sur ton piano (ou clique sur les touches) — chaque note validée s'allume.",
+      targetNotes: ['C', 'D#', 'F', 'F#', 'G', 'A#']
+    }
+  }
 ]
 
 export default function Lecon10Page() {
